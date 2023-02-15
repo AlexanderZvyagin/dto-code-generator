@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# echo I am the c++ bash wrapper script with args: $@
+
+case "$1" in
+    init)
+        dotnet new console
+        ;;
+    build)
+        dotnet build
+        ;;
+    *)
+        ./bin/Debug/net6.0/run-csharp $@
+        ;;
+esac
