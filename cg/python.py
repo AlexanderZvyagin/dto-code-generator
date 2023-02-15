@@ -75,7 +75,7 @@ def Function_python(self:Function, obj:Struct=None):
             code.append(f'{indent}{a.name}{default}')
         code.append('):')
 
-    for line in get_lines(self.lines.get('python')):
+    for line in get_code(self.code.get('python')):
         code.append(f'{indent}{line}')
 
     code.append(f'{indent}pass')

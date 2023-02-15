@@ -60,8 +60,8 @@ class Function:
         def __init__ (self,code):
             pass
 
-    def __init__ (self, name:str, type:str, args=[], lines={}, mapping=[]):
-        '''lines: dictionary of language:str=>list[str]
+    def __init__ (self, name:str, type:str, args=[], code={}, mapping=[]):
+        '''code: dictionary of language:str=>list[str]
         
         mapping: it is an array of (key,value) pairs
         '''
@@ -69,14 +69,14 @@ class Function:
         self.type = type
         self.args = args
 
-        self.lines = lines
+        self.code = code
         self.objs  = [] # Call,Code
         self.mapping = mapping
 
     def __repr__ (self):
         return f"Function('{self.name}','{self.type}',{self.args})"
 
-def get_lines (body):
+def get_code (body):
     if body is None:
         return []
     elif type(body)==str:

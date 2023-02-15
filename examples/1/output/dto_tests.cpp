@@ -33,6 +33,9 @@ float random_float (
     bool can_be_nan      = false,
     bool can_be_infinity = false
 ) {
+    // FIXME
+    return (float) random_int();
+#if 0
     std::uniform_int_distribution<int> yes_no(0,1);
 
     if(can_be_nan and yes_no(generator))
@@ -43,6 +46,7 @@ float random_float (
 
     std::uniform_real_distribution uniform_dist(min,max);
     return uniform_dist (generator);
+#endif
 }
 
 std::vector<float> random_list_of_floats (int min = 0, int max = 3) {

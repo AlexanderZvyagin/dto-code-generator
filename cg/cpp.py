@@ -73,7 +73,7 @@ def Function_cpp(self:Function, obj:Struct=None):
         code.append(')')
 
     code.append('{')
-    for line in get_lines(self.lines.get('cpp')):
+    for line in get_code(self.code.get('cpp')):
         code.append(f'{indent}{line}')
     code.append('}')
 
