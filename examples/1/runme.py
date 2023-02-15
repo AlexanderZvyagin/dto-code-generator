@@ -86,7 +86,7 @@ def create_dto(fname, languages):
     obj.methods.append(Function (
         'GetStateNumber',
         'int',
-        lines = {
+        code = {
             'typescript':
 '''
 if(this._state<0)
@@ -214,8 +214,8 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('x','HistogramAxis',Variable('HistogramAxis()')),
-            Variable('y','HistogramAxis',Variable('HistogramAxis()')),
+            Variable('x','HistogramAxis',Variable('HistogramAxis()','type')),
+            Variable('y','HistogramAxis',Variable('HistogramAxis()','type')),
         ],
         mapping = [
             ('x',[Variable('x')]),
@@ -376,9 +376,10 @@ void from_json(const json &j, std::vector<Histogram> &u) {
 
 if __name__ == '__main__':
 
-    # languages = ('python','cpp','typescript')
-    languages = ('python','cpp')
+    # languages = ['python','cpp','typescript']
+    # languages = ['python','cpp'] # OK!
+    languages = ['typescript']
     objs = create_dto('output/dto',languages)
-    for lang1 in ['python','cpp']:
-        for lang2 in ['python','cpp']:
+    for lang1 in languages:
+        for lang2 in languages:
             run_round_trip_tests(lang1,lang2,objs,'output')
