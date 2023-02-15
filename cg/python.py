@@ -256,7 +256,9 @@ def random_list_of_ints(min = 0, max = 3):
     return [random_int() for i in range(n)]
 
 def random_float (min = -1e6, max = 1e6):
-    return random.uniform(min,max)
+    return random_int()
+    # FIXME
+    # return random.uniform(min,max)
 
 def random_list_of_floats (min = 0, max = 3):
     n = random.randint(min,max)
