@@ -1,3 +1,12 @@
 #!/usr/bin/env bash
 
-echo I am the typescript bash wrapper script with args: $@
+case "$1" in
+    build)
+        cp ../../output/dto.ts .
+        # npm install typescript
+        ./node_modules/typescript/bin/tsc dto_tests.ts
+        ;;
+    *)
+        node dto_tests.js $@
+        ;;
+esac

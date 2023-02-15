@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!env python3
 
 from cg import *
 from math import nan
@@ -378,7 +378,8 @@ if __name__ == '__main__':
 
     # languages = ['python','cpp','typescript']
     # languages = ['python','cpp'] # OK!
-    languages = ['typescript']
+    # languages = ['typescript']
+    languages = ['csharp']
     objs = create_dto('output/dto',languages)
     for lang1 in languages:
         for lang2 in languages:

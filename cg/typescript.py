@@ -41,30 +41,14 @@ def File_prefix_typescript (objs):
         ''
     ]
 
-# def File_suffix_typescript (objs):
-#     code = []
-#     code.append('export {')
-#     for i,obj in enumerate(objs):
-#         c = ',' if (i+1)<len(objs) else ''
-#         code.append(f'{indent}{obj.name}' + c)
-#     code.append('}')
-#     return code
-
-# def typescript_type (name:str):
-#     return {
-#         'void'   : 'void',
-#         'string' : 'string',
-#         'int'    : 'number',
-#         'int[]'  : 'number[]',
-#         'float'  : 'number',
-#         'float[]': 'number[]',
-#     }.get(name,name)
-
-# def typescript_value (arg):
-#     if type(arg)==float:
-#         if math.isnan(arg):
-#             return 'Number.NaN'
-#     return arg
+def File_suffix_typescript (objs):
+    code = []
+    code.append('export default {')
+    for obj in objs:
+        if type(obj) in [Struct,Function]:
+            code.append(f'{indent}{obj.name},')
+    code.append('}')
+    return code
 
 def Constructor_typescript(ctor:Function,base:Struct):
     code = []

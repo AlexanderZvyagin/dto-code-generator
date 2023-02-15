@@ -10,9 +10,10 @@ autogen_text = 'This is an automatically generated file.'
 Variable = namedtuple('Variable',['name','type','defval'],defaults=['',None,None])
 
 ext = {
-    'cpp' : 'cpp',
-    'python' : 'py',
-    'typescript' : 'ts'
+    'cpp'           : 'cpp',
+    'python'        : 'py',
+    'typescript'    : 'ts',
+    'csharp'        : 'cs',
 }
 
 def decode_type(type_name:str):
@@ -117,3 +118,4 @@ def run_round_trip_tests(lang1,lang2,objs,outdir):
         json_file2 = f'{outdir}/{struct_name}-{lang1}-{lang2}-convert.json'
         run_test(lang2,'convert',struct_name,json_file1,json_file2) 
         run_test(lang1,'compare',struct_name,json_file1,json_file2)
+        break # FIXME

@@ -2,6 +2,7 @@ from .all import *
 from .python import *
 from .typescript import *
 from .cpp import *
+from .csharp import *
 
 def write_objs (
     fname       : str,
