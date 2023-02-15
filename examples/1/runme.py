@@ -70,14 +70,18 @@ def create_dto(fname, languages):
             Variable('name','string',''),
             Variable('refs','int[]',[]),
             Variable('args','float[]',[]),
-            Variable('start','float',nan)
+            Variable('start','float',nan),
         ],
-        mapping = [(obj.base.name,[
-            Variable('name'),
-            Variable('refs'),
-            Variable('args'),
-            Variable('start'),
-        ])]
+        mapping = [
+            (obj.base.name,[
+                Variable('name'),
+                Variable('refs'),
+                Variable('args'),
+                Variable('start'),
+            ]),
+            ('_equation',[-88]),
+            ('_state',[-88]),
+        ]
     ))
     obj.methods.append(Function (
         'GetStateNumber',
@@ -208,7 +212,15 @@ void from_json(const json &j, std::vector<Updater> &u) {
     obj.attributes.append(Variable('y','HistogramAxis',None))
     obj.methods.append(Function (
         obj.name,
-        'constructor'
+        'constructor',
+        args = [
+            Variable('x','HistogramAxis',Variable('HistogramAxis()')),
+            Variable('y','HistogramAxis',Variable('HistogramAxis()')),
+        ],
+        mapping = [
+            ('x',[Variable('x')]),
+            ('y',[Variable('y')])
+        ]
     ))
     # obj.methods.append(Function (
     #     obj.name,
@@ -358,69 +370,15 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     objs.append(obj)
 
     for language in languages:
-        write_objs(fname,language,objs)
+        write_objs(fname,f'{fname}_tests',language,objs)
     
     return objs
-
-class File:
-    def __init__ (self, file_name:str):
-        self.file_name = file_name
-        self.objs = []
-
-def write_file (f, language):
-    for obj in f.objs:
-        lines = obj[language]
-        with open(f.file_name + '.' + ext[language],'w') as file:
-            for line in get_lines(lines):
-                file.write(line+'\n')
-                
-def create_dto_test(fname,languages):
-    f = File(fname)
-    f.objs.append({
-        'typescript':
-'''
-import {describe, expect, test, it} from '@jest/globals';
-
-test('sum', function() {
-    expect(1+4).toBe(5);
-});
-''',
-        'cpp':
-'''
-#include "ut.hpp"
-#include "dto.cpp"
-
-
-int main (void) {
-    using namespace boost::ut;
-    "sum"_test = [&] {
-        expect(that% (1+4)==5);
-    };    
-    "UpdaterDoc ctor"_test = [&] {
-        auto doc1 = UpdaterDoc ("name","title","doc_md","start",1,2);
-        //auto js1 = UpdaterDoc_to_JSON(doc1);
-        //auto doc2 = UpdaterDoc_from_json(js1);
-        //expect(that% doc1==doc2);
-    };    
-    return 0;
-}
-''',
-        'python':
-'''
-def test_sum():
-    assert 1+4 == 5
-'''
-    })
-
-    for language in languages:
-        write_file(f,language)
-        # run_test(f.file_name + '.' + ext[language],language)
-
 
 if __name__ == '__main__':
 
     # languages = ('python','cpp','typescript')
     languages = ('python','cpp')
     objs = create_dto('output/dto',languages)
-    # create_dto_test('output/dto-test',languages)
-    run_round_trip_tests('cpp','cpp',objs,'output')
+    for lang1 in ['python','cpp']:
+        for lang2 in ['python','cpp']:
+            run_round_trip_tests(lang1,lang2,objs,'output')

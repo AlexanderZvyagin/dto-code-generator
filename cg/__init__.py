@@ -3,9 +3,14 @@ from .python import *
 from .typescript import *
 from .cpp import *
 
-def write_objs(fname:str,language,objs=[]):
+def write_objs (
+    fname       : str,
+    fname_test  : str,
+    language    : list[str],
+    objs        : any        = []
+):
     '''fname: full path name without extension, the file will be overwritten. the directory path must exist.'''
-    with open(fname+'.'+ext[language],'w') as file:
+    with open(f'{fname}.{ext[language]}','w') as file:
         file_prefix_code = globals().get(f'File_prefix_{language}')
         if file_prefix_code:
             for line in file_prefix_code(objs):
@@ -42,6 +47,6 @@ def write_objs(fname:str,language,objs=[]):
     if not func:
         print(f'No code for {name}')
     else:
-        with open(fname+'-tests.'+ext[language],'w') as file:
+        with open(f'{fname_test}.{ext[language]}','w') as file:
             for line in func(objs):
                 file.write(line+'\n')

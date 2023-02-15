@@ -73,12 +73,12 @@ std::vector<std::string> random_list_of_strings (int min = 0, int max = 3) {
 
 UpdaterDoc random_UpdaterDoc (void) {
     return UpdaterDoc (
-                random_string(),
-                random_string(),
-                random_string(),
-                random_string(),
-                random_int(),
-                random_int()
+        random_string(),
+        random_string(),
+        random_string(),
+        random_string(),
+        random_int(),
+        random_int()
 
     );
 }
@@ -96,10 +96,10 @@ std::vector<UpdaterDoc> random_list_of_UpdaterDoc (int min = 0, int max = 3) {
 
 UpdaterDto random_UpdaterDto (void) {
     return UpdaterDto (
-                random_string(),
-                random_list_of_ints(),
-                random_list_of_floats(),
-                random_float()
+        random_string(),
+        random_list_of_ints(),
+        random_list_of_floats(),
+        random_float()
 
     );
 }
@@ -117,10 +117,10 @@ std::vector<UpdaterDto> random_list_of_UpdaterDto (int min = 0, int max = 3) {
 
 Updater random_Updater (void) {
     return Updater (
-                random_string(),
-                random_list_of_ints(),
-                random_list_of_floats(),
-                random_float()
+        random_string(),
+        random_list_of_ints(),
+        random_list_of_floats(),
+        random_float()
 
     );
 }
@@ -138,7 +138,7 @@ std::vector<Updater> random_list_of_Updater (int min = 0, int max = 3) {
 
 IndependentGaussian random_IndependentGaussian (void) {
     return IndependentGaussian (
-                random_list_of_ints()
+        random_list_of_ints()
 
     );
 }
@@ -156,9 +156,9 @@ std::vector<IndependentGaussian> random_list_of_IndependentGaussian (int min = 0
 
 CorrelatedGaussian random_CorrelatedGaussian (void) {
     return CorrelatedGaussian (
-                random_float(),
-                random_int(),
-                random_int()
+        random_float(),
+        random_int(),
+        random_int()
 
     );
 }
@@ -176,12 +176,12 @@ std::vector<CorrelatedGaussian> random_list_of_CorrelatedGaussian (int min = 0, 
 
 Barrier random_Barrier (void) {
     return Barrier (
-                random_int(),
-                random_float(),
-                random_float(),
-                random_int(),
-                random_int(),
-                random_float()
+        random_int(),
+        random_float(),
+        random_float(),
+        random_int(),
+        random_int(),
+        random_float()
 
     );
 }
@@ -199,10 +199,10 @@ std::vector<Barrier> random_list_of_Barrier (int min = 0, int max = 3) {
 
 HistogramAxis random_HistogramAxis (void) {
     return HistogramAxis (
-                random_int(),
-                random_int(),
-                random_float(),
-                random_float()
+        random_int(),
+        random_int(),
+        random_float(),
+        random_float()
 
     );
 }
@@ -220,6 +220,8 @@ std::vector<HistogramAxis> random_list_of_HistogramAxis (int min = 0, int max = 
 
 Histogram random_Histogram (void) {
     return Histogram (
+        random_HistogramAxis(),
+        random_HistogramAxis()
 
     );
 }
@@ -237,10 +239,10 @@ std::vector<Histogram> random_list_of_Histogram (int min = 0, int max = 3) {
 
 EvaluationPoint random_EvaluationPoint (void) {
     return EvaluationPoint (
-                random_int(),
-                random_float(),
-                random_float(),
-                random_float()
+        random_int(),
+        random_float(),
+        random_float(),
+        random_float()
 
     );
 }
@@ -258,14 +260,14 @@ std::vector<EvaluationPoint> random_list_of_EvaluationPoint (int min = 0, int ma
 
 EvaluationResults random_EvaluationResults (void) {
     return EvaluationResults (
-                random_list_of_strings(),
-                random_list_of_ints(),
-                random_list_of_floats(),
-                random_list_of_floats(),
-                random_list_of_floats(),
-                random_list_of_floats(),
-                random_list_of_ints(),
-                random_list_of_Histogram()
+        random_list_of_strings(),
+        random_list_of_ints(),
+        random_list_of_floats(),
+        random_list_of_floats(),
+        random_list_of_floats(),
+        random_list_of_floats(),
+        random_list_of_ints(),
+        random_list_of_Histogram()
 
     );
 }
@@ -283,10 +285,10 @@ std::vector<EvaluationResults> random_list_of_EvaluationResults (int min = 0, in
 
 Parameter random_Parameter (void) {
     return Parameter (
-                random_float(),
-                random_float(),
-                random_float(),
-                random_float()
+        random_float(),
+        random_float(),
+        random_float(),
+        random_float()
 
     );
 }
@@ -304,13 +306,13 @@ std::vector<Parameter> random_list_of_Parameter (int min = 0, int max = 3) {
 
 Model random_Model (void) {
     return Model (
-                random_float(),
-                random_int(),
-                random_int(),
-                random_list_of_Updater(),
-                random_list_of_EvaluationPoint(),
-                random_float(),
-                random_int()
+        random_float(),
+        random_int(),
+        random_int(),
+        random_list_of_Updater(),
+        random_list_of_EvaluationPoint(),
+        random_float(),
+        random_int()
 
     );
 }

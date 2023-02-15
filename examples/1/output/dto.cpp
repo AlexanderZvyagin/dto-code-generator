@@ -169,6 +169,12 @@ public:
         args,
         start
     )
+    , _equation (
+        -88
+    )
+    , _state (
+        -88
+    )
     {
     }
 
@@ -419,6 +425,14 @@ public:
 
     
     Histogram (
+        HistogramAxis x = HistogramAxis(),
+        HistogramAxis y = HistogramAxis()
+    )
+    : x (
+        x
+    )
+    , y (
+        y
     )
     {
     }

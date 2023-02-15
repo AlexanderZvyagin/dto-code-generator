@@ -175,11 +175,6 @@ def File_prefix_cpp (objs):
         '',
     ]
 
-# def cpp_run_test(fname):
-#     incdir = '-I /home/zvyagin/Projects/MonteCarlo/MonteCarlo-to-gitlab/external/json/include'
-#     cmd = f'g++ {incdir} {fname} -o {fname}.exe && {fname}.exe'
-#     asyncio.run(run(cmd))
-
 def Tests_cpp (objs):
 
     struct_names = []
@@ -191,10 +186,6 @@ def Tests_cpp (objs):
     for obj in objs:
         if type(obj)!=Struct:
             continue
-
-        # print(obj.name,obj.generate_json)
-        # if not obj.generate_json:
-        #     continue
 
         struct_names.append(obj.name)
 
@@ -227,7 +218,7 @@ def Tests_cpp (objs):
             else:
                 raise Exception(f'Unknown type {type_name}')
             ending = '' if (i+1)==len(ctors[0].args) else ','
-            random_args += f'{indent*4}{random_arg}{ending}\n'
+            random_args += f'{indent*2}{random_arg}{ending}\n'
 
         code_construct_random.extend(f'''
 {obj.name} random_{obj.name} (void) {{

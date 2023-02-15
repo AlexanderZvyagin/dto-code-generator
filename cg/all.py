@@ -84,22 +84,8 @@ def get_lines (body):
     else:
         return body
 
-# async def run(cmd):
-#     proc = await asyncio.create_subprocess_shell(
-#         cmd,
-#         stdout=asyncio.subprocess.PIPE,
-#         stderr=asyncio.subprocess.PIPE)
-
-#     stdout, stderr = await proc.communicate()
-
-#     print(f'[{cmd!r} exited with {proc.returncode}]')
-#     assert proc.returncode==0
-#     if stdout:
-#         print(f'[stdout]\n{stdout.decode()}')
-#     if stderr:
-#         print(f'[stderr]\n{stderr.decode()}')
-
 def run_test(language,command,struct_name='',file1='',file2=''):
+    '''run_test: version 2'''
     cmd = [
         './run',
         command,
@@ -107,15 +93,14 @@ def run_test(language,command,struct_name='',file1='',file2=''):
         os.path.abspath(file1) if file1 else '',
         os.path.abspath(file2) if file2 else ''
     ]
-    proc = subprocess.run (cmd, capture_output=True, text=True, cwd=f'languages/{language}')
-    print('')
-    print('>>>',cmd)
-    print(f'ExitCode={proc.returncode} StdOutLen={len(proc.stdout)} StdErrLen={len(proc.stderr)}')
-    for v in ['stdout','stderr']:
-        if not getattr(proc,v):
-            continue
-        print(f'*** {v} ***')
-        print(getattr(proc,v))
+    cwd=f'languages/{language}'
+    proc = subprocess.run (cmd, capture_output=True, text=True, cwd=cwd)
+    if proc.returncode:
+        for v in ['stdout','stderr']:
+            if not getattr(proc,v):
+                continue
+            print(f'*** {v} ***')
+            print(getattr(proc,v))
     proc.check_returncode()
 
 def run_round_trip_tests(lang1,lang2,objs,outdir):
@@ -129,6 +114,6 @@ def run_round_trip_tests(lang1,lang2,objs,outdir):
         struct_name = obj.name
         json_file1 = f'{outdir}/{struct_name}-{lang1}-create.json'
         run_test(lang1,'create',struct_name,json_file1)
-        json_file2 = f'{outdir}/{struct_name}-{lang2}-convert.json'
+        json_file2 = f'{outdir}/{struct_name}-{lang1}-{lang2}-convert.json'
         run_test(lang2,'convert',struct_name,json_file1,json_file2) 
         run_test(lang1,'compare',struct_name,json_file1,json_file2)
