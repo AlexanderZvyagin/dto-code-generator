@@ -26,11 +26,11 @@ class Struct:
     Should contain info enough to generate code for all languages.
     '''
     def __init__ (self, name:str, base=None, generate_json=True):
-        self.name = name
-        self.attributes = []
-        self.methods = []
-        self.base = base
-        self.generate_json = generate_json
+        self.name : str = name
+        self.attributes : list[Variable] = []
+        self.methods : list [Function] = []
+        self.base : Struct|None = base
+        self.generate_json : bool = generate_json
     def __repr__ (self):
         return f"Struct('{self.name}',base={self.base}) #attributes={len(self.attributes)} #methods={len(self.methods)}"
     def GetAllAttributes (self):
@@ -47,25 +47,25 @@ class CodeBlock:
 
 class Function:
 
-    class Call:
-        '''
-        FunctionCall('myfunc',[1,'arg_string',Variable('aa')])
-        '''
-        def __init__ (self,name:str,args=[]):
-            pass
+    # class Call:
+    #     '''
+    #     FunctionCall('myfunc',[1,'arg_string',Variable('aa')])
+    #     '''
+    #     def __init__ (self,name:str,args=[]):
+    #         pass
 
-    class Code:
-        def __init__ (self,code):
-            pass
+    # class Code:
+    #     def __init__ (self,code):
+    #         pass
 
     def __init__ (self, name:str, type:str, args=[], code={}, mapping=[]):
         '''code: dictionary of language:str=>list[str]
         
         mapping: it is an array of (key,value) pairs
         '''
-        self.name = name
-        self.type = type
-        self.args = args
+        self.name : str = name
+        self.type : str = type
+        self.args : list[Variable] = args
 
         self.code = code
         self.objs  = [] # Call,Code

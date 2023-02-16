@@ -16,12 +16,28 @@ def random_list_of_ints(min = 0, max = 3):
     n = random.randint(min,max)
     return [random_int() for i in range(n)]
 
+def random_optional_list_of_ints(min = 0, max = 3):
+    if random.randint(0,1): return None
+    n = random.randint(min,max)
+    return [random_int() for i in range(n)]
+
 def random_float (min = -1e6, max = 1e6):
     return random_int()
     # FIXME
     # return random.uniform(min,max)
 
+def random_optional_float (min = -1e6, max = 1e6):
+    if random.randint(0,1): return None
+    return random_int()
+    # FIXME
+    # return random.uniform(min,max)
+
 def random_list_of_floats (min = 0, max = 3):
+    n = random.randint(min,max)
+    return [random_float() for i in range(n)]
+
+def random_optional_list_of_floats (min = 0, max = 3):
+    if random.randint(0,1): return None
     n = random.randint(min,max)
     return [random_float() for i in range(n)]
 
@@ -46,9 +62,9 @@ def random_list_of_UpdaterDoc (min:int = 0, max:int = 3):
 def random_UpdaterDto ():
     return UpdaterDto (
         random_string(),
-        random_list_of_ints(),
-        random_list_of_floats(),
-        random_float()
+        random_optional_list_of_ints(),
+        random_optional_list_of_floats(),
+        random_optional_float()
 
     )
 

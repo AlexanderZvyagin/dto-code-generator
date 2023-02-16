@@ -193,8 +193,8 @@ std::vector<UpdaterDoc> random_optional_list_of_UpdaterDoc (int min = 0, int max
 UpdaterDto random_UpdaterDto (void) {
     return UpdaterDto (
         random_string(),
-        random_list_of_ints(),
-        random_list_of_floats(),
+        random_optional_list_of_ints(),
+        random_optional_list_of_floats(),
         random_optional_float()
 
     );

@@ -1,22 +1,17 @@
 from .all import *
 
-def File_prefix_python (objs):
-    return [
-        f'# {autogen_text}',
-        'from math import nan',
-        'import json',
-        '# 1',
-        ''
-    ]
+def python_type_to_string (var:Variable):
 
-def python_type_to_string (name:str):
-    return {
-        'string' : 'str',
-        'int'    : 'int',
-        'int[]'  : 'list[int]',
-        'float'  : 'float',
-        'float[]': 'list[float]',
-    }.get(name,name)
+    type_str = {
+        'void'    : 'void',
+        'string'  : 'str',
+        'int'     : 'int',
+        'float'   : 'float',
+    } .get(var.type,var.type)
+
+    if var.list:
+        type_str = f'list[{type_str}]'
+    return type_str
 
 def python_value_to_string (arg):
     if type(arg)==Variable:
@@ -30,21 +25,35 @@ def python_value_to_string (arg):
     else:
         return str(arg)
 
+def File_prefix_python (objs):
+    return [
+        f'# {autogen_text}',
+        'from math import nan',
+        'import json',
+        '# 1',
+        ''
+    ]
+
 def Constructor_python(ctor:Function,base:Struct):
+
     assert ctor.name == base.name
+
     code = []
     code.append('')
     
     code.append(f'def __init__ (')
     code.append(f'{indent}self,')
     for i,arg in enumerate(ctor.args):
-        defval = '' if arg.defval is None else f' = {python_value_to_string(arg.defval)}'
+        # defval = '' if arg.defval is None else f' = {python_value_to_string(arg.defval)}'
+        defval = ''
+        if arg.defval is not None:
+            defval = f' = {python_value_to_string(arg.defval)}'
+        elif arg.optional:
+            defval = ' = None'
+        else:
+            defval = ''
         code.append(f'{indent}{arg.name}{defval}{"," if i+1<len(ctor.args) else ""}')
     code.append(f'):')
-
-    # for attr in base.attributes:
-    #     code.append(f'{indent*2}# attr: {attr}')
-    # attrs_to_initialize = [attr for attr in base.attributes]
 
     for i,(name,mapping) in enumerate(ctor.mapping):
         if base.base and name==base.base.name:
@@ -55,7 +64,18 @@ def Constructor_python(ctor:Function,base:Struct):
         else:
             assert len(mapping)==1
             arg = mapping[0]
-            code.append(f'{indent}self.{name} = {python_value_to_string(arg)}')
+
+            attr = None
+            for a in base.attributes:
+                if a.name == name:
+                    attr = a
+            assert attr is not None
+
+            # if attr.optional:
+            #     code.append(f'{indent*1}if {python_value_to_string(arg)} is not None:')
+            #     code.append(f'{indent*2}self.{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(arg)}')
+            # else:
+            code.append(f'{indent*1}self.{attr.name} = {python_value_to_string(arg)}')
 
     return code
 
@@ -135,7 +155,10 @@ def Struct_from_json_string_python (self):
     for attr in self.attributes:
         # TODO
         if attr.name[0]=='_': continue
-        code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
+        if attr.optional:
+            code.append(f'{indent}obj.{attr.name} = j.get("{attr.name}",None)')
+        else:
+            code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
     # code.append(f'{indent}return')
 
     code.append(f'def {self.name}_from_json_string (jstr):')
@@ -166,28 +189,50 @@ def Tests_python (objs):
         assert len(ctors)==1
 
         for i,arg in enumerate(ctors[0].args):
-            is_list, type_name = decode_type(arg.type)
-            if is_list:
-                if type_name=='string':
-                    random_arg = 'random_list_of_strings()'
-                elif type_name=='float':
-                    random_arg = 'random_list_of_floats()'
-                elif type_name=='int':
-                    random_arg = 'random_list_of_ints()'
-                elif type_name in struct_names:
-                    random_arg = f'random_list_of_{type_name}()'
+            if arg.optional:
+                if arg.list:
+                    if arg.type=='string':
+                        random_arg = 'random_optional_list_of_strings()'
+                    elif arg.type=='float':
+                        random_arg = 'random_optional_list_of_floats()'
+                    elif arg.type=='int':
+                        random_arg = 'random_optional_list_of_ints()'
+                    elif arg.type in struct_names:
+                        random_arg = f'random_optional_list_of_{arg.type}()'
+                    else:
+                        raise Exception(f'Unknown type {arg.type}')
+                elif arg.type=='string':
+                    random_arg = 'random_optional_string()'
+                elif arg.type=='float':
+                    random_arg = 'random_optional_float()'
+                elif arg.type=='int':
+                    random_arg = 'random_optional_int()'
+                elif arg.type in struct_names:
+                    random_arg = f'random_optional_{arg.type}()'
                 else:
-                    raise Exception(f'Unknown type {type_name}')
-            elif type_name=='string':
-                random_arg = 'random_string()'
-            elif type_name=='float':
-                random_arg = 'random_float()'
-            elif type_name=='int':
-                random_arg = 'random_int()'
-            elif type_name in struct_names:
-                random_arg = f'random_{type_name}()'
+                    raise Exception(f'Unknown type {arg.type}')
             else:
-                raise Exception(f'Unknown type {type_name}')
+                if arg.list:
+                    if arg.type=='string':
+                        random_arg = 'random_list_of_strings()'
+                    elif arg.type=='float':
+                        random_arg = 'random_list_of_floats()'
+                    elif arg.type=='int':
+                        random_arg = 'random_list_of_ints()'
+                    elif arg.type in struct_names:
+                        random_arg = f'random_list_of_{arg.type}()'
+                    else:
+                        raise Exception(f'Unknown type {arg.type}')
+                elif arg.type=='string':
+                    random_arg = 'random_string()'
+                elif arg.type=='float':
+                    random_arg = 'random_float()'
+                elif arg.type=='int':
+                    random_arg = 'random_int()'
+                elif arg.type in struct_names:
+                    random_arg = f'random_{arg.type}()'
+                else:
+                    raise Exception(f'Unknown type {arg.type}')
             ending = '' if (i+1)==len(ctors[0].args) else ','
             random_args += f'{indent*2}{random_arg}{ending}\n'
 
@@ -255,12 +300,28 @@ def random_list_of_ints(min = 0, max = 3):
     n = random.randint(min,max)
     return [random_int() for i in range(n)]
 
+def random_optional_list_of_ints(min = 0, max = 3):
+    if random.randint(0,1): return None
+    n = random.randint(min,max)
+    return [random_int() for i in range(n)]
+
 def random_float (min = -1e6, max = 1e6):
     return random_int()
     # FIXME
     # return random.uniform(min,max)
 
+def random_optional_float (min = -1e6, max = 1e6):
+    if random.randint(0,1): return None
+    return random_int()
+    # FIXME
+    # return random.uniform(min,max)
+
 def random_list_of_floats (min = 0, max = 3):
+    n = random.randint(min,max)
+    return [random_float() for i in range(n)]
+
+def random_optional_list_of_floats (min = 0, max = 3):
+    if random.randint(0,1): return None
     n = random.randint(min,max)
     return [random_float() for i in range(n)]
 

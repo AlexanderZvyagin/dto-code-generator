@@ -45,10 +45,10 @@ def create_dto(fname, languages):
         obj.name,
         'constructor',
         args = [
-            Variable('name_','string',''),
-            Variable(name='refs_', type='int', defval=[], list=True),
-            Variable('args_','float',defval=[],list=True),
-            Variable('start_','float',defval=None, optional=True)
+            Variable('name_', 'string', ''),
+            Variable(name='refs_', type='int', defval=None, list=True, optional=True),
+            Variable('args_', 'float', defval=None, list=True, optional=True),
+            Variable('start_', 'float', defval=None, optional=True)
         ],
         mapping = [
             ('name',[Variable('name_')]),
@@ -378,7 +378,7 @@ if __name__ == '__main__':
 
     # languages = ['python','cpp','typescript'] # OK
     # languages = ['csharp']
-    languages = ['cpp']
+    languages = ['python','cpp']
     objs = create_dto('output/dto',languages)
     for lang1 in languages:
         for lang2 in languages:

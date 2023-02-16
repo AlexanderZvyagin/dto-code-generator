@@ -58,9 +58,9 @@ class UpdaterDto:
     def __init__ (
         self,
         name_ = "",
-        refs_ = [],
-        args_ = [],
-        start_ = nan
+        refs_ = None,
+        args_ = None,
+        start_ = None
     ):
         self.name = name_
         self.refs = refs_
@@ -83,9 +83,9 @@ def UpdaterDto_to_json_string (self):
     return json.dumps(self,default=lambda x: x.__dict__)
 def UpdaterDto_from_json (j, obj):
     obj.name = j["name"]
-    obj.refs = j["refs"]
-    obj.args = j["args"]
-    obj.start = j["start"]
+    obj.refs = j.get("refs",None)
+    obj.args = j.get("args",None)
+    obj.start = j.get("start",None)
 def UpdaterDto_from_json_string (jstr):
     j = json.loads(jstr)
     obj = UpdaterDto()

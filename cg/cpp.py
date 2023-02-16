@@ -47,7 +47,6 @@ def Constructor_cpp(ctor:Function,base:Struct):
             defval = ' = {}'
         else:
             defval = ''
-        # defval = '' if arg.defval is None else f' = {cpp_value_to_string(arg.defval)}'
         code.append(f'{indent}{cpp_type_to_string(arg)} {arg.name}{defval}{"," if i+1<len(ctor.args) else ""}')
     code.append(f')')
 
@@ -153,7 +152,7 @@ def Struct_from_JSON_cpp (self:Struct):
         code.append(f'{indent}from_json(j,static_cast<{self.base.name} &>(obj));')
     for attr in self.attributes:
         if attr.optional:
-            code.append(f'{indent*1}if(auto it=j.find("{attr.name}"); it!=j.end())')
+            code.append(f'{indent*1}if(auto it=j.find("{attr.name}"); it!=j.end() and !it->is_null())')
             code.append(f'{indent*2}obj.{attr.name} = *it;')
         else:
             code.append(f'{indent}j.at("{attr.name}").get_to(obj.{attr.name});')

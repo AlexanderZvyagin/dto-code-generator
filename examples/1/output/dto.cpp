@@ -99,8 +99,8 @@ public:
     
     UpdaterDto (
         std::string name_ = "",
-        std::vector<int> refs_ = {},
-        std::vector<float> args_ = {},
+        std::optional<std::vector<int>> refs_ = {},
+        std::optional<std::vector<float>> args_ = {},
         std::optional<float> start_ = {}
     )
     : name (
@@ -144,11 +144,11 @@ std::string to_json(const UpdaterDto &obj) {
 }
 void from_json(const json &j, UpdaterDto &obj) {
     j.at("name").get_to(obj.name);
-    if(auto it=j.find("refs"); it!=j.end())
+    if(auto it=j.find("refs"); it!=j.end() and !it->is_null())
         obj.refs = *it;
-    if(auto it=j.find("args"); it!=j.end())
+    if(auto it=j.find("args"); it!=j.end() and !it->is_null())
         obj.args = *it;
-    if(auto it=j.find("start"); it!=j.end())
+    if(auto it=j.find("start"); it!=j.end() and !it->is_null())
         obj.start = *it;
 }
 UpdaterDto UpdaterDto_from_json(const json &j) {
