@@ -8,7 +8,7 @@ def cpp_type_to_string (var:Variable):
         'string'  : 'std::string',
         'int'     : 'int',
         'float'   : 'float',
-    }[var.type]
+    } .get(var.type,var.type)
 
     if var.list:
         type_str = f'std::vector<{type_str}>'
