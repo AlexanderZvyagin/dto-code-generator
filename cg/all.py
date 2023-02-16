@@ -7,7 +7,11 @@ from collections import namedtuple
 indent = ' '*4
 autogen_text = 'This is an automatically generated file.'
 
-Variable = namedtuple('Variable',['name','type','defval'],defaults=['',None,None])
+Variable = namedtuple(
+    'Variable',
+    ['name','type','defval','list','optional'],
+    defaults=['',None,None,False,False]
+)
 
 ext = {
     'cpp'           : 'cpp',
@@ -15,13 +19,6 @@ ext = {
     'typescript'    : 'ts',
     'csharp'        : 'cs',
 }
-
-def decode_type(type_name:str):
-    '''return (bool,str) for is_list and type_string'''
-    if type_name[-2:]=='[]':
-        return (True,type_name[:-2])
-    else:
-        return (False,type_name)
 
 class Struct:
     '''Holds info on a structure.

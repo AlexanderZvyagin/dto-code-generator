@@ -25,32 +25,6 @@ def random_list_of_floats (min = 0, max = 3):
     n = random.randint(min,max)
     return [random_float() for i in range(n)]
 
-# def random_UpdaterDto ():
-#     return UpdaterDto (
-#                 random_string(),
-#                 random_list_of_ints(),
-#                 random_list_of_floats(),
-#                 random_float()
-#     )
-
-# def random_list_of_UpdaterDto (min = 0, max = 3):
-#     n = random.randint(min,max)
-#     return [random_UpdaterDto() for i in range(n)]
-
-# def random_UpdaterDoc ():
-#     return UpdaterDoc (
-#                 random_string(),
-#                 random_string(),
-#                 random_string(),
-#                 random_string(),
-#                 random_int(),
-#                 random_int()
-#     )
-
-# def random_list_of_UpdaterDoc (min = 0, max = 3):
-#     n = random.randint(min,max)
-#     return [random_UpdaterDoc() for i in range(n)]
-
 #create-struct-random#
 
 def main(command, struct_name, file1_name, file2_name):
@@ -60,28 +34,18 @@ def main(command, struct_name, file1_name, file2_name):
     if command=='create':
         if False:
             pass
-        # elif struct_name=='UpdaterDoc':
-        #     obj = UpdaterDoc_to_json_string(random_UpdaterDoc())
-        #     open(file1_name,'w').write(obj)
 #create-struct-tests#
         else:
             raise Exception(f'Not supported struct {struct_name}')
     elif command=='convert':
         if False:
             pass
-        # elif struct_name=='UpdaterDoc':
-        #     obj = UpdaterDoc_from_json_string(open(file1_name).read())
-        #     open(file2_name,'w').write(UpdaterDoc_to_json_string(obj))
 #convert-struct-tests#
         else:
             raise Exception(f'Not supported struct {struct_name}')
     elif command=='compare':
         if False:
             pass
-        # elif struct_name=='UpdaterDoc':
-        #     obj1 = UpdaterDoc_from_json_string(open(file1_name).read())
-        #     obj2 = UpdaterDoc_from_json_string(open(file2_name).read())
-        #     assert obj1==obj2
 #compare-struct-tests#
         else:
             raise Exception(f'Not supported struct {struct_name}')
