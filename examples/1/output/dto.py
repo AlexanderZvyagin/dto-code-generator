@@ -15,12 +15,12 @@ class UpdaterDoc:
         nargs_min_ = -88,
         nrefs_min_ = -88
     ):
-        self.name = name_
-        self.title = title_
-        self.doc_md = doc_md_
-        self.start = start_
-        self.nargs_min = nargs_min_
-        self.nrefs_min = nrefs_min_
+        self.name : str = name_
+        self.title : str = title_
+        self.doc_md : str = doc_md_
+        self.start : str = start_
+        self.nargs_min : int = nargs_min_
+        self.nrefs_min : int = nrefs_min_
         pass
 
     def __eq__ (self, other):
@@ -34,10 +34,7 @@ class UpdaterDoc:
     def __neq__ (self, other):
         return not (self==other)
 def UpdaterDoc_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def UpdaterDoc_from_json (j, obj):
     obj.name = j["name"]
     obj.title = j["title"]
@@ -62,10 +59,10 @@ class UpdaterDto:
         args_ = None,
         start_ = None
     ):
-        self.name = name_
-        self.refs = refs_
-        self.args = args_
-        self.start = start_
+        self.name : str = name_
+        self.refs : list[int]|None = refs_
+        self.args : list[float]|None = args_
+        self.start : float|None = start_
         pass
 
     def __eq__ (self, other):
@@ -77,10 +74,7 @@ class UpdaterDto:
     def __neq__ (self, other):
         return not (self==other)
 def UpdaterDto_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in ['refs', 'args', 'start'] and v is None) })
 def UpdaterDto_from_json (j, obj):
     obj.name = j["name"]
     obj.refs = j.get("refs",None)
@@ -109,8 +103,8 @@ class Updater (UpdaterDto):
             args,
             start,
         )
-        self._equation = -88
-        self._state = -88
+        self._equation : int = -88
+        self._state : int = -88
         pass
 
     def GetStateNumber (
@@ -131,10 +125,7 @@ class Updater (UpdaterDto):
     def __neq__ (self, other):
         return not (self==other)
 def Updater_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def Updater_from_json (j, obj):
     UpdaterDto_from_json(j,obj)
 def Updater_from_json_string (jstr):
@@ -165,10 +156,7 @@ class IndependentGaussian (Updater):
     def __neq__ (self, other):
         return not (self==other)
 def IndependentGaussian_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def IndependentGaussian_from_json (j, obj):
     Updater_from_json(j,obj)
 def IndependentGaussian_from_json_string (jstr):
@@ -201,10 +189,7 @@ class CorrelatedGaussian (Updater):
     def __neq__ (self, other):
         return not (self==other)
 def CorrelatedGaussian_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def CorrelatedGaussian_from_json (j, obj):
     Updater_from_json(j,obj)
 def CorrelatedGaussian_from_json_string (jstr):
@@ -240,10 +225,7 @@ class Barrier (Updater):
     def __neq__ (self, other):
         return not (self==other)
 def Barrier_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def Barrier_from_json (j, obj):
     Updater_from_json(j,obj)
 def Barrier_from_json_string (jstr):
@@ -263,10 +245,10 @@ class HistogramAxis:
         _min = -88,
         _max = -88
     ):
-        self.state = _state
-        self.nbins = _nbins
-        self.min = _min
-        self.max = _max
+        self.state : int = _state
+        self.nbins : int = _nbins
+        self.min : float = _min
+        self.max : float = _max
         pass
 
     def __eq__ (self, other):
@@ -278,10 +260,7 @@ class HistogramAxis:
     def __neq__ (self, other):
         return not (self==other)
 def HistogramAxis_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def HistogramAxis_from_json (j, obj):
     obj.state = j["state"]
     obj.nbins = j["nbins"]
@@ -302,8 +281,8 @@ class Histogram:
         x = HistogramAxis(),
         y = HistogramAxis()
     ):
-        self.x = x
-        self.y = y
+        self.x : HistogramAxis = x
+        self.y : HistogramAxis = y
         pass
 
     def __eq__ (self, other):
@@ -313,10 +292,7 @@ class Histogram:
     def __neq__ (self, other):
         return not (self==other)
 def Histogram_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def Histogram_from_json (j, obj):
     obj.x = j["x"]
     obj.y = j["y"]
@@ -337,10 +313,10 @@ class EvaluationPoint:
         value_ = nan,
         error_ = nan
     ):
-        self.state = state_
-        self.time = time_
-        self.value = value_
-        self.error = error_
+        self.state : int = state_
+        self.time : float = time_
+        self.value : float = value_
+        self.error : float = error_
         pass
 
     def __eq__ (self, other):
@@ -352,10 +328,7 @@ class EvaluationPoint:
     def __neq__ (self, other):
         return not (self==other)
 def EvaluationPoint_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def EvaluationPoint_from_json (j, obj):
     obj.state = j["state"]
     obj.time = j["time"]
@@ -382,14 +355,14 @@ class EvaluationResults:
         time_steps_ = [],
         histograms_ = []
     ):
-        self.names = names_
-        self.npaths = npaths_
-        self.mean = mean_
-        self.stddev = stddev_
-        self.skewness = skewness_
-        self.time_points = time_points_
-        self.time_steps = time_steps_
-        self.histograms = histograms_
+        self.names : list[str] = names_
+        self.npaths : list[int] = npaths_
+        self.mean : list[float] = mean_
+        self.stddev : list[float] = stddev_
+        self.skewness : list[float] = skewness_
+        self.time_points : list[float] = time_points_
+        self.time_steps : list[int] = time_steps_
+        self.histograms : list[Histogram] = histograms_
         pass
 
     def __eq__ (self, other):
@@ -405,10 +378,7 @@ class EvaluationResults:
     def __neq__ (self, other):
         return not (self==other)
 def EvaluationResults_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def EvaluationResults_from_json (j, obj):
     obj.names = j["names"]
     obj.npaths = j["npaths"]
@@ -435,10 +405,10 @@ class Parameter:
         min_ = nan,
         max_ = nan
     ):
-        self.value = value_
-        self.step = step_
-        self.min = min_
-        self.max = max_
+        self.value : float = value_
+        self.step : float = step_
+        self.min : float = min_
+        self.max : float = max_
         pass
 
     def __eq__ (self, other):
@@ -450,10 +420,7 @@ class Parameter:
     def __neq__ (self, other):
         return not (self==other)
 def Parameter_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def Parameter_from_json (j, obj):
     obj.value = j["value"]
     obj.step = j["step"]
@@ -479,13 +446,13 @@ class Model:
         RunTimeoutSeconds_ = 1,
         MemoryLimitKB_ = 1
     ):
-        self.TimeStart = TimeStart_
-        self.TimeSteps = TimeSteps_
-        self.NumPaths = NumPaths_
-        self.updaters = updaters_
-        self.evaluations = evaluations_
-        self.RunTimeoutSeconds = RunTimeoutSeconds_
-        self.MemoryLimitKB = MemoryLimitKB_
+        self.TimeStart : float = TimeStart_
+        self.TimeSteps : int = TimeSteps_
+        self.NumPaths : int = NumPaths_
+        self.updaters : list[Updater] = updaters_
+        self.evaluations : list[EvaluationPoint] = evaluations_
+        self.RunTimeoutSeconds : float = RunTimeoutSeconds_
+        self.MemoryLimitKB : int = MemoryLimitKB_
         pass
 
     def __eq__ (self, other):
@@ -500,10 +467,7 @@ class Model:
     def __neq__ (self, other):
         return not (self==other)
 def Model_to_json_string (self):
-    print(type(self))
-    for k,v in self.__dict__.items():
-        print(k,v)
-    return json.dumps(self,default=lambda x: x.__dict__)
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
 def Model_from_json (j, obj):
     obj.TimeStart = j["TimeStart"]
     obj.TimeSteps = j["TimeSteps"]

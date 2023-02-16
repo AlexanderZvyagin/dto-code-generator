@@ -110,8 +110,8 @@ def run_round_trip_tests(lang1,lang2,objs,outdir):
         if type(obj)!=Struct:
             continue
         struct_name = obj.name
-        json_file1 = f'{outdir}/{struct_name}-{lang1}-create.json'
+        json_file1 = f'{outdir}/{struct_name}-created-by-{lang1}.json'
         run_test(lang1,'create',struct_name,json_file1)
-        json_file2 = f'{outdir}/{struct_name}-{lang1}-{lang2}-convert.json'
+        json_file2 = f'{outdir}/{struct_name}-created-by-{lang1}-converted-by-{lang2}.json'
         run_test(lang2,'convert',struct_name,json_file1,json_file2) 
         run_test(lang1,'compare',struct_name,json_file1,json_file2)

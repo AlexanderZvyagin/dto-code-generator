@@ -11,6 +11,8 @@ def python_type_to_string (var:Variable):
 
     if var.list:
         type_str = f'list[{type_str}]'
+    if var.optional:
+        type_str = f'{type_str}|None'
     return type_str
 
 def python_value_to_string (arg):
@@ -75,7 +77,7 @@ def Constructor_python(ctor:Function,base:Struct):
             #     code.append(f'{indent*1}if {python_value_to_string(arg)} is not None:')
             #     code.append(f'{indent*2}self.{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(arg)}')
             # else:
-            code.append(f'{indent*1}self.{attr.name} = {python_value_to_string(arg)}')
+            code.append(f'{indent*1}self.{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(arg)}')
 
     return code
 
@@ -130,21 +132,12 @@ def Struct_python (self:Struct):
 
     return code
 
-def Struct_to_json_string_python (self):
+def Struct_to_json_string_python (self:Struct):
     code = []
     code.append(f'def {self.name}_to_json_string (self):')
-    code.append(f'{indent}print(type(self))')
-    code.append(f'{indent}for k,v in self.__dict__.items():')
-    code.append(f'{indent*2}print(k,v)')
-    
-    code.append(f'{indent}return json.dumps(self,default=lambda x: x.__dict__)')
+    optional_attributes = [attr.name for attr in self.attributes if attr.optional]
+    code.append(f'{indent}return json.dumps(self,default=lambda x: {{k:v for k,v in x.__dict__.items() if not (k in {optional_attributes} and v is None) }})')
     return code
-    # return [
-    #     f'def {self.name}_to_json_string (self):',
-    #     f'{indent}assert type(self)=={self.name}',
-    #     f"{indent}return json.dumps(self,default=lambda o: {{k:v for k,v in o.__dict__.items() if k[0]!='_'}})",
-    #     ''
-    # ]
 
 def Struct_from_json_string_python (self):
     code = []

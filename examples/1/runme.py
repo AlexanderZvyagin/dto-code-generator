@@ -8,12 +8,12 @@ def create_dto(fname, languages):
     objs = [] # objects in the file
 
     obj = Struct('UpdaterDoc')
-    obj.attributes.append(Variable('name','string',None))
-    obj.attributes.append(Variable('title','string',None))
-    obj.attributes.append(Variable('doc_md','string',None))
-    obj.attributes.append(Variable('start','string',None))
-    obj.attributes.append(Variable('nargs_min','int',None))
-    obj.attributes.append(Variable('nrefs_min','int',None))
+    obj.attributes.append(Variable('name','string'))
+    obj.attributes.append(Variable('title','string'))
+    obj.attributes.append(Variable('doc_md','string'))
+    obj.attributes.append(Variable('start','string'))
+    obj.attributes.append(Variable('nargs_min','int'))
+    obj.attributes.append(Variable('nrefs_min','int'))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -37,10 +37,10 @@ def create_dto(fname, languages):
     objs.append(obj)
 
     obj = Struct('UpdaterDto')
-    obj.attributes.append(Variable('name','string',defval=None))
+    obj.attributes.append(Variable('name','string'))
     obj.attributes.append(Variable('refs','int', list=True, optional=True))
     obj.attributes.append(Variable('args','float', list=True, optional=True))
-    obj.attributes.append(Variable('start','float',defval=None,optional=True))
+    obj.attributes.append(Variable('start','float',optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -61,8 +61,8 @@ def create_dto(fname, languages):
     UpdaterDto = obj
 
     obj = Struct('Updater',UpdaterDto)
-    obj.attributes.append(Variable('_equation','int',-88))
-    obj.attributes.append(Variable('_state','int',-88))
+    obj.attributes.append(Variable('_equation','int'))
+    obj.attributes.append(Variable('_state','int'))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -185,10 +185,10 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('HistogramAxis')
-    obj.attributes.append(Variable('state','int',-88))
-    obj.attributes.append(Variable('nbins','int',0))
-    obj.attributes.append(Variable('min','float',nan))
-    obj.attributes.append(Variable('max','float',nan))
+    obj.attributes.append(Variable('state','int'))
+    obj.attributes.append(Variable('nbins','int'))
+    obj.attributes.append(Variable('min','float'))
+    obj.attributes.append(Variable('max','float'))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -208,8 +208,8 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('Histogram')
-    obj.attributes.append(Variable('x','HistogramAxis',None))
-    obj.attributes.append(Variable('y','HistogramAxis',None))
+    obj.attributes.append(Variable('x','HistogramAxis'))
+    obj.attributes.append(Variable('y','HistogramAxis'))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -280,14 +280,14 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     objs.append(obj)
 
     obj = Struct('EvaluationResults')
-    obj.attributes.append(Variable('names','string',None,list=True))
-    obj.attributes.append(Variable('npaths','int',None,list=True))
-    obj.attributes.append(Variable('mean','float',None,list=True))
-    obj.attributes.append(Variable('stddev','float',None,list=True))
-    obj.attributes.append(Variable('skewness','float',None,list=True))
-    obj.attributes.append(Variable('time_points','float',None,list=True))
-    obj.attributes.append(Variable('time_steps','int',None,list=True))
-    obj.attributes.append(Variable('histograms','Histogram',None,list=True))
+    obj.attributes.append(Variable('names','string',list=True))
+    obj.attributes.append(Variable('npaths','int',list=True))
+    obj.attributes.append(Variable('mean','float',list=True))
+    obj.attributes.append(Variable('stddev','float',list=True))
+    obj.attributes.append(Variable('skewness','float',list=True))
+    obj.attributes.append(Variable('time_points','float',list=True))
+    obj.attributes.append(Variable('time_steps','int',list=True))
+    obj.attributes.append(Variable('histograms','Histogram',list=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -315,10 +315,10 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     objs.append(obj)
 
     obj = Struct ('Parameter')
-    obj.attributes.append(Variable('value','float',None))
-    obj.attributes.append(Variable('step','float',None))
-    obj.attributes.append(Variable('min','float',None))
-    obj.attributes.append(Variable('max','float',None))
+    obj.attributes.append(Variable('value','float'))
+    obj.attributes.append(Variable('step','float'))
+    obj.attributes.append(Variable('min','float'))
+    obj.attributes.append(Variable('max','float'))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -338,13 +338,13 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     objs.append(obj)
 
     obj = Struct ('Model')
-    obj.attributes.append(Variable('TimeStart','float',None))
-    obj.attributes.append(Variable('TimeSteps','int',None))
-    obj.attributes.append(Variable('NumPaths','int',None))
-    obj.attributes.append(Variable('updaters','Updater',None,list=True))
-    obj.attributes.append(Variable('evaluations','EvaluationPoint',None,list=True))
-    obj.attributes.append(Variable('RunTimeoutSeconds','float',None))
-    obj.attributes.append(Variable('MemoryLimitKB','int',None))
+    obj.attributes.append(Variable('TimeStart','float'))
+    obj.attributes.append(Variable('TimeSteps','int'))
+    obj.attributes.append(Variable('NumPaths','int'))
+    obj.attributes.append(Variable('updaters','Updater',list=True))
+    obj.attributes.append(Variable('evaluations','EvaluationPoint',list=True))
+    obj.attributes.append(Variable('RunTimeoutSeconds','float'))
+    obj.attributes.append(Variable('MemoryLimitKB','int'))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -376,10 +376,9 @@ void from_json(const json &j, std::vector<Histogram> &u) {
 
 if __name__ == '__main__':
 
-    # languages = ['python','cpp','typescript'] # OK
-    # languages = ['csharp']
-    languages = ['python','cpp']
+    languages = ['python','cpp','typescript']
     objs = create_dto('output/dto',languages)
     for lang1 in languages:
         for lang2 in languages:
+            print(f'Testing: {lang1} {lang2}')
             run_round_trip_tests(lang1,lang2,objs,'output')

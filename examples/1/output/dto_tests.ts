@@ -23,8 +23,20 @@ function random_int(min:number = -1000, max:number = 1000) : number {
     return Math.floor (min + Math.random()*(max-min+1));
 }
 
+function yes_no () : boolean {
+    return random_int(0,1)==1;
+}
+
+function random_optional_int() : number|undefined {
+    return yes_no() ? random_int() : undefined;
+}
+
 function random_float(min:number = -1e6, max:number = 1e6) : number {
     return random_int();
+}
+
+function random_optional_float() : number|undefined {
+    return yes_no() ? random_float() : undefined;
 }
 
 function random_string(min:number = 0, max:number = 3) : string {
@@ -35,12 +47,20 @@ function random_string(min:number = 0, max:number = 3) : string {
     return out;
 }
 
+function random_optional_string() : string|undefined {
+    return yes_no() ? random_string() : undefined;
+}
+
 function random_list_of_ints (min:number = 0, max:number = 3) : number[] {
     const size = random_int(min,max);
     let list:number[] = [];
     for(let i=0; i<size; i++)
         list.push(random_int());
     return list;
+}
+
+function random_optional_list_of_ints() : number[]|undefined {
+    return yes_no() ? random_list_of_ints() : undefined;
 }
 
 function random_list_of_floats (min:number = 0, max:number = 3) : number[] {
@@ -51,6 +71,10 @@ function random_list_of_floats (min:number = 0, max:number = 3) : number[] {
     return list;
 }
 
+function random_optional_list_of_floats() : number[]|undefined {
+    return yes_no() ? random_list_of_floats() : undefined;
+}
+
 function random_list_of_strings (min:number = 0, max:number = 3) : string[] {
     const size = random_int(min,max);
     let list:string[] = [];
@@ -59,6 +83,9 @@ function random_list_of_strings (min:number = 0, max:number = 3) : string[] {
     return list;
 }
 
+function random_optional_list_of_strings() : string[]|undefined {
+    return yes_no() ? random_list_of_strings() : undefined;
+}
 
 // https://stackoverflow.com/questions/1068834/object-comparison-in-javascript/6713782#6713782
 function object_equals( x, y ) {
@@ -123,9 +150,9 @@ function random_list_of_UpdaterDoc (min:number = 0, max:number = 3) : UpdaterDoc
 function random_UpdaterDto () : UpdaterDto {
     return new UpdaterDto (
         random_string(),
-        random_list_of_ints(),
-        random_list_of_floats(),
-        random_float()
+        random_optional_list_of_ints(),
+        random_optional_list_of_floats(),
+        random_optional_float()
 
     );
 }
@@ -578,9 +605,6 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
 }
 
 function main () {
-    console.log(`echo I am the typescript with ${process.argv.length} arguments`);
-    console.log(process.argv);
-
     // expect at least 3 args
     if(process.argv.length<3)
         throw new Error(`Expect at least 3 args, found ${process.argv.length}`);

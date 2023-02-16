@@ -1,18 +1,20 @@
 from .all import *
 import math
 
-def typescript_type_to_string (name:str):
+def typescript_type_to_string (var:Variable):
 
-    if name[-2:]=='[]':
-        t = typescript_type_to_string(name[:-2])
-        return f'{t}[]'
-
-    return {
+    type_str = {
         'void'    : 'void',
         'string'  : 'string',
         'int'     : 'number',
         'float'   : 'number',
-    }.get(name,name)
+    } .get(var.type,var.type)
+
+    if var.list:
+        type_str = f'{type_str}[]'
+    if var.optional:
+        type_str = f'{type_str}|undefined'
+    return type_str
 
 def typescript_value_to_string (arg):
     if type(arg)==Variable:
@@ -56,7 +58,7 @@ def Constructor_typescript(ctor:Function,base:Struct):
 
     for arg in ctor.args:
         defval = '' if arg.defval is None else f' = {typescript_value_to_string(arg.defval)}'
-        code.append(f'{indent}{arg.name} : {typescript_type_to_string(arg.type)} {defval},')
+        code.append(f'{indent}{arg.name} : {typescript_type_to_string(arg)} {defval},')
     code.append('){')
 
     for name,mapping in ctor.mapping:
@@ -79,7 +81,7 @@ def Function_typescript (self:Function, obj:Struct=None):
     if obj and self.name==obj.name:
         code = Constructor_typescript(self,obj)
     else:
-        ftype = typescript_type_to_string(self.type)+' '
+        ftype = typescript_type_to_string(Variable('',self.type))+' '
 
         code = []
         code.append(f'{self.name} (')
@@ -87,7 +89,7 @@ def Function_typescript (self:Function, obj:Struct=None):
         for a in self.args:
             code.append(f'{indent}')
             default = '' if a.defval is None else f' = {typescript_value_to_string(a.defval)}'
-            code.append(f'{indent}{a.name} : {typescript_type_to_string(a.type)}{default},')
+            code.append(f'{indent}{a.name} : {typescript_type_to_string(a)}{default},')
         code.append(f') : {ftype} {{')
 
     for line in get_code(self.code.get('typescript')):
@@ -105,7 +107,7 @@ def Struct_typescript (self:Struct):
     code.append(f'')
     
     for a in self.attributes:
-        code.append(f'{indent}{a.name} : {typescript_type_to_string(a.type)};')
+        code.append(f'{indent}{a.name} : {typescript_type_to_string(a)};')
 
     code.append('')
 
@@ -114,17 +116,7 @@ def Struct_typescript (self:Struct):
             code.append(f'{indent}{line}')
         code.append('')
 
-    # FIXME
-    # code.extend(Struct_compare_typescript(self))
-
     code.append(f'}}')
-
-    # FIXME
-    # if self.generate_json:
-    #     code.extend(Struct_to_JSON_cpp(self))
-    #     code.extend(Struct_to_JSON_string_cpp(self))
-    #     code.extend(Struct_from_JSON_cpp(self))
-    #     code.extend(Struct_from_JSON_string_cpp(self))
 
     return code
 
@@ -148,28 +140,50 @@ def Tests_typescript (objs):
         assert len(ctors)==1
 
         for i,arg in enumerate(ctors[0].args):
-            is_list, type_name = decode_type(arg.type)
-            if is_list:
-                if type_name=='string':
-                    random_arg = 'random_list_of_strings()'
-                elif type_name=='float':
-                    random_arg = 'random_list_of_floats()'
-                elif type_name=='int':
-                    random_arg = 'random_list_of_ints()'
-                elif type_name in struct_names:
-                    random_arg = f'random_list_of_{type_name}()'
+            if arg.optional:
+                if arg.list:
+                    if arg.type=='string':
+                        random_arg = 'random_optional_list_of_strings()'
+                    elif arg.type=='float':
+                        random_arg = 'random_optional_list_of_floats()'
+                    elif arg.type=='int':
+                        random_arg = 'random_optional_list_of_ints()'
+                    elif arg.type in struct_names:
+                        random_arg = f'random_optional_list_of_{arg.type}()'
+                    else:
+                        raise Exception(f'Unknown type {arg.type}')
+                elif arg.type=='string':
+                    random_arg = 'random_optional_string()'
+                elif arg.type=='float':
+                    random_arg = 'random_optional_float()'
+                elif arg.type=='int':
+                    random_arg = 'random_optional_int()'
+                elif arg.type in struct_names:
+                    random_arg = f'random_optional_{arg.type}()'
                 else:
-                    raise Exception(f'Unknown type {type_name}')
-            elif type_name=='string':
-                random_arg = 'random_string()'
-            elif type_name=='float':
-                random_arg = 'random_float()'
-            elif type_name=='int':
-                random_arg = 'random_int()'
-            elif type_name in struct_names:
-                random_arg = f'random_{type_name}()'
+                    raise Exception(f'Unknown type {arg.type}')
             else:
-                raise Exception(f'Unknown type {type_name}')
+                if arg.list:
+                    if arg.type=='string':
+                        random_arg = 'random_list_of_strings()'
+                    elif arg.type=='float':
+                        random_arg = 'random_list_of_floats()'
+                    elif arg.type=='int':
+                        random_arg = 'random_list_of_ints()'
+                    elif arg.type in struct_names:
+                        random_arg = f'random_list_of_{arg.type}()'
+                    else:
+                        raise Exception(f'Unknown type {arg.type}')
+                elif arg.type=='string':
+                    random_arg = 'random_string()'
+                elif arg.type=='float':
+                    random_arg = 'random_float()'
+                elif arg.type=='int':
+                    random_arg = 'random_int()'
+                elif arg.type in struct_names:
+                    random_arg = f'random_{arg.type}()'
+                else:
+                    raise Exception(f'Unknown type {arg.type}')
             ending = '' if (i+1)==len(ctors[0].args) else ','
             random_args += f'{indent*2}{random_arg}{ending}\n'
 
@@ -241,8 +255,20 @@ function random_int(min:number = -1000, max:number = 1000) : number {
     return Math.floor (min + Math.random()*(max-min+1));
 }
 
+function yes_no () : boolean {
+    return random_int(0,1)==1;
+}
+
+function random_optional_int() : number|undefined {
+    return yes_no() ? random_int() : undefined;
+}
+
 function random_float(min:number = -1e6, max:number = 1e6) : number {
     return random_int();
+}
+
+function random_optional_float() : number|undefined {
+    return yes_no() ? random_float() : undefined;
 }
 
 function random_string(min:number = 0, max:number = 3) : string {
@@ -253,12 +279,20 @@ function random_string(min:number = 0, max:number = 3) : string {
     return out;
 }
 
+function random_optional_string() : string|undefined {
+    return yes_no() ? random_string() : undefined;
+}
+
 function random_list_of_ints (min:number = 0, max:number = 3) : number[] {
     const size = random_int(min,max);
     let list:number[] = [];
     for(let i=0; i<size; i++)
         list.push(random_int());
     return list;
+}
+
+function random_optional_list_of_ints() : number[]|undefined {
+    return yes_no() ? random_list_of_ints() : undefined;
 }
 
 function random_list_of_floats (min:number = 0, max:number = 3) : number[] {
@@ -269,6 +303,10 @@ function random_list_of_floats (min:number = 0, max:number = 3) : number[] {
     return list;
 }
 
+function random_optional_list_of_floats() : number[]|undefined {
+    return yes_no() ? random_list_of_floats() : undefined;
+}
+
 function random_list_of_strings (min:number = 0, max:number = 3) : string[] {
     const size = random_int(min,max);
     let list:string[] = [];
@@ -277,6 +315,9 @@ function random_list_of_strings (min:number = 0, max:number = 3) : string[] {
     return list;
 }
 
+function random_optional_list_of_strings() : string[]|undefined {
+    return yes_no() ? random_list_of_strings() : undefined;
+}
 
 // https://stackoverflow.com/questions/1068834/object-comparison-in-javascript/6713782#6713782
 function object_equals( x, y ) {
@@ -339,9 +380,6 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
 }
 
 function main () {
-    console.log(`echo I am the typescript with ${process.argv.length} arguments`);
-    console.log(process.argv);
-
     // expect at least 3 args
     if(process.argv.length<3)
         throw new Error(`Expect at least 3 args, found ${process.argv.length}`);

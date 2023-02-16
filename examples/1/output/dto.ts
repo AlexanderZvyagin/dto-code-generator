@@ -31,15 +31,15 @@ class UpdaterDoc {
 class UpdaterDto {
 
     name : string;
-    refs : number[];
-    args : number[];
-    start : number;
+    refs : number[]|undefined;
+    args : number[]|undefined;
+    start : number|undefined;
 
     constructor(
         name_ : string  = "",
-        refs_ : number[]  = [],
-        args_ : number[]  = [],
-        start_ : number  = Number.NaN,
+        refs_ : number[]|undefined ,
+        args_ : number[]|undefined ,
+        start_ : number|undefined ,
     ){
         this.name = name_;
         this.refs = refs_;
