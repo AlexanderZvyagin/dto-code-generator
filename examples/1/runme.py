@@ -1,4 +1,4 @@
-#!env python3
+#!/usr/bin/env python3
 
 from cg import *
 from math import nan
@@ -376,10 +376,9 @@ void from_json(const json &j, std::vector<Histogram> &u) {
 
 if __name__ == '__main__':
 
-    # languages = ['python','cpp','typescript']
+    languages = ['python','cpp','typescript']
     # languages = ['python','cpp'] # OK!
-    # languages = ['typescript']
-    languages = ['csharp']
+    # languages = ['csharp']
     objs = create_dto('output/dto',languages)
     for lang1 in languages:
         for lang2 in languages:

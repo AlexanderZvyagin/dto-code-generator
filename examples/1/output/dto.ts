@@ -288,3 +288,17 @@ class Model {
 
 }
 
+export {
+    UpdaterDoc,
+    UpdaterDto,
+    Updater,
+    IndependentGaussian,
+    CorrelatedGaussian,
+    Barrier,
+    HistogramAxis,
+    Histogram,
+    EvaluationPoint,
+    EvaluationResults,
+    Parameter,
+    Model,
+}
