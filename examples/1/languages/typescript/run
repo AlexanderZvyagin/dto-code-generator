@@ -3,7 +3,8 @@
 case "$1" in
     build)
         cp ../../output/dto.ts .
-        # npm install typescript
+        cp ../../output/dto_tests.ts .
+        npm install typescript
         ./node_modules/typescript/bin/tsc dto_tests.ts
         ;;
     *)

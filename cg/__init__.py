@@ -43,11 +43,12 @@ def write_objs (
             for line in file_suffix_code(objs):
                 file.write(line+'\n')
 
-    name = f'Tests_{language}'
-    func = globals().get(name)
-    if not func:
-        print(f'No code for {name}')
-    else:
-        with open(f'{fname_test}.{ext[language]}','w') as file:
-            for line in func(objs):
-                file.write(line+'\n')
+    if fname_test:
+        name = f'Tests_{language}'
+        func = globals().get(name)
+        if not func:
+            print(f'No code for {name}')
+        else:
+            with open(f'{fname_test}.{ext[language]}','w') as file:
+                for line in func(objs):
+                    file.write(line+'\n')

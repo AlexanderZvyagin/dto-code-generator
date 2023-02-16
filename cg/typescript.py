@@ -43,7 +43,7 @@ def File_prefix_typescript (objs):
 
 def File_suffix_typescript (objs):
     code = []
-    code.append('export default {')
+    code.append('export {')
     for obj in objs:
         if type(obj) in [Struct,Function]:
             code.append(f'{indent}{obj.name},')
@@ -127,3 +127,244 @@ def Struct_typescript (self:Struct):
     #     code.extend(Struct_from_JSON_string_cpp(self))
 
     return code
+
+def Tests_typescript (objs):
+
+    struct_names = []
+    code_construct_random = []
+    code_create = []
+    code_convert = []
+    code_compare = []
+
+    for obj in objs:
+        if type(obj)!=Struct:
+            continue
+
+        struct_names.append(obj.name)
+
+        random_args = ''
+
+        ctors = [method for method in obj.methods if method.name == obj.name]
+        assert len(ctors)==1
+
+        for i,arg in enumerate(ctors[0].args):
+            is_list, type_name = decode_type(arg.type)
+            if is_list:
+                if type_name=='string':
+                    random_arg = 'random_list_of_strings()'
+                elif type_name=='float':
+                    random_arg = 'random_list_of_floats()'
+                elif type_name=='int':
+                    random_arg = 'random_list_of_ints()'
+                elif type_name in struct_names:
+                    random_arg = f'random_list_of_{type_name}()'
+                else:
+                    raise Exception(f'Unknown type {type_name}')
+            elif type_name=='string':
+                random_arg = 'random_string()'
+            elif type_name=='float':
+                random_arg = 'random_float()'
+            elif type_name=='int':
+                random_arg = 'random_int()'
+            elif type_name in struct_names:
+                random_arg = f'random_{type_name}()'
+            else:
+                raise Exception(f'Unknown type {type_name}')
+            ending = '' if (i+1)==len(ctors[0].args) else ','
+            random_args += f'{indent*2}{random_arg}{ending}\n'
+
+        code_construct_random.extend(f'''
+function random_{obj.name} () : {obj.name} {{
+    return new {obj.name} (
+{random_args}
+    );
+}}
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
+function random_list_of_{obj.name} (min:number = 0, max:number = 3) : {obj.name}[] {{
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:{obj.name}[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_{obj.name}());
+    return list;
+}}
+'''.split('\n'))
+
+        code_create.append(f'''
+    }} else if (struct_name === '{obj.name}') {{
+        fs.writeFileSync(
+            file_name,
+            JSON.stringify (random_{obj.name}()));
+''')
+
+        code_convert.extend(f'''
+    }} else if (struct_name === '{obj.name}') {{
+        const obj = JSON.parse((fs.readFileSync(file1_name,'utf-8')));
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+'''.split('\n'))
+        code_compare.extend(f'''
+    }} else if (struct_name === '{obj.name}') {{
+        const obj1 = JSON.parse((fs.readFileSync(file1_name,'utf-8')));
+        const obj2 = JSON.parse((fs.readFileSync(file2_name,'utf-8')));
+        if(!object_equals(obj1,obj2))
+            throw new Error(`${{struct_name}} objects are not equal.`);
+'''.split('\n'))
+
+    code = []
+    for line in typescript_test_template.split('\n'):
+        if line=='//structs//':
+            code.extend([f'{indent}{name},' for name in struct_names])
+        elif line=='//create-struct-random//':
+            code.extend(code_construct_random)
+        elif line=='//create-struct-tests//':
+            code.extend(code_create)
+        elif line=='//convert-struct-tests//':
+            code.extend(code_convert)
+        elif line=='//compare-struct-tests//':
+            code.extend(code_compare)
+        else:
+            code.append(line)
+    return code
+
+typescript_test_template = '''
+// This file was automatically generated!
+// - by <software> <version>
+// - from <DTO-s spec>
+
+import * as fs from 'fs'
+import {
+//structs//
+} from './dto'
+
+function random_int(min:number = -1000, max:number = 1000) : number {
+    return Math.floor (min + Math.random()*(max-min+1));
+}
+
+function random_float(min:number = -1e6, max:number = 1e6) : number {
+    return random_int();
+}
+
+function random_string(min:number = 0, max:number = 3) : string {
+    let out: string = '';
+    const input: string = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++)
+        out += input.charAt(random_int(0,input.length));
+    return out;
+}
+
+function random_list_of_ints (min:number = 0, max:number = 3) : number[] {
+    const size = random_int(min,max);
+    let list:number[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_int());
+    return list;
+}
+
+function random_list_of_floats (min:number = 0, max:number = 3) : number[] {
+    const size = random_int(min,max);
+    let list:number[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_float());
+    return list;
+}
+
+function random_list_of_strings (min:number = 0, max:number = 3) : string[] {
+    const size = random_int(min,max);
+    let list:string[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_string());
+    return list;
+}
+
+
+// https://stackoverflow.com/questions/1068834/object-comparison-in-javascript/6713782#6713782
+function object_equals( x, y ) {
+    if ( x === y ) return true;
+      // if both x and y are null or undefined and exactly the same
+  
+    if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
+      // if they are not strictly equal, they both need to be Objects
+  
+    if ( x.constructor !== y.constructor ) return false;
+      // they must have the exact same prototype chain, the closest we can do is
+      // test there constructor.
+  
+    for ( var p in x ) {
+      if ( ! x.hasOwnProperty( p ) ) continue;
+        // other properties were tested using x.constructor === y.constructor
+  
+      if ( ! y.hasOwnProperty( p ) ) return false;
+        // allows to compare x[ p ] and y[ p ] when set to undefined
+  
+      if ( x[ p ] === y[ p ] ) continue;
+        // if they have the same strict value or identity then they are equal
+  
+      if ( typeof( x[ p ] ) !== "object" ) return false;
+        // Numbers, Strings, Functions, Booleans must be strictly equal
+  
+      if ( ! object_equals( x[ p ],  y[ p ] ) ) return false;
+        // Objects and Arrays must be tested recursively
+    }
+  
+    for ( p in y )
+      if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) )
+        return false;
+          // allows x[ p ] to be set to undefined
+  
+    return true;
+}
+
+//create-struct-random//
+
+function create (struct_name:string, file_name:string){
+    if(false){
+//create-struct-tests//
+    } else
+        throw new Error(`Cannot create an object of the structure ${struct_name}.`);
+}
+
+function convert (struct_name:string, file1_name:string, file2_name:string){
+    if(false){
+//convert-struct-tests//
+    } else
+        throw new Error(`Cannot convert an object of the structure ${struct_name}.`);
+}
+
+function compare (struct_name:string, file1_name:string, file2_name:string){
+    if(false){
+//compare-struct-tests//
+    } else
+        throw new Error(`Cannot compare an object of the structure ${struct_name}.`);
+}
+
+function main () {
+    console.log(`echo I am the typescript with ${process.argv.length} arguments`);
+    console.log(process.argv);
+
+    // expect at least 3 args
+    if(process.argv.length<3)
+        throw new Error(`Expect at least 3 args, found ${process.argv.length}`);
+
+    var command = process.argv[2];
+
+    if(command=='create'){
+        if(process.argv.length<5)
+            throw new Error(`Command "${command}" expects at least 5 args, found ${process.argv.length}`);
+        create(process.argv[3],process.argv[4]);
+    }
+    else if(command=='convert'){
+        if(process.argv.length<6)
+            throw new Error(`Command "${command}" expects at least 6 args, found ${process.argv.length}`);
+        convert(process.argv[3],process.argv[4],process.argv[5]);
+    }
+    else if(command=='compare'){
+        if(process.argv.length<6)
+            throw new Error(`Command "${command}" expects at least 6 args, found ${process.argv.length}`);
+        compare(process.argv[3],process.argv[4],process.argv[5]);
+    } else
+        throw new Error(`Unknown command "${command}"`);
+}
+
+main();
+'''
