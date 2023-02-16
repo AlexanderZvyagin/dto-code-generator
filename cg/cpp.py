@@ -1,18 +1,20 @@
 from .all import *
 import math
 
-def cpp_type_to_string (name:str):
+def cpp_type_to_string (var:Variable):
 
-    if name[-2:]=='[]':
-        t = cpp_type_to_string(name[:-2])
-        return f'std::vector<{t}>'
-
-    return {
+    type_str = {
         'void'    : 'void',
         'string'  : 'std::string',
         'int'     : 'int',
         'float'   : 'float',
-    }.get(name,name)
+    }[var.type]
+
+    if var.list:
+        type_str = f'std::vector<{type_str}>'
+    if var.optional:
+        type_str = f'std::optional<{type_str}>'
+    return type_str
 
 def cpp_value_to_string (arg):
     if type(arg)==Variable:
@@ -38,8 +40,15 @@ def Constructor_cpp(ctor:Function,base:Struct):
     
     code.append(f'{ctor.name} (')
     for i,arg in enumerate(ctor.args):
-        defval = '' if arg.defval is None else f' = {cpp_value_to_string(arg.defval)}'
-        code.append(f'{indent}{cpp_type_to_string(arg.type)} {arg.name}{defval}{"," if i+1<len(ctor.args) else ""}')
+        defval = ''
+        if arg.defval is not None:
+            defval = f' = {cpp_value_to_string(arg.defval)}'
+        elif arg.optional:
+            defval = ' = {}'
+        else:
+            defval = ''
+        # defval = '' if arg.defval is None else f' = {cpp_value_to_string(arg.defval)}'
+        code.append(f'{indent}{cpp_type_to_string(arg)} {arg.name}{defval}{"," if i+1<len(ctor.args) else ""}')
     code.append(f')')
 
     for i,(name,mapping) in enumerate(ctor.mapping):
@@ -58,7 +67,7 @@ def Function_cpp(self:Function, obj:Struct=None):
     if obj and self.name==obj.name:
         code = Constructor_cpp(self,obj)
     else:
-        ftype = cpp_type_to_string(self.type)+' '
+        ftype = cpp_type_to_string(Variable('',self.type))+' '
 
         code = []
         code.append(f'{ftype}{self.name} (')
@@ -66,7 +75,7 @@ def Function_cpp(self:Function, obj:Struct=None):
         args_code = []
         for a in self.args:
             default = '' if a.defval is None else f' = {cpp_value_to_string(a.defval)}'
-            args_code.append(f'{indent}{cpp_type_to_string(a.type)} {a.name}{default}')
+            args_code.append(f'{indent}{cpp_type_to_string(a)} {a.name}{default}')
         for i in range(len(args_code)-1):
             args_code[i] += ','
         code.extend(args_code)
@@ -89,7 +98,7 @@ def Struct_cpp (self:Struct):
     code.append(f'')
     
     for a in self.attributes:
-        code.append(f'{indent}{cpp_type_to_string(a.type)} {a.name};')
+        code.append(f'{indent}{cpp_type_to_string(a)} {a.name};')
 
     code.append('')
 
@@ -128,7 +137,11 @@ def Struct_to_JSON_cpp (self:Struct):
     if self.base:
         code.append(f'{indent}to_json(j,static_cast<const {self.base.name} &>(obj));')
     for attr in self.attributes:
-        code.append(f'{indent}j["{attr.name}"] = obj.{attr.name};')
+        if attr.optional:
+            code.append(f'{indent*1}if(obj.{attr.name}.has_value())')
+            code.append(f'{indent*2}j["{attr.name}"] = obj.{attr.name}.value();')
+        else:
+            code.append(f'{indent}j["{attr.name}"] = obj.{attr.name};')
     code.append(f'}}')
     code.append('')
     return code
@@ -139,7 +152,11 @@ def Struct_from_JSON_cpp (self:Struct):
     if self.base:
         code.append(f'{indent}from_json(j,static_cast<{self.base.name} &>(obj));')
     for attr in self.attributes:
-        code.append(f'{indent}j.at("{attr.name}").get_to(obj.{attr.name});')
+        if attr.optional:
+            code.append(f'{indent*1}if(auto it=j.find("{attr.name}"); it!=j.end())')
+            code.append(f'{indent*2}obj.{attr.name} = *it;')
+        else:
+            code.append(f'{indent}j.at("{attr.name}").get_to(obj.{attr.name});')
     code.append(f'}}')
     return code
 
@@ -165,6 +182,7 @@ def File_prefix_cpp (objs):
     return [
         f'// {autogen_text}',
         '',
+        '#include <optional>',
         '#include <string>',
         '#include <vector>',
         '#include <stdexcept>',
@@ -195,28 +213,27 @@ def Tests_cpp (objs):
         assert len(ctors)==1
 
         for i,arg in enumerate(ctors[0].args):
-            is_list, type_name = decode_type(arg.type)
-            if is_list:
-                if type_name=='string':
+            if arg.list:
+                if arg.type=='string':
                     random_arg = 'random_list_of_strings()'
-                elif type_name=='float':
+                elif arg.type=='float':
                     random_arg = 'random_list_of_floats()'
-                elif type_name=='int':
+                elif arg.type=='int':
                     random_arg = 'random_list_of_ints()'
-                elif type_name in struct_names:
-                    random_arg = f'random_list_of_{type_name}()'
+                elif arg.type in struct_names:
+                    random_arg = f'random_list_of_{arg.type}()'
                 else:
-                    raise Exception(f'Unknown type {type_name}')
-            elif type_name=='string':
+                    raise Exception(f'Unknown type {arg.type}')
+            elif arg.type=='string':
                 random_arg = 'random_string()'
-            elif type_name=='float':
+            elif arg.type=='float':
                 random_arg = 'random_float()'
-            elif type_name=='int':
+            elif arg.type=='int':
                 random_arg = 'random_int()'
-            elif type_name in struct_names:
-                random_arg = f'random_{type_name}()'
+            elif arg.type in struct_names:
+                random_arg = f'random_{arg.type}()'
             else:
-                raise Exception(f'Unknown type {type_name}')
+                raise Exception(f'Unknown type {arg.type}')
             ending = '' if (i+1)==len(ctors[0].args) else ','
             random_args += f'{indent*2}{random_arg}{ending}\n'
 
@@ -304,18 +321,49 @@ namespace fs = std::filesystem;
 std::random_device rd;
 std::mt19937 generator(rd());
 
-int random_int (int min = -1000, int max = 1000) {
+int random_int (
+    int min = -1000,
+    int max = 1000
+) {
     std::uniform_int_distribution<int> uniform_dist(min,max);
     return uniform_dist (generator);
 }
 
-std::vector<int> random_list_of_ints (int min = 0, int max = 3) {
-    std::uniform_int_distribution<int> uniform_dist(min,max);
-    auto size = uniform_dist (generator);
+auto yes_no = [] (void) -> bool {return random_int(0,1);};
+
+std::optional<int> random_optional_int (
+    int min = -1000,
+    int max = 1000
+) {
+    if(yes_no())
+        return random_int(min,max);
+    else
+        return {};
+}
+
+std::vector<int> random_list_of_ints (
+    int len_min = 0,
+    int len_max = 3,
+    int int_min = -1000,
+    int int_max = 1000
+) {
+    const auto size = random_int (len_min, len_max);
     std::vector<int> list;
     for(int i=0; i<size; i++)
-        list.push_back(random_int());
+        list.push_back(random_int(int_min,int_max));
     return list;
+}
+
+std::optional<std::vector<int>> random_optional_list_of_ints (
+    int len_min = 0,
+    int len_max = 3,
+    int int_min = -1000,
+    int int_max = 1000
+) {
+    if(yes_no())
+        return random_list_of_ints(len_min,len_max,int_min,int_max);
+    else
+        return {};
 }
 
 float random_float (
@@ -325,28 +373,58 @@ float random_float (
     bool can_be_infinity = false
 ) {
     // FIXME
-    return (float) random_int();
+    return (float) random_int(min,max);
 #if 0
-    std::uniform_int_distribution<int> yes_no(0,1);
-
-    if(can_be_nan and yes_no(generator))
+    if(can_be_nan and yes_no())
         return NAN;
 
-    if(can_be_infinity and yes_no(generator))
-        return (yes_no(generator) ? -1 : 1) * std::numeric_limits<float>::infinity();
+    if(can_be_infinity and yes_no())
+        return (yes_no() ? -1 : 1) * std::numeric_limits<float>::infinity();
 
     std::uniform_real_distribution uniform_dist(min,max);
     return uniform_dist (generator);
 #endif
 }
 
-std::vector<float> random_list_of_floats (int min = 0, int max = 3) {
-    std::uniform_int_distribution<int> uniform_dist(min,max);
-    auto size = uniform_dist (generator);
+std::optional<float> random_optional_float (
+    float min            = -1e6,
+    float max            =  1e6,
+    bool can_be_nan      = false,
+    bool can_be_infinity = false
+) {
+    if(yes_no())
+        return random_float(min,max,can_be_nan,can_be_infinity);
+    else
+        return {};
+}
+
+std::vector<float> random_list_of_floats (
+    int   len_min         = 0,
+    int   len_max         = 3,
+    float min             = -1e6,
+    float max             =  1e6,
+    bool  can_be_nan      = false,
+    bool  can_be_infinity = false
+) {
+    const auto size = random_int (len_min, len_max);
     std::vector<float> list;
     for(int i=0; i<size; i++)
-        list.push_back(random_float());
+        list.push_back(random_float(min,max,can_be_nan,can_be_infinity));
     return list;
+}
+
+std::optional<std::vector<float>> random_optional_list_of_floats (
+    int   len_min         = 0,
+    int   len_max         = 3,
+    float min             = -1e6,
+    float max             =  1e6,
+    bool  can_be_nan      = false,
+    bool  can_be_infinity = false
+) {
+    if(yes_no())
+        return random_list_of_floats(len_min,len_max,min,max,can_be_nan,can_be_infinity);
+    else
+        return {};
 }
 
 // https://stackoverflow.com/questions/47977829/generate-a-random-string-in-c11
@@ -356,13 +434,34 @@ std::string random_string (int len=16) {
     return str.substr(0, len);
 }
 
-std::vector<std::string> random_list_of_strings (int min = 0, int max = 3) {
-    std::uniform_int_distribution<int> uniform_dist(min,max);
-    auto size = uniform_dist (generator);
+std::optional<std::string> random_optional_string (int len=16) {
+    if(yes_no())
+        return random_string(len);
+    else
+        return {};
+}
+
+std::vector<std::string> random_list_of_strings (
+    int len_min = 0,
+    int len_max = 3,
+    int strlen_max = 16
+) {
+    const auto size = random_int (len_min, len_max);
     std::vector<std::string> list;
     for(int i=0; i<size; i++)
-        list.push_back(random_string());
+        list.push_back(random_string(strlen_max));
     return list;
+}
+
+std::optional<std::vector<std::string>> random_optional_list_of_strings (
+    int len_min = 0,
+    int len_max = 3,
+    int strlen_max = 16
+) {
+    if(yes_no())
+        return random_list_of_strings(len_min,len_max,strlen_max);
+    else
+        {};
 }
 
 //create-struct-random//
