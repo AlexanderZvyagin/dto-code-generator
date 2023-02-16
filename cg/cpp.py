@@ -213,27 +213,50 @@ def Tests_cpp (objs):
         assert len(ctors)==1
 
         for i,arg in enumerate(ctors[0].args):
-            if arg.list:
-                if arg.type=='string':
-                    random_arg = 'random_list_of_strings()'
+            if arg.optional:
+                if arg.list:
+                    if arg.type=='string':
+                        random_arg = 'random_optional_list_of_strings()'
+                    elif arg.type=='float':
+                        random_arg = 'random_optional_list_of_floats()'
+                    elif arg.type=='int':
+                        random_arg = 'random_optional_list_of_ints()'
+                    elif arg.type in struct_names:
+                        random_arg = f'random_optional_list_of_{arg.type}()'
+                    else:
+                        raise Exception(f'Unknown type {arg.type}')
+                elif arg.type=='string':
+                    random_arg = 'random_optional_string()'
                 elif arg.type=='float':
-                    random_arg = 'random_list_of_floats()'
+                    random_arg = 'random_optional_float()'
                 elif arg.type=='int':
-                    random_arg = 'random_list_of_ints()'
+                    random_arg = 'random_optional_int()'
                 elif arg.type in struct_names:
-                    random_arg = f'random_list_of_{arg.type}()'
+                    random_arg = f'random_optional_{arg.type}()'
                 else:
                     raise Exception(f'Unknown type {arg.type}')
-            elif arg.type=='string':
-                random_arg = 'random_string()'
-            elif arg.type=='float':
-                random_arg = 'random_float()'
-            elif arg.type=='int':
-                random_arg = 'random_int()'
-            elif arg.type in struct_names:
-                random_arg = f'random_{arg.type}()'
             else:
-                raise Exception(f'Unknown type {arg.type}')
+                if arg.list:
+                    if arg.type=='string':
+                        random_arg = 'random_list_of_strings()'
+                    elif arg.type=='float':
+                        random_arg = 'random_list_of_floats()'
+                    elif arg.type=='int':
+                        random_arg = 'random_list_of_ints()'
+                    elif arg.type in struct_names:
+                        random_arg = f'random_list_of_{arg.type}()'
+                    else:
+                        raise Exception(f'Unknown type {arg.type}')
+                elif arg.type=='string':
+                    random_arg = 'random_string()'
+                elif arg.type=='float':
+                    random_arg = 'random_float()'
+                elif arg.type=='int':
+                    random_arg = 'random_int()'
+                elif arg.type in struct_names:
+                    random_arg = f'random_{arg.type}()'
+                else:
+                    raise Exception(f'Unknown type {arg.type}')
             ending = '' if (i+1)==len(ctors[0].args) else ','
             random_args += f'{indent*2}{random_arg}{ending}\n'
 
@@ -247,8 +270,19 @@ def Tests_cpp (objs):
 
         code_construct_random.extend(f'''
 std::vector<{obj.name}> random_list_of_{obj.name} (int min = 0, int max = 3) {{
-    std::uniform_int_distribution<int> uniform_dist(min,max);
-    auto size = uniform_dist (generator);
+    const auto size = random_int(min,max);
+    std::vector<{obj.name}> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_{obj.name}());
+    return list;
+}}
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
+std::vector<{obj.name}> random_optional_list_of_{obj.name} (int min = 0, int max = 3) {{
+    if(yes_no())
+        return {{}};
+    const auto size = random_int(min,max);
     std::vector<{obj.name}> list;
     for(int i=0; i<size; i++)
         list.push_back(random_{obj.name}());
