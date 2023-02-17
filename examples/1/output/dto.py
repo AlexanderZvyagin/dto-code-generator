@@ -117,6 +117,14 @@ class Updater (UpdaterDto):
         
         pass
 
+    def HasState (
+        self,
+    ):
+        
+        return self._state>=0
+        
+        pass
+
     def __eq__ (self, other):
         if not super().__eq__(other): return False
         if self._equation != other._equation: return False
@@ -453,6 +461,36 @@ class Model:
         self.evaluations : list[EvaluationPoint] = evaluations_
         self.RunTimeoutSeconds : float = RunTimeoutSeconds_
         self.MemoryLimitKB : int = MemoryLimitKB_
+        pass
+
+    def GetNumberOfUpdaters (
+        self,
+    ):
+        
+        return len(self.updaters)
+        
+        pass
+
+    def GetNumberOfStates (
+        self,
+    ):
+        
+        return len([u for u in self.updaters if u.HasState()])
+        
+        pass
+
+    def Add (
+        self,
+        updater
+    ):
+        
+        self.updaters.append(updater)
+        # title = getattr(updater,'_title',None)
+        # updater._equation = len(self.updaters)-1
+        # updater._state = self.NumStatefulProcesses()-1 if updater.HasState() else None
+        # self._titles[updater._state] = title
+        # return updater
+        
         pass
 
     def __eq__ (self, other):

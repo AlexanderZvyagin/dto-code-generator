@@ -5,6 +5,7 @@ def python_type_to_string (var:Variable):
     type_str = {
         'void'    : 'void',
         'string'  : 'str',
+        'boolean' : 'bool',
         'int'     : 'int',
         'float'   : 'float',
     } .get(var.type,var.type)

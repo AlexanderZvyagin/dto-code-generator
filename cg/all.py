@@ -47,18 +47,7 @@ class CodeBlock:
 
 class Function:
 
-    # class Call:
-    #     '''
-    #     FunctionCall('myfunc',[1,'arg_string',Variable('aa')])
-    #     '''
-    #     def __init__ (self,name:str,args=[]):
-    #         pass
-
-    # class Code:
-    #     def __init__ (self,code):
-    #         pass
-
-    def __init__ (self, name:str, type:str, args=[], code={}, mapping=[]):
+    def __init__ (self, name:str, type:str, args=[], code={}, mapping=[], const=False):
         '''code: dictionary of language:str=>list[str]
         
         mapping: it is an array of (key,value) pairs
@@ -66,10 +55,9 @@ class Function:
         self.name : str = name
         self.type : str = type
         self.args : list[Variable] = args
-
         self.code = code
-        self.objs  = [] # Call,Code
         self.mapping = mapping
+        self.const = const
 
     def __repr__ (self):
         return f"Function('{self.name}','{self.type}',{self.args})"

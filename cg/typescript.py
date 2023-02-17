@@ -6,6 +6,7 @@ def typescript_type_to_string (var:Variable):
     type_str = {
         'void'    : 'void',
         'string'  : 'string',
+        'boolean' : 'boolean',
         'int'     : 'number',
         'float'   : 'number',
     } .get(var.type,var.type)

@@ -153,7 +153,7 @@ std::optional<std::vector<std::string>> random_optional_list_of_strings (
     if(yes_no())
         return random_list_of_strings(len_min,len_max,strlen_max);
     else
-        {};
+        return {};
 }
 
 

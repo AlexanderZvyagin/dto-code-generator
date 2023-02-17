@@ -6,6 +6,7 @@ def cpp_type_to_string (var:Variable):
     type_str = {
         'void'    : 'void',
         'string'  : 'std::string',
+        'boolean' : 'bool',
         'int'     : 'int',
         'float'   : 'float',
     } .get(var.type,var.type)
@@ -78,7 +79,10 @@ def Function_cpp(self:Function, obj:Struct=None):
         for i in range(len(args_code)-1):
             args_code[i] += ','
         code.extend(args_code)
-        code.append(')')
+        if obj and self.const:
+            code.append(') const')
+        else:
+            code.append(')')
 
     code.append('{')
     for line in get_code(self.code.get('cpp')):
@@ -494,7 +498,7 @@ std::optional<std::vector<std::string>> random_optional_list_of_strings (
     if(yes_no())
         return random_list_of_strings(len_min,len_max,strlen_max);
     else
-        {};
+        return {};
 }
 
 //create-struct-random//

@@ -107,9 +107,29 @@ return self._state
 '''
         }
     ))
+
+    obj.methods.append(Function (
+        'HasState',
+        'boolean',
+        const = True,
+        code = {
+            'python':
+'''
+return self._state>=0
+''',
+            'cpp':
+'''
+return _state>=0;
+''',
+            'typescript':
+'''
+return this._state>=0;
+'''
+        }
+    ))
+
     objs.append(obj)
     Updater = obj
-
 
     objs.append(CodeBlock(code={
         'cpp': {'''
@@ -367,6 +387,73 @@ void from_json(const json &j, std::vector<Histogram> &u) {
             ('MemoryLimitKB',[Variable('MemoryLimitKB_')]),
         ]
     ))
+
+    obj.methods.append(Function (
+        'GetNumberOfUpdaters',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return len(self.updaters)
+''',
+            'cpp':
+'''
+return updaters.size();
+''',
+            'typescript':
+'''
+return this.updaters.length;
+''',
+            'csharp':
+'''
+return updaters.Count();
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetNumberOfStates',
+        'int', # FIXME: boolean
+        const = True,
+        code = {
+            'python':
+'''
+return len([u for u in self.updaters if u.HasState()])
+''',
+            'cpp':
+'''
+int n {0};
+for(const auto &u: updaters)
+    n += u.HasState();
+return n;
+''',
+            'typescript':
+'''
+return this.updaters.filter(
+    u => u.HasState()
+).length;
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'Add',
+        'void',
+        args = [Variable('updater','Updater')],
+        code = {
+            'python':
+'''
+self.updaters.append(updater)
+# title = getattr(updater,'_title',None)
+# updater._equation = len(self.updaters)-1
+# updater._state = self.NumStatefulProcesses()-1 if updater.HasState() else None
+# self._titles[updater._state] = title
+# return updater
+'''
+        }
+    ))
+
     objs.append(obj)
 
     for language in languages:

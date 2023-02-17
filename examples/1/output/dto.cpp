@@ -195,6 +195,14 @@ public:
         
     }
 
+    bool HasState (
+    ) const
+    {
+        
+        return _state>=0;
+        
+    }
+
     bool operator == (const Updater &other) const {
         if (UpdaterDto::operator != (other)) return false;
         if (_equation != other._equation) return false;
@@ -739,6 +747,31 @@ public:
     )
     , MemoryLimitKB (
         MemoryLimitKB_
+    )
+    {
+    }
+
+    int GetNumberOfUpdaters (
+    ) const
+    {
+        
+        return updaters.size();
+        
+    }
+
+    int GetNumberOfStates (
+    ) const
+    {
+        
+        int n {0};
+        for(const auto &u: updaters)
+            n += u.HasState();
+        return n;
+        
+    }
+
+    void Add (
+        Updater updater
     )
     {
     }

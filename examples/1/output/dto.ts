@@ -81,6 +81,13 @@ class Updater extends UpdaterDto {
         
     }
 
+    HasState (
+    ) : boolean  {
+        
+        return this._state>=0;
+        
+    }
+
 }
 
 class IndependentGaussian extends Updater {
@@ -284,6 +291,28 @@ class Model {
         this.RunTimeoutSeconds = RunTimeoutSeconds_;
         this.MemoryLimitKB = MemoryLimitKB_;
     
+    }
+
+    GetNumberOfUpdaters (
+    ) : number  {
+        
+        return this.updaters.length;
+        
+    }
+
+    GetNumberOfStates (
+    ) : number  {
+        
+        return this.updaters.filter(
+            u => u.HasState()
+        ).length;
+        
+    }
+
+    Add (
+        
+        updater : Updater,
+    ) : void  {
     }
 
 }
