@@ -34,7 +34,11 @@ class UpdaterDoc:
     def __neq__ (self, other):
         return not (self==other)
 def UpdaterDoc_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def UpdaterDoc_from_json (j, obj):
     obj.name = j["name"]
     obj.title = j["title"]
@@ -74,7 +78,11 @@ class UpdaterDto:
     def __neq__ (self, other):
         return not (self==other)
 def UpdaterDto_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in ['refs', 'args', 'start'] and v is None) })
+    def is_serialisable(k,v):
+        if k in ['refs', 'args', 'start'] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def UpdaterDto_from_json (j, obj):
     obj.name = j["name"]
     obj.refs = j.get("refs",None)
@@ -133,9 +141,15 @@ class Updater (UpdaterDto):
     def __neq__ (self, other):
         return not (self==other)
 def Updater_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def Updater_from_json (j, obj):
     UpdaterDto_from_json(j,obj)
+    obj._equation = j["_equation"]
+    obj._state = j["_state"]
 def Updater_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Updater()
@@ -164,7 +178,11 @@ class IndependentGaussian (Updater):
     def __neq__ (self, other):
         return not (self==other)
 def IndependentGaussian_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def IndependentGaussian_from_json (j, obj):
     Updater_from_json(j,obj)
 def IndependentGaussian_from_json_string (jstr):
@@ -197,7 +215,11 @@ class CorrelatedGaussian (Updater):
     def __neq__ (self, other):
         return not (self==other)
 def CorrelatedGaussian_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def CorrelatedGaussian_from_json (j, obj):
     Updater_from_json(j,obj)
 def CorrelatedGaussian_from_json_string (jstr):
@@ -233,7 +255,11 @@ class Barrier (Updater):
     def __neq__ (self, other):
         return not (self==other)
 def Barrier_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def Barrier_from_json (j, obj):
     Updater_from_json(j,obj)
 def Barrier_from_json_string (jstr):
@@ -268,7 +294,11 @@ class HistogramAxis:
     def __neq__ (self, other):
         return not (self==other)
 def HistogramAxis_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def HistogramAxis_from_json (j, obj):
     obj.state = j["state"]
     obj.nbins = j["nbins"]
@@ -300,7 +330,11 @@ class Histogram:
     def __neq__ (self, other):
         return not (self==other)
 def Histogram_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def Histogram_from_json (j, obj):
     obj.x = j["x"]
     obj.y = j["y"]
@@ -336,7 +370,11 @@ class EvaluationPoint:
     def __neq__ (self, other):
         return not (self==other)
 def EvaluationPoint_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def EvaluationPoint_from_json (j, obj):
     obj.state = j["state"]
     obj.time = j["time"]
@@ -386,7 +424,11 @@ class EvaluationResults:
     def __neq__ (self, other):
         return not (self==other)
 def EvaluationResults_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def EvaluationResults_from_json (j, obj):
     obj.names = j["names"]
     obj.npaths = j["npaths"]
@@ -428,7 +470,11 @@ class Parameter:
     def __neq__ (self, other):
         return not (self==other)
 def Parameter_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def Parameter_from_json (j, obj):
     obj.value = j["value"]
     obj.step = j["step"]
@@ -505,7 +551,11 @@ class Model:
     def __neq__ (self, other):
         return not (self==other)
 def Model_to_json_string (self):
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if not (k in [] and v is None) })
+    def is_serialisable(k,v):
+        if k in [] and v is None: return False
+        if k in []: return False
+        return True
+    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
 def Model_from_json (j, obj):
     obj.TimeStart = j["TimeStart"]
     obj.TimeSteps = j["TimeSteps"]

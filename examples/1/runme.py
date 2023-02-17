@@ -414,7 +414,7 @@ return updaters.Count();
 
     obj.methods.append(Function (
         'GetNumberOfStates',
-        'int', # FIXME: boolean
+        'int',
         const = True,
         code = {
             'python':

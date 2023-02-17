@@ -136,8 +136,13 @@ def Struct_python (self:Struct):
 def Struct_to_json_string_python (self:Struct):
     code = []
     code.append(f'def {self.name}_to_json_string (self):')
+    skip_dto = [attr.name for attr in self.attributes if attr.skip_dto]
     optional_attributes = [attr.name for attr in self.attributes if attr.optional]
-    code.append(f'{indent}return json.dumps(self,default=lambda x: {{k:v for k,v in x.__dict__.items() if not (k in {optional_attributes} and v is None) }})')
+    code.append(f'{indent*1}def is_serialisable(k,v):')
+    code.append(f'{indent*2}if k in {optional_attributes} and v is None: return False')
+    code.append(f'{indent*2}if k in {skip_dto}: return False')
+    code.append(f'{indent*2}return True')
+    code.append(f'{indent}return json.dumps(self,default=lambda x: {{k:v for k,v in x.__dict__.items() if is_serialisable(k,v) }})')
     return code
 
 def Struct_from_json_string_python (self):
@@ -148,7 +153,7 @@ def Struct_from_json_string_python (self):
         code.append(f'{indent}{self.base.name}_from_json(j,obj)')
     for attr in self.attributes:
         # TODO
-        if attr.name[0]=='_': continue
+        if attr.skip_dto: continue
         if attr.optional:
             code.append(f'{indent}obj.{attr.name} = j.get("{attr.name}",None)')
         else:

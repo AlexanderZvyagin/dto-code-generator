@@ -9,8 +9,8 @@ autogen_text = 'This is an automatically generated file.'
 
 Variable = namedtuple(
     'Variable',
-    ['name','type','defval','list','optional'],
-    defaults=['',None,None,False,False]
+    ['name','type','defval','list','optional','skip_dto'],
+    defaults=['',None,None,False,False,False]
 )
 
 ext = {

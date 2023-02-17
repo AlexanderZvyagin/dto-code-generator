@@ -140,6 +140,7 @@ def Struct_to_JSON_cpp (self:Struct):
     if self.base:
         code.append(f'{indent}to_json(j,static_cast<const {self.base.name} &>(obj));')
     for attr in self.attributes:
+        if attr.skip_dto: continue
         if attr.optional:
             code.append(f'{indent*1}if(obj.{attr.name}.has_value())')
             code.append(f'{indent*2}j["{attr.name}"] = obj.{attr.name}.value();')
@@ -155,6 +156,7 @@ def Struct_from_JSON_cpp (self:Struct):
     if self.base:
         code.append(f'{indent}from_json(j,static_cast<{self.base.name} &>(obj));')
     for attr in self.attributes:
+        if attr.skip_dto: continue
         if attr.optional:
             code.append(f'{indent*1}if(auto it=j.find("{attr.name}"); it!=j.end() and !it->is_null())')
             code.append(f'{indent*2}obj.{attr.name} = *it;')
