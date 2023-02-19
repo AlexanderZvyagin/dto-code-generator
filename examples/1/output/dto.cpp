@@ -1,5 +1,6 @@
 // This is an automatically generated file.
 
+#include <optional>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -91,16 +92,16 @@ class UpdaterDto {
 public:
 
     std::string name;
-    std::vector<int> refs;
-    std::vector<float> args;
-    float start;
+    std::optional<std::vector<int>> refs;
+    std::optional<std::vector<float>> args;
+    std::optional<float> start;
 
     
     UpdaterDto (
         std::string name_ = "",
-        std::vector<int> refs_ = {},
-        std::vector<float> args_ = {},
-        float start_ = NAN
+        std::optional<std::vector<int>> refs_ = {},
+        std::optional<std::vector<float>> args_ = {},
+        std::optional<float> start_ = {}
     )
     : name (
         name_
@@ -128,9 +129,12 @@ public:
 };
 void to_json(json &j, const UpdaterDto &obj) {
     j["name"] = obj.name;
-    j["refs"] = obj.refs;
-    j["args"] = obj.args;
-    j["start"] = obj.start;
+    if(obj.refs.has_value())
+        j["refs"] = obj.refs.value();
+    if(obj.args.has_value())
+        j["args"] = obj.args.value();
+    if(obj.start.has_value())
+        j["start"] = obj.start.value();
 }
 
 std::string to_json(const UpdaterDto &obj) {
@@ -140,9 +144,12 @@ std::string to_json(const UpdaterDto &obj) {
 }
 void from_json(const json &j, UpdaterDto &obj) {
     j.at("name").get_to(obj.name);
-    j.at("refs").get_to(obj.refs);
-    j.at("args").get_to(obj.args);
-    j.at("start").get_to(obj.start);
+    if(auto it=j.find("refs"); it!=j.end() and !it->is_null())
+        obj.refs = *it;
+    if(auto it=j.find("args"); it!=j.end() and !it->is_null())
+        obj.args = *it;
+    if(auto it=j.find("start"); it!=j.end() and !it->is_null())
+        obj.start = *it;
 }
 UpdaterDto UpdaterDto_from_json(const json &j) {
     UpdaterDto obj;
@@ -188,6 +195,14 @@ public:
         
     }
 
+    bool HasState (
+    ) const
+    {
+        
+        return _state>=0;
+        
+    }
+
     bool operator == (const Updater &other) const {
         if (UpdaterDto::operator != (other)) return false;
         if (_equation != other._equation) return false;
@@ -198,8 +213,6 @@ public:
 };
 void to_json(json &j, const Updater &obj) {
     to_json(j,static_cast<const UpdaterDto &>(obj));
-    j["_equation"] = obj._equation;
-    j["_state"] = obj._state;
 }
 
 std::string to_json(const Updater &obj) {
@@ -209,8 +222,6 @@ std::string to_json(const Updater &obj) {
 }
 void from_json(const json &j, Updater &obj) {
     from_json(j,static_cast<UpdaterDto &>(obj));
-    j.at("_equation").get_to(obj._equation);
-    j.at("_state").get_to(obj._state);
 }
 Updater Updater_from_json(const json &j) {
     Updater obj;
@@ -732,6 +743,31 @@ public:
     )
     , MemoryLimitKB (
         MemoryLimitKB_
+    )
+    {
+    }
+
+    int GetNumberOfUpdaters (
+    ) const
+    {
+        
+        return updaters.size();
+        
+    }
+
+    int GetNumberOfStates (
+    ) const
+    {
+        
+        int n {0};
+        for(const auto &u: updaters)
+            n += u.HasState();
+        return n;
+        
+    }
+
+    void Add (
+        Updater updater
     )
     {
     }

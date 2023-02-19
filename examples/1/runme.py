@@ -8,12 +8,12 @@ def create_dto(fname, languages):
     objs = [] # objects in the file
 
     obj = Struct('UpdaterDoc')
-    obj.attributes.append(Variable('name','string',None))
-    obj.attributes.append(Variable('title','string',None))
-    obj.attributes.append(Variable('doc_md','string',None))
-    obj.attributes.append(Variable('start','string',None))
-    obj.attributes.append(Variable('nargs_min','int',None))
-    obj.attributes.append(Variable('nrefs_min','int',None))
+    obj.attributes.append(Variable('name','string'))
+    obj.attributes.append(Variable('title','string'))
+    obj.attributes.append(Variable('doc_md','string'))
+    obj.attributes.append(Variable('start','string'))
+    obj.attributes.append(Variable('nargs_min','int'))
+    obj.attributes.append(Variable('nrefs_min','int'))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -37,18 +37,18 @@ def create_dto(fname, languages):
     objs.append(obj)
 
     obj = Struct('UpdaterDto')
-    obj.attributes.append(Variable('name','string',defval=None))
+    obj.attributes.append(Variable('name','string'))
     obj.attributes.append(Variable('refs','int', list=True, optional=True))
     obj.attributes.append(Variable('args','float', list=True, optional=True))
-    obj.attributes.append(Variable('start','float',defval=None,optional=True))
+    obj.attributes.append(Variable('start','float',optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('name_','string',''),
-            Variable(name='refs_', type='int', defval=[], list=True),
-            Variable('args_','float',defval=[],list=True),
-            Variable('start_','float',defval=None, optional=True)
+            Variable('name_', 'string', ''),
+            Variable(name='refs_', type='int', defval=None, list=True, optional=True),
+            Variable('args_', 'float', defval=None, list=True, optional=True),
+            Variable('start_', 'float', defval=None, optional=True)
         ],
         mapping = [
             ('name',[Variable('name_')]),
@@ -60,314 +60,382 @@ def create_dto(fname, languages):
     objs.append(obj)
     UpdaterDto = obj
 
-#     obj = Struct('Updater',UpdaterDto)
-#     obj.attributes.append(Variable('_equation','int',-88))
-#     obj.attributes.append(Variable('_state','int',-88))
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('name','string',''),
-#             Variable('refs','int[]',[]),
-#             Variable('args','float[]',[]),
-#             Variable('start','float',nan),
-#         ],
-#         mapping = [
-#             (obj.base.name,[
-#                 Variable('name'),
-#                 Variable('refs'),
-#                 Variable('args'),
-#                 Variable('start'),
-#             ]),
-#             ('_equation',[-88]),
-#             ('_state',[-88]),
-#         ]
-#     ))
-#     obj.methods.append(Function (
-#         'GetStateNumber',
-#         'int',
-#         code = {
-#             'typescript':
-# '''
-# if(this._state<0)
-#     throw new Error(`Updater ${this.name} has no state.`);
-# return this._state;
-# ''',
-#             'cpp':
-# '''
-# if(_state<0)
-#     throw std::runtime_error("An updater has no state.");
-# return _state;
-# ''',
-#             'python':
-# '''
-# if self._state<0:
-#     raise Exception(f'Updater {self.name} has no state.')
-# return self._state
-# '''
-#         }
-#     ))
-#     objs.append(obj)
-#     Updater = obj
+    obj = Struct('Updater',UpdaterDto)
+    obj.attributes.append(Variable('_equation','int',skip_dto=True))
+    obj.attributes.append(Variable('_state','int',skip_dto=True))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('name','string',''),
+            Variable('refs','int',[],list=True),
+            Variable('args','float',[],list=True),
+            Variable('start','float',nan),
+        ],
+        mapping = [
+            (obj.base.name,[
+                Variable('name'),
+                Variable('refs'),
+                Variable('args'),
+                Variable('start'),
+            ]),
+            ('_equation',[-88]),
+            ('_state',[-88]),
+        ]
+    ))
+    obj.methods.append(Function (
+        'GetStateNumber',
+        'int',
+        code = {
+            'typescript':
+'''
+if(this._state<0)
+    throw new Error(`Updater ${this.name} has no state.`);
+return this._state;
+''',
+            'cpp':
+'''
+if(_state<0)
+    throw std::runtime_error("An updater has no state.");
+return _state;
+''',
+            'python':
+'''
+if self._state<0:
+    raise Exception(f'Updater {self.name} has no state.')
+return self._state
+'''
+        }
+    ))
 
+    obj.methods.append(Function (
+        'HasState',
+        'boolean',
+        const = True,
+        code = {
+            'python':
+'''
+return self._state>=0
+''',
+            'cpp':
+'''
+return _state>=0;
+''',
+            'typescript':
+'''
+return this._state>=0;
+'''
+        }
+    ))
 
-#     objs.append(CodeBlock(code={
-#         'cpp': {'''
-# void from_json(const json &j, std::vector<Updater> &u) {
-#     for(auto v: j)
-#         u.push_back(v);
-# }
-# '''
-#         }
-#     }))
+    objs.append(obj)
+    Updater = obj
 
-#     obj = Struct('IndependentGaussian',Updater,generate_json=True)
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('refs_','int[]'  ,[]),
-#         ],
-#         mapping = [(obj.base.name,[
-#             'IndependentGaussian',
-#             Variable('refs_'),
-#             [],
-#             -88 # FIXME: cannot use math.nan for the moment
-#         ])]
-#     ))
-#     objs.append(obj)
+    objs.append(CodeBlock(code={
+        'cpp': {'''
+void from_json(const json &j, std::vector<Updater> &u) {
+    for(auto v: j)
+        u.push_back(v);
+}
+'''
+        }
+    }))
+
+    obj = Struct('IndependentGaussian',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('refs_','int'  ,defval=[], list=True),
+        ],
+        mapping = [(obj.base.name,[
+            'IndependentGaussian',
+            Variable('refs_'),
+            [],
+            -88 # FIXME: cannot use math.nan for the moment
+        ])]
+    ))
+    objs.append(obj)
     
-#     obj = Struct('CorrelatedGaussian',Updater,generate_json=True)
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('correlation','float'  ,nan),
-#             Variable('state1','int'  ,-88),
-#             Variable('state2','int'  ,-88),
-#         ],
-#         mapping = [(obj.base.name,[
-#             'CorrelatedGaussian',
-#             [Variable('state1'),Variable('state2')],
-#             [Variable('correlation')],
-#             -88 # FIXME: cannot use math.nan for the moment
-#         ])]
-#     ))
-#     objs.append(obj)
+    obj = Struct('CorrelatedGaussian',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('correlation','float'  ,nan),
+            Variable('state1','int'  ,-88),
+            Variable('state2','int'  ,-88),
+        ],
+        mapping = [(obj.base.name,[
+            'CorrelatedGaussian',
+            [Variable('state1'),Variable('state2')],
+            [Variable('correlation')],
+            -88 # FIXME: cannot use math.nan for the moment
+        ])]
+    ))
+    objs.append(obj)
 
-#     obj = Struct('Barrier',Updater,generate_json=True)
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('underlying','int'  ,-88),
-#             Variable('start'     ,'float',nan),
-#             Variable('level'     ,'float',nan),
-#             Variable('direction' ,'int'  ,-88),
-#             Variable('action'    ,'int'  ,-88),
-#             Variable('value'     ,'float',nan),
-#         ],
-#         mapping = [(obj.base.name,[
-#             'Barrier',
-#             [
-#                 Variable('underlying')
-#             ],
-#             [
-#                 Variable('level'),
-#                 Variable('value'),
-#                 Variable('direction'),
-#                 Variable('action')
-#             ],
-#             Variable('start')
-#         ])]
-#     ))
+    obj = Struct('Barrier',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('underlying','int'  ,-88),
+            Variable('start'     ,'float',nan),
+            Variable('level'     ,'float',nan),
+            Variable('direction' ,'int'  ,-88),
+            Variable('action'    ,'int'  ,-88),
+            Variable('value'     ,'float',nan),
+        ],
+        mapping = [(obj.base.name,[
+            'Barrier',
+            [
+                Variable('underlying')
+            ],
+            [
+                Variable('level'),
+                Variable('value'),
+                Variable('direction'),
+                Variable('action')
+            ],
+            Variable('start')
+        ])]
+    ))
     
-#     objs.append(obj)
+    objs.append(obj)
 
-#     obj = Struct('HistogramAxis')
-#     obj.attributes.append(Variable('state','int',-88))
-#     obj.attributes.append(Variable('nbins','int',0))
-#     obj.attributes.append(Variable('min','float',nan))
-#     obj.attributes.append(Variable('max','float',nan))
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('_state','int',-88),
-#             Variable('_nbins','int',-88),
-#             Variable('_min'  ,'float',-88), # FIXME: cannot use math.nan for the moment
-#             Variable('_max'  ,'float',-88), # FIXME: cannot use math.nan for the moment
-#         ],
-#         mapping = [
-#             ('state',[Variable('_state')]),
-#             ('nbins',[Variable('_nbins')]),
-#             ('min',[Variable('_min')]),
-#             ('max',[Variable('_max')]),
-#         ]
-#     ))
-#     objs.append(obj)
+    obj = Struct('HistogramAxis')
+    HistogramAxis = obj
+    obj.attributes.append(Variable('state','int'))
+    obj.attributes.append(Variable('nbins','int'))
+    obj.attributes.append(Variable('min','float'))
+    obj.attributes.append(Variable('max','float'))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('_state','int',-88),
+            Variable('_nbins','int',-88),
+            Variable('_min'  ,'float',-88), # FIXME: cannot use math.nan for the moment
+            Variable('_max'  ,'float',-88), # FIXME: cannot use math.nan for the moment
+        ],
+        mapping = [
+            ('state',[Variable('_state')]),
+            ('nbins',[Variable('_nbins')]),
+            ('min',[Variable('_min')]),
+            ('max',[Variable('_max')]),
+        ]
+    ))
+    objs.append(obj)
 
-#     obj = Struct('Histogram')
-#     obj.attributes.append(Variable('x','HistogramAxis',None))
-#     obj.attributes.append(Variable('y','HistogramAxis',None))
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('x','HistogramAxis',Variable('HistogramAxis()','type')),
-#             Variable('y','HistogramAxis',Variable('HistogramAxis()','type')),
-#         ],
-#         mapping = [
-#             ('x',[Variable('x')]),
-#             ('y',[Variable('y')])
-#         ]
-#     ))
-#     # obj.methods.append(Function (
-#     #     obj.name,
-#     #     'constructor',
-#     #     args = [
-#     #         Variable('x','HistogramAxis',None),
-#     #     ],
-#     #     mapping = [
-#     #         ('x',[Variable('x')]),
-#     #     ]
-#     # ))
-#     # obj.methods.append(Function (
-#     #     obj.name,
-#     #     'constructor',
-#     #     args = [
-#     #         Variable('x','HistogramAxis',None),
-#     #         Variable('y','HistogramAxis',None),
-#     #     ],
-#     #     mapping = [
-#     #         ('x',[Variable('x')]),
-#     #         ('y',[Variable('y')])
-#     #     ]
-#     # ))
-#     objs.append(obj)
+    obj = Struct('Histogram')
+    Histogram = obj
+    obj.attributes.append(Variable('x',HistogramAxis))
+    obj.attributes.append(Variable('y',HistogramAxis))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('x','HistogramAxis',Variable('HistogramAxis()',HistogramAxis)),
+            Variable('y','HistogramAxis',Variable('HistogramAxis()',HistogramAxis)),
+        ],
+        mapping = [
+            ('x',[Variable('x')]),
+            ('y',[Variable('y')])
+        ]
+    ))
+    objs.append(obj)
 
-#     objs.append(CodeBlock(code={
-#         'cpp': {'''
-# void from_json(const json &j, std::vector<Histogram> &u) {
-#     for(auto v: j)
-#         u.push_back(v);
-# }
-# '''
-#         }
-#     }))
+    objs.append(CodeBlock(code={
+        'cpp': {'''
+void from_json(const json &j, std::vector<Histogram> &u) {
+    for(auto v: j)
+        u.push_back(v);
+}
+'''
+        }
+    }))
 
-#     obj = Struct ('EvaluationPoint')
-#     obj.attributes.append(Variable('state','int',None))
-#     obj.attributes.append(Variable('time','float',None))
-#     obj.attributes.append(Variable('value','float',None))
-#     obj.attributes.append(Variable('error','float',None))
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('state_','int',-88),
-#             Variable('time_','float',nan),
-#             Variable('value_','float',nan),
-#             Variable('error_','float',nan),
-#         ],
-#         mapping = [
-#             ('state',[Variable('state_')]),
-#             ('time',[Variable('time_')]),
-#             ('value',[Variable('value_')]),
-#             ('error',[Variable('error_')]),
-#         ]
-#     ))
-#     objs.append(obj)
+    obj = Struct ('EvaluationPoint')
+    EvaluationPoint = obj
+    obj.attributes.append(Variable('state','int',None))
+    obj.attributes.append(Variable('time','float',None))
+    obj.attributes.append(Variable('value','float',None))
+    obj.attributes.append(Variable('error','float',None))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('state_','int',-88),
+            Variable('time_','float',nan),
+            Variable('value_','float',nan),
+            Variable('error_','float',nan),
+        ],
+        mapping = [
+            ('state',[Variable('state_')]),
+            ('time',[Variable('time_')]),
+            ('value',[Variable('value_')]),
+            ('error',[Variable('error_')]),
+        ]
+    ))
+    objs.append(obj)
 
-#     obj = Struct('EvaluationResults')
-#     obj.attributes.append(Variable('names','string[]',None))
-#     obj.attributes.append(Variable('npaths','int[]',None))
-#     obj.attributes.append(Variable('mean','float[]',None))
-#     obj.attributes.append(Variable('stddev','float[]',None))
-#     obj.attributes.append(Variable('skewness','float[]',None))
-#     obj.attributes.append(Variable('time_points','float[]',None))
-#     obj.attributes.append(Variable('time_steps','int[]',None))
-#     obj.attributes.append(Variable('histograms','Histogram[]',None))
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('names_','string[]',[]),
-#             Variable('npaths_','int[]',[]),
-#             Variable('mean_','float[]',[]),
-#             Variable('stddev_','float[]',[]),
-#             Variable('skewness_','float[]',[]),
-#             Variable('time_points_','float[]',[]),
-#             Variable('time_steps_','int[]',[]),
-#             Variable('histograms_','Histogram[]',[]),
-#         ],
-#         mapping = [
-#             ('names',[Variable('names_')]),
-#             ('npaths',[Variable('npaths_')]),
-#             ('mean',[Variable('mean_')]),
-#             ('stddev',[Variable('stddev_')]),
-#             ('skewness',[Variable('skewness_')]),
-#             ('time_points',[Variable('time_points_')]),
-#             ('time_steps',[Variable('time_steps_')]),
-#             ('histograms',[Variable('histograms_')]),
-#         ]
-#     ))
-#     objs.append(obj)
+    obj = Struct('EvaluationResults')
+    obj.attributes.append(Variable('names','string',list=True))
+    obj.attributes.append(Variable('npaths','int',list=True))
+    obj.attributes.append(Variable('mean','float',list=True))
+    obj.attributes.append(Variable('stddev','float',list=True))
+    obj.attributes.append(Variable('skewness','float',list=True))
+    obj.attributes.append(Variable('time_points','float',list=True))
+    obj.attributes.append(Variable('time_steps','int',list=True))
+    obj.attributes.append(Variable('histograms',Histogram,list=True))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('names_','string',[],list=True),
+            Variable('npaths_','int',[],list=True),
+            Variable('mean_','float',[],list=True),
+            Variable('stddev_','float',[],list=True),
+            Variable('skewness_','float',[],list=True),
+            Variable('time_points_','float',[],list=True),
+            Variable('time_steps_','int',[],list=True),
+            Variable('histograms_','Histogram',[],list=True),
+        ],
+        mapping = [
+            ('names',[Variable('names_')]),
+            ('npaths',[Variable('npaths_')]),
+            ('mean',[Variable('mean_')]),
+            ('stddev',[Variable('stddev_')]),
+            ('skewness',[Variable('skewness_')]),
+            ('time_points',[Variable('time_points_')]),
+            ('time_steps',[Variable('time_steps_')]),
+            ('histograms',[Variable('histograms_')]),
+        ]
+    ))
+    objs.append(obj)
 
-#     obj = Struct ('Parameter')
-#     obj.attributes.append(Variable('value','float',None))
-#     obj.attributes.append(Variable('step','float',None))
-#     obj.attributes.append(Variable('min','float',None))
-#     obj.attributes.append(Variable('max','float',None))
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('value_','float',nan),
-#             Variable('step_','float',nan),
-#             Variable('min_','float',nan),
-#             Variable('max_','float',nan),
-#         ],
-#         mapping = [
-#             ('value',[Variable('value_')]),
-#             ('step',[Variable('step_')]),
-#             ('min',[Variable('min_')]),
-#             ('max',[Variable('max_')]),
-#         ]
-#     ))
-#     objs.append(obj)
+    obj = Struct ('Parameter')
+    obj.attributes.append(Variable('value','float'))
+    obj.attributes.append(Variable('step','float'))
+    obj.attributes.append(Variable('min','float'))
+    obj.attributes.append(Variable('max','float'))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('value_','float',nan),
+            Variable('step_','float',nan),
+            Variable('min_','float',nan),
+            Variable('max_','float',nan),
+        ],
+        mapping = [
+            ('value',[Variable('value_')]),
+            ('step',[Variable('step_')]),
+            ('min',[Variable('min_')]),
+            ('max',[Variable('max_')]),
+        ]
+    ))
+    objs.append(obj)
 
-#     obj = Struct ('Model')
-#     obj.attributes.append(Variable('TimeStart','float',None))
-#     obj.attributes.append(Variable('TimeSteps','int',None))
-#     obj.attributes.append(Variable('NumPaths','int',None))
-#     obj.attributes.append(Variable('updaters','Updater[]',None))
-#     obj.attributes.append(Variable('evaluations','EvaluationPoint[]',None))
-#     obj.attributes.append(Variable('RunTimeoutSeconds','float',None))
-#     obj.attributes.append(Variable('MemoryLimitKB','int',None))
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('TimeStart_','float',nan),
-#             Variable('TimeSteps_','int',0),
-#             Variable('NumPaths_','int',0),
-#             Variable('updaters_','Updater[]',[]),
-#             Variable('evaluations_','EvaluationPoint[]',[]),
-#             Variable('RunTimeoutSeconds_','float',1),
-#             Variable('MemoryLimitKB_','int',1),
-#         ],
-#         mapping = [
-#             ('TimeStart',[Variable('TimeStart_')]),
-#             ('TimeSteps',[Variable('TimeSteps_')]),
-#             ('NumPaths',[Variable('NumPaths_')]),
-#             ('updaters',[Variable('updaters_')]),
-#             ('evaluations',[Variable('evaluations_')]),
-#             ('RunTimeoutSeconds',[Variable('RunTimeoutSeconds_')]),
-#             ('MemoryLimitKB',[Variable('MemoryLimitKB_')]),
-#         ]
-#     ))
-#     objs.append(obj)
+    obj = Struct ('Model')
+    obj.attributes.append(Variable('TimeStart','float'))
+    obj.attributes.append(Variable('TimeSteps','int'))
+    obj.attributes.append(Variable('NumPaths','int'))
+    obj.attributes.append(Variable('updaters',Updater,list=True))
+    obj.attributes.append(Variable('evaluations',EvaluationPoint,list=True))
+    obj.attributes.append(Variable('RunTimeoutSeconds','float'))
+    obj.attributes.append(Variable('MemoryLimitKB','int'))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('TimeStart_','float',nan),
+            Variable('TimeSteps_','int',0),
+            Variable('NumPaths_','int',0),
+            Variable('updaters_',Updater,[],list=True),
+            Variable('evaluations_',EvaluationPoint,[],list=True),
+            Variable('RunTimeoutSeconds_','float',1),
+            Variable('MemoryLimitKB_','int',1),
+        ],
+        mapping = [
+            ('TimeStart',[Variable('TimeStart_')]),
+            ('TimeSteps',[Variable('TimeSteps_')]),
+            ('NumPaths',[Variable('NumPaths_')]),
+            ('updaters',[Variable('updaters_')]),
+            ('evaluations',[Variable('evaluations_')]),
+            ('RunTimeoutSeconds',[Variable('RunTimeoutSeconds_')]),
+            ('MemoryLimitKB',[Variable('MemoryLimitKB_')]),
+        ]
+    ))
+
+    obj.methods.append(Function (
+        'GetNumberOfUpdaters',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return len(self.updaters)
+''',
+            'cpp':
+'''
+return updaters.size();
+''',
+            'typescript':
+'''
+return this.updaters.length;
+''',
+            'csharp':
+'''
+return updaters.Count();
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetNumberOfStates',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return len([u for u in self.updaters if u.HasState()])
+''',
+            'cpp':
+'''
+int n {0};
+for(const auto &u: updaters)
+    n += u.HasState();
+return n;
+''',
+            'typescript':
+'''
+return this.updaters.filter(
+    u => u.HasState()
+).length;
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'Add',
+        'void',
+        args = [Variable('updater',Updater)],
+        code = {
+            'python':
+'''
+self.updaters.append(updater)
+# title = getattr(updater,'_title',None)
+# updater._equation = len(self.updaters)-1
+# updater._state = self.NumStatefulProcesses()-1 if updater.HasState() else None
+# self._titles[updater._state] = title
+# return updater
+'''
+        }
+    ))
+
+    objs.append(obj)
 
     for language in languages:
         write_objs(fname,f'{fname}_tests',language,objs)
@@ -376,10 +444,9 @@ def create_dto(fname, languages):
 
 if __name__ == '__main__':
 
-    # languages = ['python','cpp','typescript'] # OK
-    # languages = ['csharp']
-    languages = ['cpp']
+    languages = ['python','cpp','typescript']
     objs = create_dto('output/dto',languages)
     for lang1 in languages:
         for lang2 in languages:
+            print(f'Testing: {lang1} {lang2}')
             run_round_trip_tests(lang1,lang2,objs,'output')

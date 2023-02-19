@@ -7,11 +7,33 @@ from collections import namedtuple
 indent = ' '*4
 autogen_text = 'This is an automatically generated file.'
 
-Variable = namedtuple(
-    'Variable',
-    ['name','type','defval','list','optional'],
-    defaults=['',None,None,False,False]
-)
+class Variable:
+
+    def __init__ (
+        self,
+        name:str = '',
+        type     = None,
+        defval   = None,
+        list     = False,
+        optional = False,
+        skip_dto = False
+    ):
+        self.name     = name
+        self.type     = type
+        self.defval   = defval
+        self.list     = list
+        self.optional = optional
+        self.skip_dto = skip_dto
+
+    def TypeName (self) -> str:
+        if isinstance(self.type,Struct):
+            return self.type.name
+        else:
+            assert isinstance(self.type,str)
+            return self.type
+    
+    def __repr__ (self):
+        return f'Variable(name={self.name},type={self.type},defval={self.defval},list={self.list},optional={self.optional},skip_dto={self.skip_dto})'
 
 ext = {
     'cpp'           : 'cpp',
@@ -25,12 +47,11 @@ class Struct:
     
     Should contain info enough to generate code for all languages.
     '''
-    def __init__ (self, name:str, base=None, generate_json=True):
-        self.name = name
-        self.attributes = []
-        self.methods = []
-        self.base = base
-        self.generate_json = generate_json
+    def __init__ (self, name:str, base=None):
+        self.name : str = name
+        self.attributes : list[Variable] = []
+        self.methods : list [Function] = []
+        self.base : Struct|None = base
     def __repr__ (self):
         return f"Struct('{self.name}',base={self.base}) #attributes={len(self.attributes)} #methods={len(self.methods)}"
     def GetAllAttributes (self):
@@ -47,29 +68,17 @@ class CodeBlock:
 
 class Function:
 
-    class Call:
-        '''
-        FunctionCall('myfunc',[1,'arg_string',Variable('aa')])
-        '''
-        def __init__ (self,name:str,args=[]):
-            pass
-
-    class Code:
-        def __init__ (self,code):
-            pass
-
-    def __init__ (self, name:str, type:str, args=[], code={}, mapping=[]):
+    def __init__ (self, name:str, type:str, args=[], code={}, mapping=[], const=False):
         '''code: dictionary of language:str=>list[str]
         
         mapping: it is an array of (key,value) pairs
         '''
-        self.name = name
-        self.type = type
-        self.args = args
-
+        self.name : str = name
+        self.type : str = type
+        self.args : list[Variable] = args
         self.code = code
-        self.objs  = [] # Call,Code
         self.mapping = mapping
+        self.const = const
 
     def __repr__ (self):
         return f"Function('{self.name}','{self.type}',{self.args})"
@@ -77,7 +86,7 @@ class Function:
 def get_code (body):
     if body is None:
         return []
-    elif type(body)==str:
+    elif isinstance(body,str):
         return body.split('\n')
     else:
         return body
@@ -107,11 +116,11 @@ def run_round_trip_tests(lang1,lang2,objs,outdir):
         run_test(lang,'build')
 
     for obj in objs:
-        if type(obj)!=Struct:
+        if not isinstance(obj,Struct):
             continue
         struct_name = obj.name
-        json_file1 = f'{outdir}/{struct_name}-{lang1}-create.json'
+        json_file1 = f'{outdir}/{struct_name}-created-by-{lang1}.json'
         run_test(lang1,'create',struct_name,json_file1)
-        json_file2 = f'{outdir}/{struct_name}-{lang1}-{lang2}-convert.json'
+        json_file2 = f'{outdir}/{struct_name}-created-by-{lang1}-converted-by-{lang2}.json'
         run_test(lang2,'convert',struct_name,json_file1,json_file2) 
         run_test(lang1,'compare',struct_name,json_file1,json_file2)
