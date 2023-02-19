@@ -85,7 +85,6 @@ def Constructor_typescript(ctor:Function,base:Struct):
 
     for arg in ctor.args:
         if arg.defval is not None:
-            code.append(f'{indent}// defval: {arg.defval}')
             if isinstance(arg.defval,Variable) and isinstance(arg.defval.type,Struct):
                 defval = f' = new {typescript_value_to_string(arg.defval)}'
             else:
@@ -183,7 +182,6 @@ def Struct_equal_typescript(self:Struct):
         elif attr.list:
             code.append(f'{indent*1}if(!list_equal(a.{attr.name},b.{attr.name},{attr.TypeName()}_equal)) return false;')
         else:
-            code.append(f'{indent*lvl}// ')
             code.append(f'{indent*lvl}if(!{attr.TypeName()}_equal(a.{attr.name},b.{attr.name})) return false;')
     code.append(f'{indent*1}return true;')
     code.append(f'}}')
@@ -374,12 +372,28 @@ function random_{obj.name} () : {obj.name} {{
 '''.split('\n'))
 
         code_construct_random.extend(f'''
+function random_optional_{obj.name} () : {obj.name}|undefined {{
+    if(yes_no())
+        return undefined;
+    return random_{obj.name} ();
+}}
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
 function random_list_{obj.name} (min:number = 0, max:number = 3) : {obj.name}[] {{
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:{obj.name}[] = [];
     for(let i=0; i<size; i++)
         list.push(random_{obj.name}());
     return list;
+}}
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
+function random_optional_list_{obj.name} () : {obj.name}[]|undefined {{
+    if(yes_no())
+        return undefined;
+    return random_list_{obj.name} ();
 }}
 '''.split('\n'))
 

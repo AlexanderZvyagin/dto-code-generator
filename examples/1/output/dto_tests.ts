@@ -103,12 +103,26 @@ function random_UpdaterDoc () : UpdaterDoc {
 }
 
 
+function random_optional_UpdaterDoc () : UpdaterDoc|undefined {
+    if(yes_no())
+        return undefined;
+    return random_UpdaterDoc ();
+}
+
+
 function random_list_UpdaterDoc (min:number = 0, max:number = 3) : UpdaterDoc[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:UpdaterDoc[] = [];
     for(let i=0; i<size; i++)
         list.push(random_UpdaterDoc());
     return list;
+}
+
+
+function random_optional_list_UpdaterDoc () : UpdaterDoc[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_UpdaterDoc ();
 }
 
 
@@ -123,12 +137,26 @@ function random_UpdaterDto () : UpdaterDto {
 }
 
 
+function random_optional_UpdaterDto () : UpdaterDto|undefined {
+    if(yes_no())
+        return undefined;
+    return random_UpdaterDto ();
+}
+
+
 function random_list_UpdaterDto (min:number = 0, max:number = 3) : UpdaterDto[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:UpdaterDto[] = [];
     for(let i=0; i<size; i++)
         list.push(random_UpdaterDto());
     return list;
+}
+
+
+function random_optional_list_UpdaterDto () : UpdaterDto[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_UpdaterDto ();
 }
 
 
@@ -143,12 +171,26 @@ function random_Updater () : Updater {
 }
 
 
+function random_optional_Updater () : Updater|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Updater ();
+}
+
+
 function random_list_Updater (min:number = 0, max:number = 3) : Updater[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:Updater[] = [];
     for(let i=0; i<size; i++)
         list.push(random_Updater());
     return list;
+}
+
+
+function random_optional_list_Updater () : Updater[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Updater ();
 }
 
 
@@ -160,12 +202,26 @@ function random_IndependentGaussian () : IndependentGaussian {
 }
 
 
+function random_optional_IndependentGaussian () : IndependentGaussian|undefined {
+    if(yes_no())
+        return undefined;
+    return random_IndependentGaussian ();
+}
+
+
 function random_list_IndependentGaussian (min:number = 0, max:number = 3) : IndependentGaussian[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:IndependentGaussian[] = [];
     for(let i=0; i<size; i++)
         list.push(random_IndependentGaussian());
     return list;
+}
+
+
+function random_optional_list_IndependentGaussian () : IndependentGaussian[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_IndependentGaussian ();
 }
 
 
@@ -179,12 +235,26 @@ function random_CorrelatedGaussian () : CorrelatedGaussian {
 }
 
 
+function random_optional_CorrelatedGaussian () : CorrelatedGaussian|undefined {
+    if(yes_no())
+        return undefined;
+    return random_CorrelatedGaussian ();
+}
+
+
 function random_list_CorrelatedGaussian (min:number = 0, max:number = 3) : CorrelatedGaussian[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:CorrelatedGaussian[] = [];
     for(let i=0; i<size; i++)
         list.push(random_CorrelatedGaussian());
     return list;
+}
+
+
+function random_optional_list_CorrelatedGaussian () : CorrelatedGaussian[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_CorrelatedGaussian ();
 }
 
 
@@ -201,12 +271,26 @@ function random_Barrier () : Barrier {
 }
 
 
+function random_optional_Barrier () : Barrier|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Barrier ();
+}
+
+
 function random_list_Barrier (min:number = 0, max:number = 3) : Barrier[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:Barrier[] = [];
     for(let i=0; i<size; i++)
         list.push(random_Barrier());
     return list;
+}
+
+
+function random_optional_list_Barrier () : Barrier[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Barrier ();
 }
 
 
@@ -221,6 +305,13 @@ function random_HistogramAxis () : HistogramAxis {
 }
 
 
+function random_optional_HistogramAxis () : HistogramAxis|undefined {
+    if(yes_no())
+        return undefined;
+    return random_HistogramAxis ();
+}
+
+
 function random_list_HistogramAxis (min:number = 0, max:number = 3) : HistogramAxis[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:HistogramAxis[] = [];
@@ -230,12 +321,26 @@ function random_list_HistogramAxis (min:number = 0, max:number = 3) : HistogramA
 }
 
 
+function random_optional_list_HistogramAxis () : HistogramAxis[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_HistogramAxis ();
+}
+
+
 function random_Histogram () : Histogram {
     return new Histogram (
         random_HistogramAxis(),
-        random_HistogramAxis()
+        random_optional_HistogramAxis()
 
     );
+}
+
+
+function random_optional_Histogram () : Histogram|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Histogram ();
 }
 
 
@@ -248,14 +353,28 @@ function random_list_Histogram (min:number = 0, max:number = 3) : Histogram[] {
 }
 
 
+function random_optional_list_Histogram () : Histogram[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Histogram ();
+}
+
+
 function random_EvaluationPoint () : EvaluationPoint {
     return new EvaluationPoint (
         random_int(),
         random_float(),
-        random_float(),
-        random_float()
+        random_optional_float(),
+        random_optional_float()
 
     );
+}
+
+
+function random_optional_EvaluationPoint () : EvaluationPoint|undefined {
+    if(yes_no())
+        return undefined;
+    return random_EvaluationPoint ();
 }
 
 
@@ -265,6 +384,13 @@ function random_list_EvaluationPoint (min:number = 0, max:number = 3) : Evaluati
     for(let i=0; i<size; i++)
         list.push(random_EvaluationPoint());
     return list;
+}
+
+
+function random_optional_list_EvaluationPoint () : EvaluationPoint[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_EvaluationPoint ();
 }
 
 
@@ -283,12 +409,26 @@ function random_EvaluationResults () : EvaluationResults {
 }
 
 
+function random_optional_EvaluationResults () : EvaluationResults|undefined {
+    if(yes_no())
+        return undefined;
+    return random_EvaluationResults ();
+}
+
+
 function random_list_EvaluationResults (min:number = 0, max:number = 3) : EvaluationResults[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:EvaluationResults[] = [];
     for(let i=0; i<size; i++)
         list.push(random_EvaluationResults());
     return list;
+}
+
+
+function random_optional_list_EvaluationResults () : EvaluationResults[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_EvaluationResults ();
 }
 
 
@@ -303,12 +443,26 @@ function random_Parameter () : Parameter {
 }
 
 
+function random_optional_Parameter () : Parameter|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Parameter ();
+}
+
+
 function random_list_Parameter (min:number = 0, max:number = 3) : Parameter[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:Parameter[] = [];
     for(let i=0; i<size; i++)
         list.push(random_Parameter());
     return list;
+}
+
+
+function random_optional_list_Parameter () : Parameter[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Parameter ();
 }
 
 
@@ -326,12 +480,26 @@ function random_Model () : Model {
 }
 
 
+function random_optional_Model () : Model|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Model ();
+}
+
+
 function random_list_Model (min:number = 0, max:number = 3) : Model[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:Model[] = [];
     for(let i=0; i<size; i++)
         list.push(random_Model());
     return list;
+}
+
+
+function random_optional_list_Model () : Model[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Model ();
 }
 
 

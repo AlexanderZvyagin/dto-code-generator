@@ -437,7 +437,7 @@ public:
     
     Histogram (
         HistogramAxis x = HistogramAxis(),
-        HistogramAxis y = HistogramAxis()
+        std::optional<HistogramAxis> y = {}
     )
     : x (
         x
@@ -488,15 +488,15 @@ public:
 
     int state;
     float time;
-    float value;
-    float error;
+    std::optional<float> value;
+    std::optional<float> error;
 
     
     EvaluationPoint (
         int state_ = -88,
         float time_ = NAN,
-        float value_ = NAN,
-        float error_ = NAN
+        std::optional<float> value_ = {},
+        std::optional<float> error_ = {}
     )
     : state (
         state_
@@ -513,6 +513,52 @@ public:
     {
     }
 
+    int GetState (
+    ) const
+    {
+        
+        return state;
+        
+    }
+
+    int GetTime (
+    ) const
+    {
+        
+        return time;
+        
+    }
+
+    float GetValue (
+    ) const
+    {
+        
+        if( not value.has_value() )
+            throw std::invalid_argument("value");
+        return value.value();
+        
+    }
+
+    float GetError (
+    ) const
+    {
+        
+        if( not error.has_value() )
+            throw std::invalid_argument("error");
+        return error.value();
+        
+    }
+
+    EvaluationPoint Add (
+        Histogram histogram
+    )
+    {
+        
+        // histograms.push_back(histogram);
+        return *this;
+        
+    }
+
     bool operator == (const EvaluationPoint &other) const {
         if (state != other.state) return false;
         if (time != other.time) return false;
@@ -525,8 +571,10 @@ public:
 void to_json(json &j, const EvaluationPoint &obj) {
     j["state"] = obj.state;
     j["time"] = obj.time;
-    j["value"] = obj.value;
-    j["error"] = obj.error;
+    if(obj.value.has_value())
+        j["value"] = obj.value.value();
+    if(obj.error.has_value())
+        j["error"] = obj.error.value();
 }
 
 std::string to_json(const EvaluationPoint &obj) {
@@ -537,8 +585,10 @@ std::string to_json(const EvaluationPoint &obj) {
 void from_json(const json &j, EvaluationPoint &obj) {
     j.at("state").get_to(obj.state);
     j.at("time").get_to(obj.time);
-    j.at("value").get_to(obj.value);
-    j.at("error").get_to(obj.error);
+    if(auto it=j.find("value"); it!=j.end() and !it->is_null())
+        obj.value = *it;
+    if(auto it=j.find("error"); it!=j.end() and !it->is_null())
+        obj.error = *it;
 }
 EvaluationPoint EvaluationPoint_from_json(const json &j) {
     EvaluationPoint obj;

@@ -236,8 +236,8 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('x','HistogramAxis',Variable('HistogramAxis()',HistogramAxis)),
-            Variable('y','HistogramAxis',Variable('HistogramAxis()',HistogramAxis)),
+            Variable('x',HistogramAxis,Variable('HistogramAxis()',HistogramAxis)),
+            Variable('y',HistogramAxis,None,optional=True),
         ],
         mapping = [
             ('x',[Variable('x')]),
@@ -258,18 +258,20 @@ void from_json(const json &j, std::vector<Histogram> &u) {
 
     obj = Struct ('EvaluationPoint')
     EvaluationPoint = obj
-    obj.attributes.append(Variable('state','int',None))
-    obj.attributes.append(Variable('time','float',None))
-    obj.attributes.append(Variable('value','float',None))
-    obj.attributes.append(Variable('error','float',None))
+    obj.attributes.append(Variable('state','int'))
+    obj.attributes.append(Variable('time','float'))
+    obj.attributes.append(Variable('value','float',optional=True))
+    obj.attributes.append(Variable('error','float',optional=True))
+    # obj.attributes.append(Variable('histograms',Histogram,list=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
             Variable('state_','int',-88),
             Variable('time_','float',nan),
-            Variable('value_','float',nan),
-            Variable('error_','float',nan),
+            Variable('value_','float',None,optional=True),
+            Variable('error_','float',None,optional=True),
+            # Variable('histogram_',Histogram),
         ],
         mapping = [
             ('state',[Variable('state_')]),
@@ -277,6 +279,116 @@ void from_json(const json &j, std::vector<Histogram> &u) {
             ('value',[Variable('value_')]),
             ('error',[Variable('error_')]),
         ]
+    ))
+    obj.methods.append(Function (
+        'GetState',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return self.state
+''',
+            'cpp':
+'''
+return state;
+''',
+            'typescript':
+'''
+return this.state;
+''',
+        }
+    ))
+    obj.methods.append(Function (
+        'GetTime',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return self.time
+''',
+            'cpp':
+'''
+return time;
+''',
+            'typescript':
+'''
+return this.time;
+''',
+        }
+    ))
+    obj.methods.append(Function (
+        'GetValue',
+        'float',
+        const = True,
+        code = {
+            'python':
+'''
+if self.value is None:
+    raise ValueError()
+return self.value
+''',
+            'cpp':
+'''
+if( not value.has_value() )
+    throw std::invalid_argument("value");
+return value.value();
+''',
+            'typescript':
+'''
+if( this.value === undefined )
+    throw new Error("value");
+return this.value;
+''',
+        }
+    ))
+    obj.methods.append(Function (
+        'GetError',
+        'float',
+        const = True,
+        code = {
+            'python':
+'''
+if self.error is None:
+    raise ValueError()
+return self.error
+''',
+            'cpp':
+'''
+if( not error.has_value() )
+    throw std::invalid_argument("error");
+return error.value();
+''',
+            'typescript':
+'''
+if( this.error === undefined )
+    throw new Error("error");
+return this.error;
+''',
+        }
+    ))
+    obj.methods.append(Function (
+        'Add',
+        EvaluationPoint,
+        args = [Variable('histogram',Histogram)],
+        code = {
+            'python':
+'''
+# self.histograms.append(histogram)
+return self
+''',
+            'cpp':
+'''
+// histograms.push_back(histogram);
+return *this;
+''',
+            'typescript':
+'''
+// this.histograms.push(histogram);
+return this;
+''',
+        }
     ))
     objs.append(obj)
 

@@ -170,6 +170,13 @@ UpdaterDoc random_UpdaterDoc (void) {
 }
 
 
+std::optional<UpdaterDoc> random_optional_UpdaterDoc (void) {
+    if(yes_no())
+        return {};
+    return random_UpdaterDoc ();
+}
+
+
 std::vector<UpdaterDoc> random_list_UpdaterDoc (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<UpdaterDoc> list;
@@ -182,11 +189,7 @@ std::vector<UpdaterDoc> random_list_UpdaterDoc (int min = 0, int max = 3) {
 std::vector<UpdaterDoc> random_optional_list_UpdaterDoc (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<UpdaterDoc> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_UpdaterDoc());
-    return list;
+    return random_list_UpdaterDoc (min,max);
 }
 
 
@@ -198,6 +201,13 @@ UpdaterDto random_UpdaterDto (void) {
         random_optional_float()
 
     );
+}
+
+
+std::optional<UpdaterDto> random_optional_UpdaterDto (void) {
+    if(yes_no())
+        return {};
+    return random_UpdaterDto ();
 }
 
 
@@ -213,11 +223,7 @@ std::vector<UpdaterDto> random_list_UpdaterDto (int min = 0, int max = 3) {
 std::vector<UpdaterDto> random_optional_list_UpdaterDto (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<UpdaterDto> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_UpdaterDto());
-    return list;
+    return random_list_UpdaterDto (min,max);
 }
 
 
@@ -229,6 +235,13 @@ Updater random_Updater (void) {
         random_float()
 
     );
+}
+
+
+std::optional<Updater> random_optional_Updater (void) {
+    if(yes_no())
+        return {};
+    return random_Updater ();
 }
 
 
@@ -244,11 +257,7 @@ std::vector<Updater> random_list_Updater (int min = 0, int max = 3) {
 std::vector<Updater> random_optional_list_Updater (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<Updater> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_Updater());
-    return list;
+    return random_list_Updater (min,max);
 }
 
 
@@ -257,6 +266,13 @@ IndependentGaussian random_IndependentGaussian (void) {
         random_list_int()
 
     );
+}
+
+
+std::optional<IndependentGaussian> random_optional_IndependentGaussian (void) {
+    if(yes_no())
+        return {};
+    return random_IndependentGaussian ();
 }
 
 
@@ -272,11 +288,7 @@ std::vector<IndependentGaussian> random_list_IndependentGaussian (int min = 0, i
 std::vector<IndependentGaussian> random_optional_list_IndependentGaussian (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<IndependentGaussian> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_IndependentGaussian());
-    return list;
+    return random_list_IndependentGaussian (min,max);
 }
 
 
@@ -287,6 +299,13 @@ CorrelatedGaussian random_CorrelatedGaussian (void) {
         random_int()
 
     );
+}
+
+
+std::optional<CorrelatedGaussian> random_optional_CorrelatedGaussian (void) {
+    if(yes_no())
+        return {};
+    return random_CorrelatedGaussian ();
 }
 
 
@@ -302,11 +321,7 @@ std::vector<CorrelatedGaussian> random_list_CorrelatedGaussian (int min = 0, int
 std::vector<CorrelatedGaussian> random_optional_list_CorrelatedGaussian (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<CorrelatedGaussian> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_CorrelatedGaussian());
-    return list;
+    return random_list_CorrelatedGaussian (min,max);
 }
 
 
@@ -323,6 +338,13 @@ Barrier random_Barrier (void) {
 }
 
 
+std::optional<Barrier> random_optional_Barrier (void) {
+    if(yes_no())
+        return {};
+    return random_Barrier ();
+}
+
+
 std::vector<Barrier> random_list_Barrier (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<Barrier> list;
@@ -335,11 +357,7 @@ std::vector<Barrier> random_list_Barrier (int min = 0, int max = 3) {
 std::vector<Barrier> random_optional_list_Barrier (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<Barrier> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_Barrier());
-    return list;
+    return random_list_Barrier (min,max);
 }
 
 
@@ -351,6 +369,13 @@ HistogramAxis random_HistogramAxis (void) {
         random_float()
 
     );
+}
+
+
+std::optional<HistogramAxis> random_optional_HistogramAxis (void) {
+    if(yes_no())
+        return {};
+    return random_HistogramAxis ();
 }
 
 
@@ -366,20 +391,23 @@ std::vector<HistogramAxis> random_list_HistogramAxis (int min = 0, int max = 3) 
 std::vector<HistogramAxis> random_optional_list_HistogramAxis (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<HistogramAxis> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_HistogramAxis());
-    return list;
+    return random_list_HistogramAxis (min,max);
 }
 
 
 Histogram random_Histogram (void) {
     return Histogram (
         random_HistogramAxis(),
-        random_HistogramAxis()
+        random_optional_HistogramAxis()
 
     );
+}
+
+
+std::optional<Histogram> random_optional_Histogram (void) {
+    if(yes_no())
+        return {};
+    return random_Histogram ();
 }
 
 
@@ -395,11 +423,7 @@ std::vector<Histogram> random_list_Histogram (int min = 0, int max = 3) {
 std::vector<Histogram> random_optional_list_Histogram (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<Histogram> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_Histogram());
-    return list;
+    return random_list_Histogram (min,max);
 }
 
 
@@ -407,10 +431,17 @@ EvaluationPoint random_EvaluationPoint (void) {
     return EvaluationPoint (
         random_int(),
         random_float(),
-        random_float(),
-        random_float()
+        random_optional_float(),
+        random_optional_float()
 
     );
+}
+
+
+std::optional<EvaluationPoint> random_optional_EvaluationPoint (void) {
+    if(yes_no())
+        return {};
+    return random_EvaluationPoint ();
 }
 
 
@@ -426,11 +457,7 @@ std::vector<EvaluationPoint> random_list_EvaluationPoint (int min = 0, int max =
 std::vector<EvaluationPoint> random_optional_list_EvaluationPoint (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<EvaluationPoint> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_EvaluationPoint());
-    return list;
+    return random_list_EvaluationPoint (min,max);
 }
 
 
@@ -449,6 +476,13 @@ EvaluationResults random_EvaluationResults (void) {
 }
 
 
+std::optional<EvaluationResults> random_optional_EvaluationResults (void) {
+    if(yes_no())
+        return {};
+    return random_EvaluationResults ();
+}
+
+
 std::vector<EvaluationResults> random_list_EvaluationResults (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<EvaluationResults> list;
@@ -461,11 +495,7 @@ std::vector<EvaluationResults> random_list_EvaluationResults (int min = 0, int m
 std::vector<EvaluationResults> random_optional_list_EvaluationResults (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<EvaluationResults> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_EvaluationResults());
-    return list;
+    return random_list_EvaluationResults (min,max);
 }
 
 
@@ -477,6 +507,13 @@ Parameter random_Parameter (void) {
         random_float()
 
     );
+}
+
+
+std::optional<Parameter> random_optional_Parameter (void) {
+    if(yes_no())
+        return {};
+    return random_Parameter ();
 }
 
 
@@ -492,11 +529,7 @@ std::vector<Parameter> random_list_Parameter (int min = 0, int max = 3) {
 std::vector<Parameter> random_optional_list_Parameter (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<Parameter> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_Parameter());
-    return list;
+    return random_list_Parameter (min,max);
 }
 
 
@@ -514,6 +547,13 @@ Model random_Model (void) {
 }
 
 
+std::optional<Model> random_optional_Model (void) {
+    if(yes_no())
+        return {};
+    return random_Model ();
+}
+
+
 std::vector<Model> random_list_Model (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<Model> list;
@@ -526,11 +566,7 @@ std::vector<Model> random_list_Model (int min = 0, int max = 3) {
 std::vector<Model> random_optional_list_Model (int min = 0, int max = 3) {
     if(yes_no())
         return {};
-    const auto size = random_int(min,max);
-    std::vector<Model> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_Model());
-    return list;
+    return random_list_Model (min,max);
 }
 
 

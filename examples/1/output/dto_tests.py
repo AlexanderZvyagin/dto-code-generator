@@ -2,44 +2,45 @@
 import sys, random, uuid
 from output.dto import *
 
-def random_string(len_max=5):
+def random_string(len_max:int = 5) -> str:
     return str(uuid.uuid4())[0:random.randint(0,len_max)]
 
-def random_list_string(min = 0, max = 3):
+def random_list_string(min:int = 0, max:int = 3) -> list[str]:
     n = random.randint(min,max)
     return [random_string() for i in range(n)]
 
-def random_int (min = -1000, max = 1000):
+def random_int (min = -1000, max = 1000) -> int:
     return random.randint(min,max)
 
-def random_list_int(min = 0, max = 3):
+def yes_no () -> bool:
+    return random_int(0,1)
+
+def random_list_int(min:int = 0, max:int = 3) -> list[int]:
     n = random.randint(min,max)
     return [random_int() for i in range(n)]
 
-def random_optional_list_int(min = 0, max = 3):
-    if random.randint(0,1): return None
-    n = random.randint(min,max)
-    return [random_int() for i in range(n)]
+def random_optional_list_int(min:int = 0, max:int = 3) -> list[int]|None:
+    if yes_no(): return None
+    return random_list_int(min,max)
 
-def random_float (min = -1e6, max = 1e6):
+def random_float (min:float = -1e6, max:float = 1e6) -> float:
     return random_int()
     # FIXME
     # return random.uniform(min,max)
 
-def random_optional_float (min = -1e6, max = 1e6):
-    if random.randint(0,1): return None
+def random_optional_float (min = -1e6, max = 1e6) -> float|None:
+    if yes_no(): return None
     return random_int()
     # FIXME
     # return random.uniform(min,max)
 
-def random_list_float (min = 0, max = 3):
+def random_list_float (min:int = 0, max:int = 3) -> list[float]:
     n = random.randint(min,max)
     return [random_float() for i in range(n)]
 
-def random_optional_list_float (min = 0, max = 3):
-    if random.randint(0,1): return None
-    n = random.randint(min,max)
-    return [random_float() for i in range(n)]
+def random_optional_list_float (min = 0, max = 3) -> list[float]|None:
+    if yes_no(): return None
+    return random_list_float(min,max)
 
 
 def random_UpdaterDoc ():
@@ -54,9 +55,21 @@ def random_UpdaterDoc ():
     )
 
 
-def random_list_UpdaterDoc (min:int = 0, max:int = 3):
+def random_optional_UpdaterDoc () -> UpdaterDoc|None:
+    if yes_no():
+        return None
+    return random_UpdaterDoc()
+
+
+def random_list_UpdaterDoc (min:int = 0, max:int = 3) -> list[UpdaterDoc]:
     size = random.randint(min,max)
     return [random_UpdaterDoc() for i in range(size)]
+
+
+def random_optional_list_UpdaterDoc (min:int = 0, max:int = 3) -> list[UpdaterDoc]|None:
+    if yes_no():
+        return None
+    return random_list_UpdaterDoc(min,max)
 
 
 def random_UpdaterDto ():
@@ -69,9 +82,21 @@ def random_UpdaterDto ():
     )
 
 
-def random_list_UpdaterDto (min:int = 0, max:int = 3):
+def random_optional_UpdaterDto () -> UpdaterDto|None:
+    if yes_no():
+        return None
+    return random_UpdaterDto()
+
+
+def random_list_UpdaterDto (min:int = 0, max:int = 3) -> list[UpdaterDto]:
     size = random.randint(min,max)
     return [random_UpdaterDto() for i in range(size)]
+
+
+def random_optional_list_UpdaterDto (min:int = 0, max:int = 3) -> list[UpdaterDto]|None:
+    if yes_no():
+        return None
+    return random_list_UpdaterDto(min,max)
 
 
 def random_Updater ():
@@ -84,9 +109,21 @@ def random_Updater ():
     )
 
 
-def random_list_Updater (min:int = 0, max:int = 3):
+def random_optional_Updater () -> Updater|None:
+    if yes_no():
+        return None
+    return random_Updater()
+
+
+def random_list_Updater (min:int = 0, max:int = 3) -> list[Updater]:
     size = random.randint(min,max)
     return [random_Updater() for i in range(size)]
+
+
+def random_optional_list_Updater (min:int = 0, max:int = 3) -> list[Updater]|None:
+    if yes_no():
+        return None
+    return random_list_Updater(min,max)
 
 
 def random_IndependentGaussian ():
@@ -96,9 +133,21 @@ def random_IndependentGaussian ():
     )
 
 
-def random_list_IndependentGaussian (min:int = 0, max:int = 3):
+def random_optional_IndependentGaussian () -> IndependentGaussian|None:
+    if yes_no():
+        return None
+    return random_IndependentGaussian()
+
+
+def random_list_IndependentGaussian (min:int = 0, max:int = 3) -> list[IndependentGaussian]:
     size = random.randint(min,max)
     return [random_IndependentGaussian() for i in range(size)]
+
+
+def random_optional_list_IndependentGaussian (min:int = 0, max:int = 3) -> list[IndependentGaussian]|None:
+    if yes_no():
+        return None
+    return random_list_IndependentGaussian(min,max)
 
 
 def random_CorrelatedGaussian ():
@@ -110,9 +159,21 @@ def random_CorrelatedGaussian ():
     )
 
 
-def random_list_CorrelatedGaussian (min:int = 0, max:int = 3):
+def random_optional_CorrelatedGaussian () -> CorrelatedGaussian|None:
+    if yes_no():
+        return None
+    return random_CorrelatedGaussian()
+
+
+def random_list_CorrelatedGaussian (min:int = 0, max:int = 3) -> list[CorrelatedGaussian]:
     size = random.randint(min,max)
     return [random_CorrelatedGaussian() for i in range(size)]
+
+
+def random_optional_list_CorrelatedGaussian (min:int = 0, max:int = 3) -> list[CorrelatedGaussian]|None:
+    if yes_no():
+        return None
+    return random_list_CorrelatedGaussian(min,max)
 
 
 def random_Barrier ():
@@ -127,9 +188,21 @@ def random_Barrier ():
     )
 
 
-def random_list_Barrier (min:int = 0, max:int = 3):
+def random_optional_Barrier () -> Barrier|None:
+    if yes_no():
+        return None
+    return random_Barrier()
+
+
+def random_list_Barrier (min:int = 0, max:int = 3) -> list[Barrier]:
     size = random.randint(min,max)
     return [random_Barrier() for i in range(size)]
+
+
+def random_optional_list_Barrier (min:int = 0, max:int = 3) -> list[Barrier]|None:
+    if yes_no():
+        return None
+    return random_list_Barrier(min,max)
 
 
 def random_HistogramAxis ():
@@ -142,37 +215,73 @@ def random_HistogramAxis ():
     )
 
 
-def random_list_HistogramAxis (min:int = 0, max:int = 3):
+def random_optional_HistogramAxis () -> HistogramAxis|None:
+    if yes_no():
+        return None
+    return random_HistogramAxis()
+
+
+def random_list_HistogramAxis (min:int = 0, max:int = 3) -> list[HistogramAxis]:
     size = random.randint(min,max)
     return [random_HistogramAxis() for i in range(size)]
+
+
+def random_optional_list_HistogramAxis (min:int = 0, max:int = 3) -> list[HistogramAxis]|None:
+    if yes_no():
+        return None
+    return random_list_HistogramAxis(min,max)
 
 
 def random_Histogram ():
     return Histogram (
         random_HistogramAxis(),
-        random_HistogramAxis()
+        random_optional_HistogramAxis()
 
     )
 
 
-def random_list_Histogram (min:int = 0, max:int = 3):
+def random_optional_Histogram () -> Histogram|None:
+    if yes_no():
+        return None
+    return random_Histogram()
+
+
+def random_list_Histogram (min:int = 0, max:int = 3) -> list[Histogram]:
     size = random.randint(min,max)
     return [random_Histogram() for i in range(size)]
+
+
+def random_optional_list_Histogram (min:int = 0, max:int = 3) -> list[Histogram]|None:
+    if yes_no():
+        return None
+    return random_list_Histogram(min,max)
 
 
 def random_EvaluationPoint ():
     return EvaluationPoint (
         random_int(),
         random_float(),
-        random_float(),
-        random_float()
+        random_optional_float(),
+        random_optional_float()
 
     )
 
 
-def random_list_EvaluationPoint (min:int = 0, max:int = 3):
+def random_optional_EvaluationPoint () -> EvaluationPoint|None:
+    if yes_no():
+        return None
+    return random_EvaluationPoint()
+
+
+def random_list_EvaluationPoint (min:int = 0, max:int = 3) -> list[EvaluationPoint]:
     size = random.randint(min,max)
     return [random_EvaluationPoint() for i in range(size)]
+
+
+def random_optional_list_EvaluationPoint (min:int = 0, max:int = 3) -> list[EvaluationPoint]|None:
+    if yes_no():
+        return None
+    return random_list_EvaluationPoint(min,max)
 
 
 def random_EvaluationResults ():
@@ -189,9 +298,21 @@ def random_EvaluationResults ():
     )
 
 
-def random_list_EvaluationResults (min:int = 0, max:int = 3):
+def random_optional_EvaluationResults () -> EvaluationResults|None:
+    if yes_no():
+        return None
+    return random_EvaluationResults()
+
+
+def random_list_EvaluationResults (min:int = 0, max:int = 3) -> list[EvaluationResults]:
     size = random.randint(min,max)
     return [random_EvaluationResults() for i in range(size)]
+
+
+def random_optional_list_EvaluationResults (min:int = 0, max:int = 3) -> list[EvaluationResults]|None:
+    if yes_no():
+        return None
+    return random_list_EvaluationResults(min,max)
 
 
 def random_Parameter ():
@@ -204,9 +325,21 @@ def random_Parameter ():
     )
 
 
-def random_list_Parameter (min:int = 0, max:int = 3):
+def random_optional_Parameter () -> Parameter|None:
+    if yes_no():
+        return None
+    return random_Parameter()
+
+
+def random_list_Parameter (min:int = 0, max:int = 3) -> list[Parameter]:
     size = random.randint(min,max)
     return [random_Parameter() for i in range(size)]
+
+
+def random_optional_list_Parameter (min:int = 0, max:int = 3) -> list[Parameter]|None:
+    if yes_no():
+        return None
+    return random_list_Parameter(min,max)
 
 
 def random_Model ():
@@ -222,9 +355,21 @@ def random_Model ():
     )
 
 
-def random_list_Model (min:int = 0, max:int = 3):
+def random_optional_Model () -> Model|None:
+    if yes_no():
+        return None
+    return random_Model()
+
+
+def random_list_Model (min:int = 0, max:int = 3) -> list[Model]:
     size = random.randint(min,max)
     return [random_Model() for i in range(size)]
+
+
+def random_optional_list_Model (min:int = 0, max:int = 3) -> list[Model]|None:
+    if yes_no():
+        return None
+    return random_list_Model(min,max)
 
 
 def test_round_trip_python(command, struct_name, file1_name, file2_name):

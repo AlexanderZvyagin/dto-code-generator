@@ -241,6 +241,14 @@ def Tests_cpp (objs):
 '''.split('\n'))
 
         code_construct_random.extend(f'''
+std::optional<{obj.name}> random_optional_{obj.name} (void) {{
+    if(yes_no())
+        return {{}};
+    return random_{obj.name} ();
+}}
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
 std::vector<{obj.name}> random_list_{obj.name} (int min = 0, int max = 3) {{
     const auto size = random_int(min,max);
     std::vector<{obj.name}> list;
@@ -254,11 +262,7 @@ std::vector<{obj.name}> random_list_{obj.name} (int min = 0, int max = 3) {{
 std::vector<{obj.name}> random_optional_list_{obj.name} (int min = 0, int max = 3) {{
     if(yes_no())
         return {{}};
-    const auto size = random_int(min,max);
-    std::vector<{obj.name}> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_{obj.name}());
-    return list;
+    return random_list_{obj.name} (min,max);
 }}
 '''.split('\n'))
 

@@ -38,17 +38,11 @@ class UpdaterDoc {
     nrefs_min : number;
 
     constructor(
-        // defval: 
         name_ : string  = "",
-        // defval: 
         title_ : string  = "",
-        // defval: 
         doc_md_ : string  = "",
-        // defval: 
         start_ : string  = "",
-        // defval: -88
         nargs_min_ : number  = -88,
-        // defval: -88
         nrefs_min_ : number  = -88,
     ){
         this.name = name_;
@@ -63,17 +57,11 @@ class UpdaterDoc {
 }
 export function
 UpdaterDoc_equal (a: UpdaterDoc, b: UpdaterDoc) : boolean {
-    // 
     if(!string_equal(a.name,b.name)) return false;
-    // 
     if(!string_equal(a.title,b.title)) return false;
-    // 
     if(!string_equal(a.doc_md,b.doc_md)) return false;
-    // 
     if(!string_equal(a.start,b.start)) return false;
-    // 
     if(!int_equal(a.nargs_min,b.nargs_min)) return false;
-    // 
     if(!int_equal(a.nrefs_min,b.nrefs_min)) return false;
     return true;
 }
@@ -138,7 +126,6 @@ class UpdaterDto {
     start : number|undefined;
 
     constructor(
-        // defval: 
         name_ : string  = "",
         refs_ : number[]|undefined  = undefined,
         args_ : number[]|undefined  = undefined,
@@ -154,7 +141,6 @@ class UpdaterDto {
 }
 export function
 UpdaterDto_equal (a: UpdaterDto, b: UpdaterDto) : boolean {
-    // 
     if(!string_equal(a.name,b.name)) return false;
     if(a.refs===undefined && b.refs!==undefined) return false;
     if(a.refs!==undefined && b.refs===undefined) return false;
@@ -241,13 +227,9 @@ class Updater extends UpdaterDto {
     _state : number;
 
     constructor(
-        // defval: 
         name : string  = "",
-        // defval: []
         refs : number[]  = [],
-        // defval: []
         args : number[]  = [],
-        // defval: nan
         start : number  = Number.NaN,
     ){
         super(
@@ -281,9 +263,7 @@ class Updater extends UpdaterDto {
 export function
 Updater_equal (a: Updater, b: Updater) : boolean {
     if(!UpdaterDto_equal(a,b)) return false;
-    // 
     if(!int_equal(a._equation,b._equation)) return false;
-    // 
     if(!int_equal(a._state,b._state)) return false;
     return true;
 }
@@ -329,7 +309,6 @@ class IndependentGaussian extends Updater {
 
 
     constructor(
-        // defval: []
         refs_ : number[]  = [],
     ){
         super(
@@ -389,11 +368,8 @@ class CorrelatedGaussian extends Updater {
 
 
     constructor(
-        // defval: nan
         correlation : number  = Number.NaN,
-        // defval: -88
         state1 : number  = -88,
-        // defval: -88
         state2 : number  = -88,
     ){
         super(
@@ -453,17 +429,11 @@ class Barrier extends Updater {
 
 
     constructor(
-        // defval: -88
         underlying : number  = -88,
-        // defval: nan
         start : number  = Number.NaN,
-        // defval: nan
         level : number  = Number.NaN,
-        // defval: -88
         direction : number  = -88,
-        // defval: -88
         action : number  = -88,
-        // defval: nan
         value : number  = Number.NaN,
     ){
         super(
@@ -527,13 +497,9 @@ class HistogramAxis {
     max : number;
 
     constructor(
-        // defval: -88
         _state : number  = -88,
-        // defval: -88
         _nbins : number  = -88,
-        // defval: -88
         _min : number  = -88,
-        // defval: -88
         _max : number  = -88,
     ){
         this.state = _state;
@@ -546,13 +512,9 @@ class HistogramAxis {
 }
 export function
 HistogramAxis_equal (a: HistogramAxis, b: HistogramAxis) : boolean {
-    // 
     if(!int_equal(a.state,b.state)) return false;
-    // 
     if(!int_equal(a.nbins,b.nbins)) return false;
-    // 
     if(!float_equal(a.min,b.min)) return false;
-    // 
     if(!float_equal(a.max,b.max)) return false;
     return true;
 }
@@ -609,10 +571,8 @@ class Histogram {
     y : HistogramAxis|undefined;
 
     constructor(
-        // defval: Variable(name=HistogramAxis(),type=Struct('HistogramAxis',base=None) #attributes=4 #methods=1,defval=None,list=False,optional=False,skip_dto=False)
         x : HistogramAxis  = new HistogramAxis(),
-        // defval: Variable(name=HistogramAxis(),type=Struct('HistogramAxis',base=None) #attributes=4 #methods=1,defval=None,list=False,optional=False,skip_dto=False)
-        y : HistogramAxis  = new HistogramAxis(),
+        y : HistogramAxis|undefined  = undefined,
     ){
         this.x = x;
         this.y = y;
@@ -622,7 +582,6 @@ class Histogram {
 }
 export function
 Histogram_equal (a: Histogram, b: Histogram) : boolean {
-    // 
     if(!HistogramAxis_equal(a.x,b.x)) return false;
     if(a.y===undefined && b.y!==undefined) return false;
     if(a.y!==undefined && b.y===undefined) return false;
@@ -687,18 +646,14 @@ class EvaluationPoint {
 
     state : number;
     time : number;
-    value : number;
-    error : number;
+    value : number|undefined;
+    error : number|undefined;
 
     constructor(
-        // defval: -88
         state_ : number  = -88,
-        // defval: nan
         time_ : number  = Number.NaN,
-        // defval: nan
-        value_ : number  = Number.NaN,
-        // defval: nan
-        error_ : number  = Number.NaN,
+        value_ : number|undefined  = undefined,
+        error_ : number|undefined  = undefined,
     ){
         this.state = state_;
         this.time = time_;
@@ -707,17 +662,61 @@ class EvaluationPoint {
     
     }
 
+    GetState (
+    ) : number  {
+        
+        return this.state;
+        
+    }
+
+    GetTime (
+    ) : number  {
+        
+        return this.time;
+        
+    }
+
+    GetValue (
+    ) : number  {
+        
+        if( this.value === undefined )
+            throw new Error("value");
+        return this.value;
+        
+    }
+
+    GetError (
+    ) : number  {
+        
+        if( this.error === undefined )
+            throw new Error("error");
+        return this.error;
+        
+    }
+
+    Add (
+        
+        histogram : Histogram,
+    ) : EvaluationPoint  {
+        
+        // this.histograms.push(histogram);
+        return this;
+        
+    }
+
 }
 export function
 EvaluationPoint_equal (a: EvaluationPoint, b: EvaluationPoint) : boolean {
-    // 
     if(!int_equal(a.state,b.state)) return false;
-    // 
     if(!float_equal(a.time,b.time)) return false;
-    // 
-    if(!float_equal(a.value,b.value)) return false;
-    // 
-    if(!float_equal(a.error,b.error)) return false;
+    if(a.value===undefined && b.value!==undefined) return false;
+    if(a.value!==undefined && b.value===undefined) return false;
+    if(a.value!==undefined && b.value!==undefined)
+    if(!float_equal(a.value!,b.value!)) return false;
+    if(a.error===undefined && b.error!==undefined) return false;
+    if(a.error!==undefined && b.error===undefined) return false;
+    if(a.error!==undefined && b.error!==undefined)
+    if(!float_equal(a.error!,b.error!)) return false;
     return true;
 }
 
@@ -725,8 +724,10 @@ export function
 EvaluationPoint_fromJSON (j:any, obj: EvaluationPoint): void {
     obj.state = j["state"];
     obj.time = j["time"];
-    obj.value = j["value"];
-    obj.error = j["error"];
+    if("value" in j)
+        obj.value = j["value"];
+    if("error" in j)
+        obj.error = j["error"];
 }
 export function
 EvaluationPoint_fromJSON_string (jstr:string): EvaluationPoint {
@@ -739,16 +740,26 @@ export function
 EvaluationPoint_to_json(j:object, obj:EvaluationPoint) {
     j["state"] = obj.state;
     j["time"] = obj.time;
-    j["value"] = obj.value;
-    j["error"] = obj.error;
+    if( obj.value !== undefined) {
+        j["value"] = obj.value;
+    }
+    if( obj.error !== undefined) {
+        j["error"] = obj.error;
+    }
 }
 
 export function
 EvaluationPoint_from_json(j:object, obj:EvaluationPoint) {
     obj.state = j["state"]
     obj.time = j["time"]
-    obj.value = j["value"]
-    obj.error = j["error"]
+    if("value" in j)
+        obj.value = j["value"] as number|undefined;
+    else
+        obj.value = undefined;
+    if("error" in j)
+        obj.error = j["error"] as number|undefined;
+    else
+        obj.error = undefined;
 }
 
 export function
@@ -779,21 +790,13 @@ class EvaluationResults {
     histograms : Histogram[];
 
     constructor(
-        // defval: []
         names_ : string[]  = [],
-        // defval: []
         npaths_ : number[]  = [],
-        // defval: []
         mean_ : number[]  = [],
-        // defval: []
         stddev_ : number[]  = [],
-        // defval: []
         skewness_ : number[]  = [],
-        // defval: []
         time_points_ : number[]  = [],
-        // defval: []
         time_steps_ : number[]  = [],
-        // defval: []
         histograms_ : Histogram[]  = [],
     ){
         this.names = names_;
@@ -896,13 +899,9 @@ class Parameter {
     max : number;
 
     constructor(
-        // defval: nan
         value_ : number  = Number.NaN,
-        // defval: nan
         step_ : number  = Number.NaN,
-        // defval: nan
         min_ : number  = Number.NaN,
-        // defval: nan
         max_ : number  = Number.NaN,
     ){
         this.value = value_;
@@ -915,13 +914,9 @@ class Parameter {
 }
 export function
 Parameter_equal (a: Parameter, b: Parameter) : boolean {
-    // 
     if(!float_equal(a.value,b.value)) return false;
-    // 
     if(!float_equal(a.step,b.step)) return false;
-    // 
     if(!float_equal(a.min,b.min)) return false;
-    // 
     if(!float_equal(a.max,b.max)) return false;
     return true;
 }
@@ -983,19 +978,12 @@ class Model {
     MemoryLimitKB : number;
 
     constructor(
-        // defval: nan
         TimeStart_ : number  = Number.NaN,
-        // defval: 0
         TimeSteps_ : number  = 0,
-        // defval: 0
         NumPaths_ : number  = 0,
-        // defval: []
         updaters_ : Updater[]  = [],
-        // defval: []
         evaluations_ : EvaluationPoint[]  = [],
-        // defval: 1
         RunTimeoutSeconds_ : number  = 1,
-        // defval: 1
         MemoryLimitKB_ : number  = 1,
     ){
         this.TimeStart = TimeStart_;
@@ -1033,17 +1021,12 @@ class Model {
 }
 export function
 Model_equal (a: Model, b: Model) : boolean {
-    // 
     if(!float_equal(a.TimeStart,b.TimeStart)) return false;
-    // 
     if(!int_equal(a.TimeSteps,b.TimeSteps)) return false;
-    // 
     if(!int_equal(a.NumPaths,b.NumPaths)) return false;
     if(!list_equal(a.updaters,b.updaters,Updater_equal)) return false;
     if(!list_equal(a.evaluations,b.evaluations,EvaluationPoint_equal)) return false;
-    // 
     if(!float_equal(a.RunTimeoutSeconds,b.RunTimeoutSeconds)) return false;
-    // 
     if(!int_equal(a.MemoryLimitKB,b.MemoryLimitKB)) return false;
     return true;
 }

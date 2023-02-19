@@ -189,6 +189,7 @@ def Struct_from_json_python (self) -> list[str]:
         if isinstance(attr.type,Struct):
             if attr.optional and not attr.list:
                 code.append(f'{indent*1}if j.get("{attr.name}",None) is not None:')
+                code.append(f'{indent*2}obj.{attr.name} = {attr.TypeName()}()')
                 code.append(f'{indent*2}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
                 code.append(f'{indent*1}else:')
                 code.append(f'{indent*2}obj.{attr.name} = None')
@@ -259,9 +260,23 @@ def random_{obj.name} ():
 '''.split('\n'))
 
         code_construct_random.extend(f'''
-def random_list_{obj.name} (min:int = 0, max:int = 3):
+def random_optional_{obj.name} () -> {obj.name}|None:
+    if yes_no():
+        return None
+    return random_{obj.name}()
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
+def random_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]:
     size = random.randint(min,max)
     return [random_{obj.name}() for i in range(size)]
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
+def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]|None:
+    if yes_no():
+        return None
+    return random_list_{obj.name}(min,max)
 '''.split('\n'))
 
         code_create.append(f'''
@@ -305,44 +320,45 @@ python_test_template = '''
 import sys, random, uuid
 from output.dto import *
 
-def random_string(len_max=5):
+def random_string(len_max:int = 5) -> str:
     return str(uuid.uuid4())[0:random.randint(0,len_max)]
 
-def random_list_string(min = 0, max = 3):
+def random_list_string(min:int = 0, max:int = 3) -> list[str]:
     n = random.randint(min,max)
     return [random_string() for i in range(n)]
 
-def random_int (min = -1000, max = 1000):
+def random_int (min = -1000, max = 1000) -> int:
     return random.randint(min,max)
 
-def random_list_int(min = 0, max = 3):
+def yes_no () -> bool:
+    return random_int(0,1)
+
+def random_list_int(min:int = 0, max:int = 3) -> list[int]:
     n = random.randint(min,max)
     return [random_int() for i in range(n)]
 
-def random_optional_list_int(min = 0, max = 3):
-    if random.randint(0,1): return None
-    n = random.randint(min,max)
-    return [random_int() for i in range(n)]
+def random_optional_list_int(min:int = 0, max:int = 3) -> list[int]|None:
+    if yes_no(): return None
+    return random_list_int(min,max)
 
-def random_float (min = -1e6, max = 1e6):
+def random_float (min:float = -1e6, max:float = 1e6) -> float:
     return random_int()
     # FIXME
     # return random.uniform(min,max)
 
-def random_optional_float (min = -1e6, max = 1e6):
-    if random.randint(0,1): return None
+def random_optional_float (min = -1e6, max = 1e6) -> float|None:
+    if yes_no(): return None
     return random_int()
     # FIXME
     # return random.uniform(min,max)
 
-def random_list_float (min = 0, max = 3):
+def random_list_float (min:int = 0, max:int = 3) -> list[float]:
     n = random.randint(min,max)
     return [random_float() for i in range(n)]
 
-def random_optional_list_float (min = 0, max = 3):
-    if random.randint(0,1): return None
-    n = random.randint(min,max)
-    return [random_float() for i in range(n)]
+def random_optional_list_float (min = 0, max = 3) -> list[float]|None:
+    if yes_no(): return None
+    return random_list_float(min,max)
 
 #create-struct-random#
 

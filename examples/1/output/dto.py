@@ -345,7 +345,7 @@ class Histogram:
     def __init__ (
         self,
         x = HistogramAxis(),
-        y = HistogramAxis()
+        y = None
     ):
         self.x : HistogramAxis = deepcopy(x)
         self.y : HistogramAxis|None = deepcopy(y)
@@ -371,6 +371,7 @@ def Histogram_from_json (j:dict, obj:Histogram):
     assert isinstance(obj,Histogram)
     HistogramAxis_from_json(j["x"],obj.x)
     if j.get("y",None) is not None:
+        obj.y = HistogramAxis()
         HistogramAxis_from_json(j["y"],obj.y)
     else:
         obj.y = None
@@ -391,13 +392,59 @@ class EvaluationPoint:
         self,
         state_ = -88,
         time_ = nan,
-        value_ = nan,
-        error_ = nan
+        value_ = None,
+        error_ = None
     ):
         self.state : int = state_
         self.time : float = time_
-        self.value : float = value_
-        self.error : float = error_
+        self.value : float|None = value_
+        self.error : float|None = error_
+        pass
+
+    def GetState (
+        self,
+    ):
+        
+        return self.state
+        
+        pass
+
+    def GetTime (
+        self,
+    ):
+        
+        return self.time
+        
+        pass
+
+    def GetValue (
+        self,
+    ):
+        
+        if self.value is None:
+            raise ValueError()
+        return self.value
+        
+        pass
+
+    def GetError (
+        self,
+    ):
+        
+        if self.error is None:
+            raise ValueError()
+        return self.error
+        
+        pass
+
+    def Add (
+        self,
+        histogram
+    ):
+        
+        # self.histograms.append(histogram)
+        return self
+        
         pass
 
     def __eq__ (self, other):
@@ -422,13 +469,15 @@ def EvaluationPoint_from_json (j:dict, obj:EvaluationPoint):
     assert isinstance(obj,EvaluationPoint)
     obj.state = j["state"]
     obj.time = j["time"]
-    obj.value = j["value"]
-    obj.error = j["error"]
+    obj.value = j.get("value",None)
+    obj.error = j.get("error",None)
 def EvaluationPoint_to_json(j:dict, obj:EvaluationPoint):
     j["state"] = obj.state
     j["time"] = obj.time
-    j["value"] = obj.value
-    j["error"] = obj.error
+    if obj.value is not None:
+        j["value"] = obj.value
+    if obj.error is not None:
+        j["error"] = obj.error
 
 
 class EvaluationResults:
