@@ -20,7 +20,9 @@ def cpp_type_to_string (var:Variable):
     return type_str
 
 def cpp_value_to_string (arg):
-    if isinstance(arg,Variable):
+    if arg is None:
+        return '{}'
+    elif isinstance(arg,Variable):
         return arg.name
     elif isinstance(arg,list):
         x = [ f'{item.name}'   for item in arg]
@@ -130,6 +132,7 @@ def Struct_compare_cpp(self:Struct):
     if self.base:
         code.append(f'{indent*2}if ({self.base.name}::operator != (other)) return false;')
     for a in self.attributes:
+        if a.skip_dto: continue
         code.append(f'{indent*2}if ({a.name} != other.{a.name}) return false;')
     code.append(f'{indent*2}return true;')
     code.append(f'{indent}}}')

@@ -70,7 +70,7 @@ def create_dto(fname, languages):
             Variable('name','string',''),
             Variable('refs','int',[],list=True),
             Variable('args','float',[],list=True),
-            Variable('start','float',nan),
+            Variable('start','float',None,optional=True),
         ],
         mapping = [
             (obj.base.name,[
@@ -109,21 +109,72 @@ return self._state
     ))
 
     obj.methods.append(Function (
+        'GetEquationNumber',
+        'int',
+        code = {
+            'typescript':
+'''
+if(this._equation<0)
+    throw new Error(`Updater ${this.name} has no _equation.`);
+return this._equation;
+''',
+            'cpp':
+'''
+if(_equation<0)
+    throw std::runtime_error("An updater has no _equation.");
+return _equation;
+''',
+            'python':
+'''
+if self._equation<0:
+    raise Exception(f'Updater {self.name} has no _equation.')
+return self._equation
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
         'HasState',
         'boolean',
         const = True,
         code = {
             'python':
 '''
-return self._state>=0
+return self.start is not None
 ''',
             'cpp':
 '''
-return _state>=0;
+return start.has_value();
 ''',
             'typescript':
 '''
-return this._state>=0;
+return this.start !== undefined;
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetStart',
+        'float',
+        const = True,
+        code = {
+            'python':
+'''
+if self.start is None:
+    raise ValueError()
+return self.start
+''',
+            'cpp':
+'''
+if( not start.has_value() )
+    throw std::invalid_argument("start");
+return start.value();
+''',
+            'typescript':
+'''
+if( this.start === undefined )
+    throw new Error("start");
+return this.start;
 '''
         }
     ))
@@ -171,6 +222,115 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [Variable('state1'),Variable('state2')],
             [Variable('correlation')],
             -88 # FIXME: cannot use math.nan for the moment
+        ])]
+    ))
+    objs.append(obj)
+
+    # TODO: add Linear1DInterpolation
+
+    obj = Struct('BrownianMotion',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('start_'     ,'float', nan),
+            Variable('drift_'     ,'float', nan),
+            Variable('diffusion_' ,'float', nan),
+        ],
+        mapping = [(obj.base.name,[
+            'BrownianMotion',
+            [], # refs
+            [Variable('drift_'),Variable('diffusion_')], # args
+            Variable('start_')
+        ])]
+    ))
+    objs.append(obj)
+
+    obj = Struct('BrownianMotionRef',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('start_'     ,'float', nan),
+            Variable('drift_'     ,'int'  , -88),
+            Variable('diffusion_' ,'int'  , -88),
+        ],
+        mapping = [(obj.base.name,[
+            'BrownianMotion',
+            [Variable('drift_'),Variable('diffusion_')], # refs
+            [], # args
+            Variable('start_')
+        ])]
+    ))
+    objs.append(obj)
+
+    obj = Struct('GeometricalBrownianMotion',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('start_'     ,'float', nan),
+            Variable('drift_'     ,'float', nan),
+            Variable('diffusion_' ,'float', nan),
+        ],
+        mapping = [(obj.base.name,[
+            'GeometricalBrownianMotion',
+            [], # refs
+            [Variable('drift_'),Variable('diffusion_')], # args
+            Variable('start_')
+        ])]
+    ))
+    objs.append(obj)
+
+    obj = Struct('GeometricalBrownianMotionRef',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('start_'     ,'float', nan),
+            Variable('drift_'     ,'int'  , -88),
+            Variable('diffusion_' ,'int'  , -88),
+        ],
+        mapping = [(obj.base.name,[
+            'GeometricalBrownianMotion',
+            [Variable('drift_'),Variable('diffusion_')], # refs
+            [], # args
+            Variable('start_')
+        ])]
+    ))
+    objs.append(obj)
+
+    obj = Struct('ZeroCouponBond',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('underlying_','int'  , -88),
+            Variable('start_'     ,'float', nan),
+        ],
+        mapping = [(obj.base.name,[
+            'ZeroCouponBond',
+            [Variable('underlying_')], # refs
+            [], # args
+            Variable('start_')
+        ])]
+    ))
+    objs.append(obj)
+
+    obj = Struct('Option',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('underlying_','int'  , -88),
+            Variable('strike_'    ,'float', nan),
+            Variable('call_put_'  ,'int',   -88),
+        ],
+        mapping = [(obj.base.name,[
+            'Option',
+            [Variable('underlying_')], # refs
+            [Variable('strike_'),Variable('call_put_')], # args
+            None # start
         ])]
     ))
     objs.append(obj)
@@ -393,41 +553,6 @@ return this;
     ))
     objs.append(obj)
 
-    obj = Struct('EvaluationResults')
-    obj.attributes.append(Variable('names','string',list=True))
-    obj.attributes.append(Variable('npaths','int',list=True))
-    obj.attributes.append(Variable('mean','float',list=True))
-    obj.attributes.append(Variable('stddev','float',list=True))
-    obj.attributes.append(Variable('skewness','float',list=True))
-    obj.attributes.append(Variable('time_points','float',list=True))
-    obj.attributes.append(Variable('time_steps','int',list=True))
-    obj.attributes.append(Variable('histograms',Histogram,list=True))
-    obj.methods.append(Function (
-        obj.name,
-        'constructor',
-        args = [
-            Variable('names_','string',[],list=True),
-            Variable('npaths_','int',[],list=True),
-            Variable('mean_','float',[],list=True),
-            Variable('stddev_','float',[],list=True),
-            Variable('skewness_','float',[],list=True),
-            Variable('time_points_','float',[],list=True),
-            Variable('time_steps_','int',[],list=True),
-            Variable('histograms_','Histogram',[],list=True),
-        ],
-        mapping = [
-            ('names',[Variable('names_')]),
-            ('npaths',[Variable('npaths_')]),
-            ('mean',[Variable('mean_')]),
-            ('stddev',[Variable('stddev_')]),
-            ('skewness',[Variable('skewness_')]),
-            ('time_points',[Variable('time_points_')]),
-            ('time_steps',[Variable('time_steps_')]),
-            ('histograms',[Variable('histograms_')]),
-        ]
-    ))
-    objs.append(obj)
-
     obj = Struct ('Parameter')
     obj.attributes.append(Variable('value','float'))
     obj.attributes.append(Variable('step','float'))
@@ -452,6 +577,7 @@ return this;
     objs.append(obj)
 
     obj = Struct ('Model')
+    Model = obj
     obj.attributes.append(Variable('TimeStart','float'))
     obj.attributes.append(Variable('TimeSteps','int'))
     obj.attributes.append(Variable('NumPaths','int'))
@@ -533,21 +659,75 @@ return this.updaters.filter(
 
     obj.methods.append(Function (
         'Add',
-        'void',
+        Updater,
         args = [Variable('updater',Updater)],
         code = {
             'python':
 '''
 self.updaters.append(updater)
-# title = getattr(updater,'_title',None)
-# updater._equation = len(self.updaters)-1
-# updater._state = self.NumStatefulProcesses()-1 if updater.HasState() else None
-# self._titles[updater._state] = title
-# return updater
+updater._equation = self.GetNumberOfUpdaters()-1
+updater._state = self.GetNumberOfStates()-1 if updater.HasState() else None
+return updater
+''',
+            'cpp':
 '''
+updaters.push_back(updater);
+auto &u = updaters.back();
+u._equation = GetNumberOfUpdaters()-1;
+if(u.HasState())
+    u._state = GetNumberOfStates()-1;
+return u;
+''',
+            'typescript':
+'''
+this.updaters.push(updater);
+updater._equation = this.GetNumberOfUpdaters()-1;
+if(updater.HasState())
+    updater._state = this.GetNumberOfStates()-1;
+return updater;
+''',
         }
     ))
 
+    objs.append(obj)
+
+
+    obj = Struct('EvaluationResults')
+    obj.attributes.append(Variable('names','string',list=True))
+    obj.attributes.append(Variable('npaths','int',list=True))
+    obj.attributes.append(Variable('mean','float',list=True))
+    obj.attributes.append(Variable('stddev','float',list=True))
+    obj.attributes.append(Variable('skewness','float',list=True))
+    obj.attributes.append(Variable('time_points','float',list=True))
+    obj.attributes.append(Variable('time_steps','int',list=True))
+    obj.attributes.append(Variable('histograms',Histogram,list=True))
+    obj.attributes.append(Variable('model',Model,optional=True))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('names_','string',[],list=True),
+            Variable('npaths_','int',[],list=True),
+            Variable('mean_','float',[],list=True),
+            Variable('stddev_','float',[],list=True),
+            Variable('skewness_','float',[],list=True),
+            Variable('time_points_','float',[],list=True),
+            Variable('time_steps_','int',[],list=True),
+            Variable('histograms_',Histogram,[],list=True),
+            Variable('model_',Model,None,optional=True),
+        ],
+        mapping = [
+            ('names',[Variable('names_')]),
+            ('npaths',[Variable('npaths_')]),
+            ('mean',[Variable('mean_')]),
+            ('stddev',[Variable('stddev_')]),
+            ('skewness',[Variable('skewness_')]),
+            ('time_points',[Variable('time_points_')]),
+            ('time_steps',[Variable('time_steps_')]),
+            ('histograms',[Variable('histograms_')]),
+            ('model',[Variable('model_')]),
+        ]
+    ))
     objs.append(obj)
 
     for language in languages:

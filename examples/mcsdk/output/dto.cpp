@@ -168,7 +168,7 @@ public:
         std::string name = "",
         std::vector<int> refs = {},
         std::vector<float> args = {},
-        float start = NAN
+        std::optional<float> start = {}
     )
     : UpdaterDto (
         name,
@@ -195,18 +195,36 @@ public:
         
     }
 
+    int GetEquationNumber (
+    )
+    {
+        
+        if(_equation<0)
+            throw std::runtime_error("An updater has no _equation.");
+        return _equation;
+        
+    }
+
     bool HasState (
     ) const
     {
         
-        return _state>=0;
+        return start.has_value();
+        
+    }
+
+    float GetStart (
+    ) const
+    {
+        
+        if( not start.has_value() )
+            throw std::invalid_argument("start");
+        return start.value();
         
     }
 
     bool operator == (const Updater &other) const {
         if (UpdaterDto::operator != (other)) return false;
-        if (_equation != other._equation) return false;
-        if (_state != other._state) return false;
         return true;
     }
     bool operator != (const Updater &other) const {return not(*this==other);}
@@ -315,6 +333,263 @@ void from_json(const json &j, CorrelatedGaussian &obj) {
 }
 CorrelatedGaussian CorrelatedGaussian_from_json(const json &j) {
     CorrelatedGaussian obj;
+    from_json(j,obj);
+    return obj;
+}
+
+class BrownianMotion: public Updater {
+public:
+
+
+    
+    BrownianMotion (
+        float start_ = NAN,
+        float drift_ = NAN,
+        float diffusion_ = NAN
+    )
+    : Updater (
+        "BrownianMotion",
+        {},
+        {drift_,diffusion_},
+        start_
+    )
+    {
+    }
+
+    bool operator == (const BrownianMotion &other) const {
+        if (Updater::operator != (other)) return false;
+        return true;
+    }
+    bool operator != (const BrownianMotion &other) const {return not(*this==other);}
+};
+void to_json(json &j, const BrownianMotion &obj) {
+    to_json(j,static_cast<const Updater &>(obj));
+}
+
+std::string to_json(const BrownianMotion &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, BrownianMotion &obj) {
+    from_json(j,static_cast<Updater &>(obj));
+}
+BrownianMotion BrownianMotion_from_json(const json &j) {
+    BrownianMotion obj;
+    from_json(j,obj);
+    return obj;
+}
+
+class BrownianMotionRef: public Updater {
+public:
+
+
+    
+    BrownianMotionRef (
+        float start_ = NAN,
+        int drift_ = -88,
+        int diffusion_ = -88
+    )
+    : Updater (
+        "BrownianMotion",
+        {drift_,diffusion_},
+        {},
+        start_
+    )
+    {
+    }
+
+    bool operator == (const BrownianMotionRef &other) const {
+        if (Updater::operator != (other)) return false;
+        return true;
+    }
+    bool operator != (const BrownianMotionRef &other) const {return not(*this==other);}
+};
+void to_json(json &j, const BrownianMotionRef &obj) {
+    to_json(j,static_cast<const Updater &>(obj));
+}
+
+std::string to_json(const BrownianMotionRef &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, BrownianMotionRef &obj) {
+    from_json(j,static_cast<Updater &>(obj));
+}
+BrownianMotionRef BrownianMotionRef_from_json(const json &j) {
+    BrownianMotionRef obj;
+    from_json(j,obj);
+    return obj;
+}
+
+class GeometricalBrownianMotion: public Updater {
+public:
+
+
+    
+    GeometricalBrownianMotion (
+        float start_ = NAN,
+        float drift_ = NAN,
+        float diffusion_ = NAN
+    )
+    : Updater (
+        "GeometricalBrownianMotion",
+        {},
+        {drift_,diffusion_},
+        start_
+    )
+    {
+    }
+
+    bool operator == (const GeometricalBrownianMotion &other) const {
+        if (Updater::operator != (other)) return false;
+        return true;
+    }
+    bool operator != (const GeometricalBrownianMotion &other) const {return not(*this==other);}
+};
+void to_json(json &j, const GeometricalBrownianMotion &obj) {
+    to_json(j,static_cast<const Updater &>(obj));
+}
+
+std::string to_json(const GeometricalBrownianMotion &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, GeometricalBrownianMotion &obj) {
+    from_json(j,static_cast<Updater &>(obj));
+}
+GeometricalBrownianMotion GeometricalBrownianMotion_from_json(const json &j) {
+    GeometricalBrownianMotion obj;
+    from_json(j,obj);
+    return obj;
+}
+
+class GeometricalBrownianMotionRef: public Updater {
+public:
+
+
+    
+    GeometricalBrownianMotionRef (
+        float start_ = NAN,
+        int drift_ = -88,
+        int diffusion_ = -88
+    )
+    : Updater (
+        "GeometricalBrownianMotion",
+        {drift_,diffusion_},
+        {},
+        start_
+    )
+    {
+    }
+
+    bool operator == (const GeometricalBrownianMotionRef &other) const {
+        if (Updater::operator != (other)) return false;
+        return true;
+    }
+    bool operator != (const GeometricalBrownianMotionRef &other) const {return not(*this==other);}
+};
+void to_json(json &j, const GeometricalBrownianMotionRef &obj) {
+    to_json(j,static_cast<const Updater &>(obj));
+}
+
+std::string to_json(const GeometricalBrownianMotionRef &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, GeometricalBrownianMotionRef &obj) {
+    from_json(j,static_cast<Updater &>(obj));
+}
+GeometricalBrownianMotionRef GeometricalBrownianMotionRef_from_json(const json &j) {
+    GeometricalBrownianMotionRef obj;
+    from_json(j,obj);
+    return obj;
+}
+
+class ZeroCouponBond: public Updater {
+public:
+
+
+    
+    ZeroCouponBond (
+        int underlying_ = -88,
+        float start_ = NAN
+    )
+    : Updater (
+        "ZeroCouponBond",
+        {underlying_},
+        {},
+        start_
+    )
+    {
+    }
+
+    bool operator == (const ZeroCouponBond &other) const {
+        if (Updater::operator != (other)) return false;
+        return true;
+    }
+    bool operator != (const ZeroCouponBond &other) const {return not(*this==other);}
+};
+void to_json(json &j, const ZeroCouponBond &obj) {
+    to_json(j,static_cast<const Updater &>(obj));
+}
+
+std::string to_json(const ZeroCouponBond &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, ZeroCouponBond &obj) {
+    from_json(j,static_cast<Updater &>(obj));
+}
+ZeroCouponBond ZeroCouponBond_from_json(const json &j) {
+    ZeroCouponBond obj;
+    from_json(j,obj);
+    return obj;
+}
+
+class Option: public Updater {
+public:
+
+
+    
+    Option (
+        int underlying_ = -88,
+        float strike_ = NAN,
+        int call_put_ = -88
+    )
+    : Updater (
+        "Option",
+        {underlying_},
+        {strike_,call_put_},
+        {}
+    )
+    {
+    }
+
+    bool operator == (const Option &other) const {
+        if (Updater::operator != (other)) return false;
+        return true;
+    }
+    bool operator != (const Option &other) const {return not(*this==other);}
+};
+void to_json(json &j, const Option &obj) {
+    to_json(j,static_cast<const Updater &>(obj));
+}
+
+std::string to_json(const Option &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, Option &obj) {
+    from_json(j,static_cast<Updater &>(obj));
+}
+Option Option_from_json(const json &j) {
+    Option obj;
     from_json(j,obj);
     return obj;
 }
@@ -604,101 +879,6 @@ EvaluationPoint EvaluationPoint_from_json(const json &j) {
     return obj;
 }
 
-class EvaluationResults {
-public:
-
-    std::vector<std::string> names;
-    std::vector<int> npaths;
-    std::vector<float> mean;
-    std::vector<float> stddev;
-    std::vector<float> skewness;
-    std::vector<float> time_points;
-    std::vector<int> time_steps;
-    std::vector<Histogram> histograms;
-
-    
-    EvaluationResults (
-        std::vector<std::string> names_ = {},
-        std::vector<int> npaths_ = {},
-        std::vector<float> mean_ = {},
-        std::vector<float> stddev_ = {},
-        std::vector<float> skewness_ = {},
-        std::vector<float> time_points_ = {},
-        std::vector<int> time_steps_ = {},
-        std::vector<Histogram> histograms_ = {}
-    )
-    : names (
-        names_
-    )
-    , npaths (
-        npaths_
-    )
-    , mean (
-        mean_
-    )
-    , stddev (
-        stddev_
-    )
-    , skewness (
-        skewness_
-    )
-    , time_points (
-        time_points_
-    )
-    , time_steps (
-        time_steps_
-    )
-    , histograms (
-        histograms_
-    )
-    {
-    }
-
-    bool operator == (const EvaluationResults &other) const {
-        if (names != other.names) return false;
-        if (npaths != other.npaths) return false;
-        if (mean != other.mean) return false;
-        if (stddev != other.stddev) return false;
-        if (skewness != other.skewness) return false;
-        if (time_points != other.time_points) return false;
-        if (time_steps != other.time_steps) return false;
-        if (histograms != other.histograms) return false;
-        return true;
-    }
-    bool operator != (const EvaluationResults &other) const {return not(*this==other);}
-};
-void to_json(json &j, const EvaluationResults &obj) {
-    j["names"] = obj.names;
-    j["npaths"] = obj.npaths;
-    j["mean"] = obj.mean;
-    j["stddev"] = obj.stddev;
-    j["skewness"] = obj.skewness;
-    j["time_points"] = obj.time_points;
-    j["time_steps"] = obj.time_steps;
-    j["histograms"] = obj.histograms;
-}
-
-std::string to_json(const EvaluationResults &obj) {
-    json j;
-    to_json(j,obj);
-    return j.dump();
-}
-void from_json(const json &j, EvaluationResults &obj) {
-    j.at("names").get_to(obj.names);
-    j.at("npaths").get_to(obj.npaths);
-    j.at("mean").get_to(obj.mean);
-    j.at("stddev").get_to(obj.stddev);
-    j.at("skewness").get_to(obj.skewness);
-    j.at("time_points").get_to(obj.time_points);
-    j.at("time_steps").get_to(obj.time_steps);
-    j.at("histograms").get_to(obj.histograms);
-}
-EvaluationResults EvaluationResults_from_json(const json &j) {
-    EvaluationResults obj;
-    from_json(j,obj);
-    return obj;
-}
-
 class Parameter {
 public:
 
@@ -826,10 +1006,18 @@ public:
         
     }
 
-    void Add (
+    Updater Add (
         Updater updater
     )
     {
+        
+        updaters.push_back(updater);
+        auto &u = updaters.back();
+        u._equation = GetNumberOfUpdaters()-1;
+        if(u.HasState())
+            u._state = GetNumberOfStates()-1;
+        return u;
+        
     }
 
     bool operator == (const Model &other) const {
@@ -870,6 +1058,111 @@ void from_json(const json &j, Model &obj) {
 }
 Model Model_from_json(const json &j) {
     Model obj;
+    from_json(j,obj);
+    return obj;
+}
+
+class EvaluationResults {
+public:
+
+    std::vector<std::string> names;
+    std::vector<int> npaths;
+    std::vector<float> mean;
+    std::vector<float> stddev;
+    std::vector<float> skewness;
+    std::vector<float> time_points;
+    std::vector<int> time_steps;
+    std::vector<Histogram> histograms;
+    std::optional<Model> model;
+
+    
+    EvaluationResults (
+        std::vector<std::string> names_ = {},
+        std::vector<int> npaths_ = {},
+        std::vector<float> mean_ = {},
+        std::vector<float> stddev_ = {},
+        std::vector<float> skewness_ = {},
+        std::vector<float> time_points_ = {},
+        std::vector<int> time_steps_ = {},
+        std::vector<Histogram> histograms_ = {},
+        std::optional<Model> model_ = {}
+    )
+    : names (
+        names_
+    )
+    , npaths (
+        npaths_
+    )
+    , mean (
+        mean_
+    )
+    , stddev (
+        stddev_
+    )
+    , skewness (
+        skewness_
+    )
+    , time_points (
+        time_points_
+    )
+    , time_steps (
+        time_steps_
+    )
+    , histograms (
+        histograms_
+    )
+    , model (
+        model_
+    )
+    {
+    }
+
+    bool operator == (const EvaluationResults &other) const {
+        if (names != other.names) return false;
+        if (npaths != other.npaths) return false;
+        if (mean != other.mean) return false;
+        if (stddev != other.stddev) return false;
+        if (skewness != other.skewness) return false;
+        if (time_points != other.time_points) return false;
+        if (time_steps != other.time_steps) return false;
+        if (histograms != other.histograms) return false;
+        if (model != other.model) return false;
+        return true;
+    }
+    bool operator != (const EvaluationResults &other) const {return not(*this==other);}
+};
+void to_json(json &j, const EvaluationResults &obj) {
+    j["names"] = obj.names;
+    j["npaths"] = obj.npaths;
+    j["mean"] = obj.mean;
+    j["stddev"] = obj.stddev;
+    j["skewness"] = obj.skewness;
+    j["time_points"] = obj.time_points;
+    j["time_steps"] = obj.time_steps;
+    j["histograms"] = obj.histograms;
+    if(obj.model.has_value())
+        j["model"] = obj.model.value();
+}
+
+std::string to_json(const EvaluationResults &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, EvaluationResults &obj) {
+    j.at("names").get_to(obj.names);
+    j.at("npaths").get_to(obj.npaths);
+    j.at("mean").get_to(obj.mean);
+    j.at("stddev").get_to(obj.stddev);
+    j.at("skewness").get_to(obj.skewness);
+    j.at("time_points").get_to(obj.time_points);
+    j.at("time_steps").get_to(obj.time_steps);
+    j.at("histograms").get_to(obj.histograms);
+    if(auto it=j.find("model"); it!=j.end() and !it->is_null())
+        obj.model = *it;
+}
+EvaluationResults EvaluationResults_from_json(const json &j) {
+    EvaluationResults obj;
     from_json(j,obj);
     return obj;
 }

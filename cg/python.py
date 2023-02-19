@@ -120,6 +120,7 @@ def Struct_python (self:Struct) -> list[str]:
     if self.base:
         code.append(f'{indent*2}if not super().__eq__(other): return False')
     for attr in self.attributes:
+        if attr.skip_dto: continue
         code.append(f'{indent*2}if self.{attr.name} != other.{attr.name}: return False')
     code.append(f'{indent*2}return True')
 

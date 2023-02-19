@@ -104,7 +104,7 @@ def random_Updater ():
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_float()
+        random_optional_float()
 
     )
 
@@ -174,6 +174,161 @@ def random_optional_list_CorrelatedGaussian (min:int = 0, max:int = 3) -> list[C
     if yes_no():
         return None
     return random_list_CorrelatedGaussian(min,max)
+
+
+def random_BrownianMotion ():
+    return BrownianMotion (
+        random_float(),
+        random_float(),
+        random_float()
+
+    )
+
+
+def random_optional_BrownianMotion () -> BrownianMotion|None:
+    if yes_no():
+        return None
+    return random_BrownianMotion()
+
+
+def random_list_BrownianMotion (min:int = 0, max:int = 3) -> list[BrownianMotion]:
+    size = random.randint(min,max)
+    return [random_BrownianMotion() for i in range(size)]
+
+
+def random_optional_list_BrownianMotion (min:int = 0, max:int = 3) -> list[BrownianMotion]|None:
+    if yes_no():
+        return None
+    return random_list_BrownianMotion(min,max)
+
+
+def random_BrownianMotionRef ():
+    return BrownianMotionRef (
+        random_float(),
+        random_int(),
+        random_int()
+
+    )
+
+
+def random_optional_BrownianMotionRef () -> BrownianMotionRef|None:
+    if yes_no():
+        return None
+    return random_BrownianMotionRef()
+
+
+def random_list_BrownianMotionRef (min:int = 0, max:int = 3) -> list[BrownianMotionRef]:
+    size = random.randint(min,max)
+    return [random_BrownianMotionRef() for i in range(size)]
+
+
+def random_optional_list_BrownianMotionRef (min:int = 0, max:int = 3) -> list[BrownianMotionRef]|None:
+    if yes_no():
+        return None
+    return random_list_BrownianMotionRef(min,max)
+
+
+def random_GeometricalBrownianMotion ():
+    return GeometricalBrownianMotion (
+        random_float(),
+        random_float(),
+        random_float()
+
+    )
+
+
+def random_optional_GeometricalBrownianMotion () -> GeometricalBrownianMotion|None:
+    if yes_no():
+        return None
+    return random_GeometricalBrownianMotion()
+
+
+def random_list_GeometricalBrownianMotion (min:int = 0, max:int = 3) -> list[GeometricalBrownianMotion]:
+    size = random.randint(min,max)
+    return [random_GeometricalBrownianMotion() for i in range(size)]
+
+
+def random_optional_list_GeometricalBrownianMotion (min:int = 0, max:int = 3) -> list[GeometricalBrownianMotion]|None:
+    if yes_no():
+        return None
+    return random_list_GeometricalBrownianMotion(min,max)
+
+
+def random_GeometricalBrownianMotionRef ():
+    return GeometricalBrownianMotionRef (
+        random_float(),
+        random_int(),
+        random_int()
+
+    )
+
+
+def random_optional_GeometricalBrownianMotionRef () -> GeometricalBrownianMotionRef|None:
+    if yes_no():
+        return None
+    return random_GeometricalBrownianMotionRef()
+
+
+def random_list_GeometricalBrownianMotionRef (min:int = 0, max:int = 3) -> list[GeometricalBrownianMotionRef]:
+    size = random.randint(min,max)
+    return [random_GeometricalBrownianMotionRef() for i in range(size)]
+
+
+def random_optional_list_GeometricalBrownianMotionRef (min:int = 0, max:int = 3) -> list[GeometricalBrownianMotionRef]|None:
+    if yes_no():
+        return None
+    return random_list_GeometricalBrownianMotionRef(min,max)
+
+
+def random_ZeroCouponBond ():
+    return ZeroCouponBond (
+        random_int(),
+        random_float()
+
+    )
+
+
+def random_optional_ZeroCouponBond () -> ZeroCouponBond|None:
+    if yes_no():
+        return None
+    return random_ZeroCouponBond()
+
+
+def random_list_ZeroCouponBond (min:int = 0, max:int = 3) -> list[ZeroCouponBond]:
+    size = random.randint(min,max)
+    return [random_ZeroCouponBond() for i in range(size)]
+
+
+def random_optional_list_ZeroCouponBond (min:int = 0, max:int = 3) -> list[ZeroCouponBond]|None:
+    if yes_no():
+        return None
+    return random_list_ZeroCouponBond(min,max)
+
+
+def random_Option ():
+    return Option (
+        random_int(),
+        random_float(),
+        random_int()
+
+    )
+
+
+def random_optional_Option () -> Option|None:
+    if yes_no():
+        return None
+    return random_Option()
+
+
+def random_list_Option (min:int = 0, max:int = 3) -> list[Option]:
+    size = random.randint(min,max)
+    return [random_Option() for i in range(size)]
+
+
+def random_optional_list_Option (min:int = 0, max:int = 3) -> list[Option]|None:
+    if yes_no():
+        return None
+    return random_list_Option(min,max)
 
 
 def random_Barrier ():
@@ -285,37 +440,6 @@ def random_optional_list_EvaluationPoint (min:int = 0, max:int = 3) -> list[Eval
     return random_list_EvaluationPoint(min,max)
 
 
-def random_EvaluationResults ():
-    return EvaluationResults (
-        random_list_string(),
-        random_list_int(),
-        random_list_float(),
-        random_list_float(),
-        random_list_float(),
-        random_list_float(),
-        random_list_int(),
-        random_list_Histogram()
-
-    )
-
-
-def random_optional_EvaluationResults () -> EvaluationResults|None:
-    if yes_no():
-        return None
-    return random_EvaluationResults()
-
-
-def random_list_EvaluationResults (min:int = 0, max:int = 3) -> list[EvaluationResults]:
-    size = random.randint(min,max)
-    return [random_EvaluationResults() for i in range(size)]
-
-
-def random_optional_list_EvaluationResults (min:int = 0, max:int = 3) -> list[EvaluationResults]|None:
-    if yes_no():
-        return None
-    return random_list_EvaluationResults(min,max)
-
-
 def random_Parameter ():
     return Parameter (
         random_float(),
@@ -373,6 +497,38 @@ def random_optional_list_Model (min:int = 0, max:int = 3) -> list[Model]|None:
     return random_list_Model(min,max)
 
 
+def random_EvaluationResults ():
+    return EvaluationResults (
+        random_list_string(),
+        random_list_int(),
+        random_list_float(),
+        random_list_float(),
+        random_list_float(),
+        random_list_float(),
+        random_list_int(),
+        random_list_Histogram(),
+        random_optional_Model()
+
+    )
+
+
+def random_optional_EvaluationResults () -> EvaluationResults|None:
+    if yes_no():
+        return None
+    return random_EvaluationResults()
+
+
+def random_list_EvaluationResults (min:int = 0, max:int = 3) -> list[EvaluationResults]:
+    size = random.randint(min,max)
+    return [random_EvaluationResults() for i in range(size)]
+
+
+def random_optional_list_EvaluationResults (min:int = 0, max:int = 3) -> list[EvaluationResults]|None:
+    if yes_no():
+        return None
+    return random_list_EvaluationResults(min,max)
+
+
 def test_round_trip_python(command, struct_name, file1_name, file2_name):
     if command=='build':
         return
@@ -426,6 +582,60 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
+        elif struct_name=='BrownianMotion':
+            obj1 = random_BrownianMotion()
+            open(file1_name,'w').write(BrownianMotion_to_json_string(obj1))
+            obj2 = BrownianMotion_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,BrownianMotion)
+            assert isinstance(obj2,BrownianMotion)
+            assert obj1==obj2
+
+
+        elif struct_name=='BrownianMotionRef':
+            obj1 = random_BrownianMotionRef()
+            open(file1_name,'w').write(BrownianMotionRef_to_json_string(obj1))
+            obj2 = BrownianMotionRef_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,BrownianMotionRef)
+            assert isinstance(obj2,BrownianMotionRef)
+            assert obj1==obj2
+
+
+        elif struct_name=='GeometricalBrownianMotion':
+            obj1 = random_GeometricalBrownianMotion()
+            open(file1_name,'w').write(GeometricalBrownianMotion_to_json_string(obj1))
+            obj2 = GeometricalBrownianMotion_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,GeometricalBrownianMotion)
+            assert isinstance(obj2,GeometricalBrownianMotion)
+            assert obj1==obj2
+
+
+        elif struct_name=='GeometricalBrownianMotionRef':
+            obj1 = random_GeometricalBrownianMotionRef()
+            open(file1_name,'w').write(GeometricalBrownianMotionRef_to_json_string(obj1))
+            obj2 = GeometricalBrownianMotionRef_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,GeometricalBrownianMotionRef)
+            assert isinstance(obj2,GeometricalBrownianMotionRef)
+            assert obj1==obj2
+
+
+        elif struct_name=='ZeroCouponBond':
+            obj1 = random_ZeroCouponBond()
+            open(file1_name,'w').write(ZeroCouponBond_to_json_string(obj1))
+            obj2 = ZeroCouponBond_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,ZeroCouponBond)
+            assert isinstance(obj2,ZeroCouponBond)
+            assert obj1==obj2
+
+
+        elif struct_name=='Option':
+            obj1 = random_Option()
+            open(file1_name,'w').write(Option_to_json_string(obj1))
+            obj2 = Option_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,Option)
+            assert isinstance(obj2,Option)
+            assert obj1==obj2
+
+
         elif struct_name=='Barrier':
             obj1 = random_Barrier()
             open(file1_name,'w').write(Barrier_to_json_string(obj1))
@@ -462,15 +672,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
-        elif struct_name=='EvaluationResults':
-            obj1 = random_EvaluationResults()
-            open(file1_name,'w').write(EvaluationResults_to_json_string(obj1))
-            obj2 = EvaluationResults_from_json_string(open(file1_name).read())
-            assert isinstance(obj1,EvaluationResults)
-            assert isinstance(obj2,EvaluationResults)
-            assert obj1==obj2
-
-
         elif struct_name=='Parameter':
             obj1 = random_Parameter()
             open(file1_name,'w').write(Parameter_to_json_string(obj1))
@@ -486,6 +687,15 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             obj2 = Model_from_json_string(open(file1_name).read())
             assert isinstance(obj1,Model)
             assert isinstance(obj2,Model)
+            assert obj1==obj2
+
+
+        elif struct_name=='EvaluationResults':
+            obj1 = random_EvaluationResults()
+            open(file1_name,'w').write(EvaluationResults_to_json_string(obj1))
+            obj2 = EvaluationResults_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,EvaluationResults)
+            assert isinstance(obj2,EvaluationResults)
             assert obj1==obj2
 
         else:
@@ -519,6 +729,36 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             open(file2_name,'w').write(CorrelatedGaussian_to_json_string(obj))
 
 
+        elif struct_name=='BrownianMotion':
+            obj = BrownianMotion_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(BrownianMotion_to_json_string(obj))
+
+
+        elif struct_name=='BrownianMotionRef':
+            obj = BrownianMotionRef_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(BrownianMotionRef_to_json_string(obj))
+
+
+        elif struct_name=='GeometricalBrownianMotion':
+            obj = GeometricalBrownianMotion_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(GeometricalBrownianMotion_to_json_string(obj))
+
+
+        elif struct_name=='GeometricalBrownianMotionRef':
+            obj = GeometricalBrownianMotionRef_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(GeometricalBrownianMotionRef_to_json_string(obj))
+
+
+        elif struct_name=='ZeroCouponBond':
+            obj = ZeroCouponBond_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(ZeroCouponBond_to_json_string(obj))
+
+
+        elif struct_name=='Option':
+            obj = Option_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(Option_to_json_string(obj))
+
+
         elif struct_name=='Barrier':
             obj = Barrier_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(Barrier_to_json_string(obj))
@@ -539,11 +779,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             open(file2_name,'w').write(EvaluationPoint_to_json_string(obj))
 
 
-        elif struct_name=='EvaluationResults':
-            obj = EvaluationResults_from_json_string(open(file1_name).read())
-            open(file2_name,'w').write(EvaluationResults_to_json_string(obj))
-
-
         elif struct_name=='Parameter':
             obj = Parameter_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(Parameter_to_json_string(obj))
@@ -552,6 +787,11 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='Model':
             obj = Model_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(Model_to_json_string(obj))
+
+
+        elif struct_name=='EvaluationResults':
+            obj = EvaluationResults_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(EvaluationResults_to_json_string(obj))
 
         else:
             raise Exception(f'Operation "{command}" does not supported struct {struct_name}')
@@ -589,6 +829,42 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
+        elif struct_name=='BrownianMotion':
+            obj1 = BrownianMotion_from_json_string(open(file1_name).read())
+            obj2 = BrownianMotion_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='BrownianMotionRef':
+            obj1 = BrownianMotionRef_from_json_string(open(file1_name).read())
+            obj2 = BrownianMotionRef_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='GeometricalBrownianMotion':
+            obj1 = GeometricalBrownianMotion_from_json_string(open(file1_name).read())
+            obj2 = GeometricalBrownianMotion_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='GeometricalBrownianMotionRef':
+            obj1 = GeometricalBrownianMotionRef_from_json_string(open(file1_name).read())
+            obj2 = GeometricalBrownianMotionRef_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='ZeroCouponBond':
+            obj1 = ZeroCouponBond_from_json_string(open(file1_name).read())
+            obj2 = ZeroCouponBond_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='Option':
+            obj1 = Option_from_json_string(open(file1_name).read())
+            obj2 = Option_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
         elif struct_name=='Barrier':
             obj1 = Barrier_from_json_string(open(file1_name).read())
             obj2 = Barrier_from_json_string(open(file2_name).read())
@@ -613,12 +889,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
-        elif struct_name=='EvaluationResults':
-            obj1 = EvaluationResults_from_json_string(open(file1_name).read())
-            obj2 = EvaluationResults_from_json_string(open(file2_name).read())
-            assert obj1==obj2
-
-
         elif struct_name=='Parameter':
             obj1 = Parameter_from_json_string(open(file1_name).read())
             obj2 = Parameter_from_json_string(open(file2_name).read())
@@ -628,6 +898,12 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='Model':
             obj1 = Model_from_json_string(open(file1_name).read())
             obj2 = Model_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='EvaluationResults':
+            obj1 = EvaluationResults_from_json_string(open(file1_name).read())
+            obj2 = EvaluationResults_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
         else:

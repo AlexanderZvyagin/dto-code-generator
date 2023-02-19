@@ -232,7 +232,7 @@ Updater random_Updater (void) {
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_float()
+        random_optional_float()
 
     );
 }
@@ -322,6 +322,203 @@ std::vector<CorrelatedGaussian> random_optional_list_CorrelatedGaussian (int min
     if(yes_no())
         return {};
     return random_list_CorrelatedGaussian (min,max);
+}
+
+
+BrownianMotion random_BrownianMotion (void) {
+    return BrownianMotion (
+        random_float(),
+        random_float(),
+        random_float()
+
+    );
+}
+
+
+std::optional<BrownianMotion> random_optional_BrownianMotion (void) {
+    if(yes_no())
+        return {};
+    return random_BrownianMotion ();
+}
+
+
+std::vector<BrownianMotion> random_list_BrownianMotion (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<BrownianMotion> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_BrownianMotion());
+    return list;
+}
+
+
+std::vector<BrownianMotion> random_optional_list_BrownianMotion (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_BrownianMotion (min,max);
+}
+
+
+BrownianMotionRef random_BrownianMotionRef (void) {
+    return BrownianMotionRef (
+        random_float(),
+        random_int(),
+        random_int()
+
+    );
+}
+
+
+std::optional<BrownianMotionRef> random_optional_BrownianMotionRef (void) {
+    if(yes_no())
+        return {};
+    return random_BrownianMotionRef ();
+}
+
+
+std::vector<BrownianMotionRef> random_list_BrownianMotionRef (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<BrownianMotionRef> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_BrownianMotionRef());
+    return list;
+}
+
+
+std::vector<BrownianMotionRef> random_optional_list_BrownianMotionRef (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_BrownianMotionRef (min,max);
+}
+
+
+GeometricalBrownianMotion random_GeometricalBrownianMotion (void) {
+    return GeometricalBrownianMotion (
+        random_float(),
+        random_float(),
+        random_float()
+
+    );
+}
+
+
+std::optional<GeometricalBrownianMotion> random_optional_GeometricalBrownianMotion (void) {
+    if(yes_no())
+        return {};
+    return random_GeometricalBrownianMotion ();
+}
+
+
+std::vector<GeometricalBrownianMotion> random_list_GeometricalBrownianMotion (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<GeometricalBrownianMotion> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_GeometricalBrownianMotion());
+    return list;
+}
+
+
+std::vector<GeometricalBrownianMotion> random_optional_list_GeometricalBrownianMotion (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_GeometricalBrownianMotion (min,max);
+}
+
+
+GeometricalBrownianMotionRef random_GeometricalBrownianMotionRef (void) {
+    return GeometricalBrownianMotionRef (
+        random_float(),
+        random_int(),
+        random_int()
+
+    );
+}
+
+
+std::optional<GeometricalBrownianMotionRef> random_optional_GeometricalBrownianMotionRef (void) {
+    if(yes_no())
+        return {};
+    return random_GeometricalBrownianMotionRef ();
+}
+
+
+std::vector<GeometricalBrownianMotionRef> random_list_GeometricalBrownianMotionRef (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<GeometricalBrownianMotionRef> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_GeometricalBrownianMotionRef());
+    return list;
+}
+
+
+std::vector<GeometricalBrownianMotionRef> random_optional_list_GeometricalBrownianMotionRef (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_GeometricalBrownianMotionRef (min,max);
+}
+
+
+ZeroCouponBond random_ZeroCouponBond (void) {
+    return ZeroCouponBond (
+        random_int(),
+        random_float()
+
+    );
+}
+
+
+std::optional<ZeroCouponBond> random_optional_ZeroCouponBond (void) {
+    if(yes_no())
+        return {};
+    return random_ZeroCouponBond ();
+}
+
+
+std::vector<ZeroCouponBond> random_list_ZeroCouponBond (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<ZeroCouponBond> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_ZeroCouponBond());
+    return list;
+}
+
+
+std::vector<ZeroCouponBond> random_optional_list_ZeroCouponBond (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_ZeroCouponBond (min,max);
+}
+
+
+Option random_Option (void) {
+    return Option (
+        random_int(),
+        random_float(),
+        random_int()
+
+    );
+}
+
+
+std::optional<Option> random_optional_Option (void) {
+    if(yes_no())
+        return {};
+    return random_Option ();
+}
+
+
+std::vector<Option> random_list_Option (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<Option> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_Option());
+    return list;
+}
+
+
+std::vector<Option> random_optional_list_Option (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_Option (min,max);
 }
 
 
@@ -462,44 +659,6 @@ std::vector<EvaluationPoint> random_optional_list_EvaluationPoint (int min = 0, 
 }
 
 
-EvaluationResults random_EvaluationResults (void) {
-    return EvaluationResults (
-        random_list_string(),
-        random_list_int(),
-        random_list_float(),
-        random_list_float(),
-        random_list_float(),
-        random_list_float(),
-        random_list_int(),
-        random_list_Histogram()
-
-    );
-}
-
-
-std::optional<EvaluationResults> random_optional_EvaluationResults (void) {
-    if(yes_no())
-        return {};
-    return random_EvaluationResults ();
-}
-
-
-std::vector<EvaluationResults> random_list_EvaluationResults (int min = 0, int max = 3) {
-    const auto size = random_int(min,max);
-    std::vector<EvaluationResults> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_EvaluationResults());
-    return list;
-}
-
-
-std::vector<EvaluationResults> random_optional_list_EvaluationResults (int min = 0, int max = 3) {
-    if(yes_no())
-        return {};
-    return random_list_EvaluationResults (min,max);
-}
-
-
 Parameter random_Parameter (void) {
     return Parameter (
         random_float(),
@@ -568,6 +727,45 @@ std::vector<Model> random_optional_list_Model (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     return random_list_Model (min,max);
+}
+
+
+EvaluationResults random_EvaluationResults (void) {
+    return EvaluationResults (
+        random_list_string(),
+        random_list_int(),
+        random_list_float(),
+        random_list_float(),
+        random_list_float(),
+        random_list_float(),
+        random_list_int(),
+        random_list_Histogram(),
+        random_optional_Model()
+
+    );
+}
+
+
+std::optional<EvaluationResults> random_optional_EvaluationResults (void) {
+    if(yes_no())
+        return {};
+    return random_EvaluationResults ();
+}
+
+
+std::vector<EvaluationResults> random_list_EvaluationResults (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<EvaluationResults> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_EvaluationResults());
+    return list;
+}
+
+
+std::vector<EvaluationResults> random_optional_list_EvaluationResults (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_EvaluationResults (min,max);
 }
 
 
@@ -653,6 +851,84 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
+        } else if (struct_name == "BrownianMotion") {
+            auto obj1 = random_BrownianMotion();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                BrownianMotion_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "BrownianMotionRef") {
+            auto obj1 = random_BrownianMotionRef();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                BrownianMotionRef_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "GeometricalBrownianMotion") {
+            auto obj1 = random_GeometricalBrownianMotion();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                GeometricalBrownianMotion_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "GeometricalBrownianMotionRef") {
+            auto obj1 = random_GeometricalBrownianMotionRef();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                GeometricalBrownianMotionRef_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "ZeroCouponBond") {
+            auto obj1 = random_ZeroCouponBond();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                ZeroCouponBond_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "Option") {
+            auto obj1 = random_Option();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                Option_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
         } else if (struct_name == "Barrier") {
             auto obj1 = random_Barrier();
             std::ofstream(file1_path) << to_json(obj1);
@@ -705,19 +981,6 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
-        } else if (struct_name == "EvaluationResults") {
-            auto obj1 = random_EvaluationResults();
-            std::ofstream(file1_path) << to_json(obj1);
-            auto obj2 =
-                EvaluationResults_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
         } else if (struct_name == "Parameter") {
             auto obj1 = random_Parameter();
             std::ofstream(file1_path) << to_json(obj1);
@@ -736,6 +999,19 @@ int main (int argc, const char **argv) try {
             std::ofstream(file1_path) << to_json(obj1);
             auto obj2 =
                 Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "EvaluationResults") {
+            auto obj1 = random_EvaluationResults();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                EvaluationResults_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -818,6 +1094,84 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
 
+        } else if (struct_name == "BrownianMotion") {
+            auto obj =
+                BrownianMotion_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << to_json(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "BrownianMotionRef") {
+            auto obj =
+                BrownianMotionRef_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << to_json(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "GeometricalBrownianMotion") {
+            auto obj =
+                GeometricalBrownianMotion_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << to_json(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "GeometricalBrownianMotionRef") {
+            auto obj =
+                GeometricalBrownianMotionRef_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << to_json(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "ZeroCouponBond") {
+            auto obj =
+                ZeroCouponBond_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << to_json(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "Option") {
+            auto obj =
+                Option_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << to_json(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
         } else if (struct_name == "Barrier") {
             auto obj =
                 Barrier_from_json (
@@ -870,19 +1224,6 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
 
-        } else if (struct_name == "EvaluationResults") {
-            auto obj =
-                EvaluationResults_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            std::ofstream out (file2_path);
-            out << to_json(obj);
-            if(!out)
-                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
-
-
         } else if (struct_name == "Parameter") {
             auto obj =
                 Parameter_from_json (
@@ -899,6 +1240,19 @@ int main (int argc, const char **argv) try {
         } else if (struct_name == "Model") {
             auto obj =
                 Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << to_json(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "EvaluationResults") {
+            auto obj =
+                EvaluationResults_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1001,6 +1355,108 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
+        } else if (struct_name == "BrownianMotion") {
+            auto obj1 =
+                BrownianMotion_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                BrownianMotion_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "BrownianMotionRef") {
+            auto obj1 =
+                BrownianMotionRef_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                BrownianMotionRef_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "GeometricalBrownianMotion") {
+            auto obj1 =
+                GeometricalBrownianMotion_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                GeometricalBrownianMotion_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "GeometricalBrownianMotionRef") {
+            auto obj1 =
+                GeometricalBrownianMotionRef_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                GeometricalBrownianMotionRef_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "ZeroCouponBond") {
+            auto obj1 =
+                ZeroCouponBond_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                ZeroCouponBond_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "Option") {
+            auto obj1 =
+                Option_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                Option_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
         } else if (struct_name == "Barrier") {
             auto obj1 =
                 Barrier_from_json (
@@ -1069,23 +1525,6 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
-        } else if (struct_name == "EvaluationResults") {
-            auto obj1 =
-                EvaluationResults_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            auto obj2 =
-                EvaluationResults_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file2_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
         } else if (struct_name == "Parameter") {
             auto obj1 =
                 Parameter_from_json (
@@ -1112,6 +1551,23 @@ int main (int argc, const char **argv) try {
             )));
             auto obj2 =
                 Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "EvaluationResults") {
+            auto obj1 =
+                EvaluationResults_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                EvaluationResults_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path

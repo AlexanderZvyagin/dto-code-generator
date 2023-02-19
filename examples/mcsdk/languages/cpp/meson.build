@@ -7,7 +7,7 @@ project (
         ]
 )
 
-add_global_arguments('-Wno-c++11-narrowing', language : 'cpp')
+add_global_arguments('-Wno-narrowing', language : 'cpp')
 
 executable (
     'run-cpp',

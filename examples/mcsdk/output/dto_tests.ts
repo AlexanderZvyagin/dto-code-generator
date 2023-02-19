@@ -12,13 +12,19 @@ import {
     Updater,
     IndependentGaussian,
     CorrelatedGaussian,
+    BrownianMotion,
+    BrownianMotionRef,
+    GeometricalBrownianMotion,
+    GeometricalBrownianMotionRef,
+    ZeroCouponBond,
+    Option,
     Barrier,
     HistogramAxis,
     Histogram,
     EvaluationPoint,
-    EvaluationResults,
     Parameter,
     Model,
+    EvaluationResults,
 } from './dto'
 
 function random_int(min:number = -1000, max:number = 1000) : number {
@@ -165,7 +171,7 @@ function random_Updater () : Updater {
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_float()
+        random_optional_float()
 
     );
 }
@@ -255,6 +261,203 @@ function random_optional_list_CorrelatedGaussian () : CorrelatedGaussian[]|undef
     if(yes_no())
         return undefined;
     return random_list_CorrelatedGaussian ();
+}
+
+
+function random_BrownianMotion () : BrownianMotion {
+    return new BrownianMotion (
+        random_float(),
+        random_float(),
+        random_float()
+
+    );
+}
+
+
+function random_optional_BrownianMotion () : BrownianMotion|undefined {
+    if(yes_no())
+        return undefined;
+    return random_BrownianMotion ();
+}
+
+
+function random_list_BrownianMotion (min:number = 0, max:number = 3) : BrownianMotion[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:BrownianMotion[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_BrownianMotion());
+    return list;
+}
+
+
+function random_optional_list_BrownianMotion () : BrownianMotion[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_BrownianMotion ();
+}
+
+
+function random_BrownianMotionRef () : BrownianMotionRef {
+    return new BrownianMotionRef (
+        random_float(),
+        random_int(),
+        random_int()
+
+    );
+}
+
+
+function random_optional_BrownianMotionRef () : BrownianMotionRef|undefined {
+    if(yes_no())
+        return undefined;
+    return random_BrownianMotionRef ();
+}
+
+
+function random_list_BrownianMotionRef (min:number = 0, max:number = 3) : BrownianMotionRef[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:BrownianMotionRef[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_BrownianMotionRef());
+    return list;
+}
+
+
+function random_optional_list_BrownianMotionRef () : BrownianMotionRef[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_BrownianMotionRef ();
+}
+
+
+function random_GeometricalBrownianMotion () : GeometricalBrownianMotion {
+    return new GeometricalBrownianMotion (
+        random_float(),
+        random_float(),
+        random_float()
+
+    );
+}
+
+
+function random_optional_GeometricalBrownianMotion () : GeometricalBrownianMotion|undefined {
+    if(yes_no())
+        return undefined;
+    return random_GeometricalBrownianMotion ();
+}
+
+
+function random_list_GeometricalBrownianMotion (min:number = 0, max:number = 3) : GeometricalBrownianMotion[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:GeometricalBrownianMotion[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_GeometricalBrownianMotion());
+    return list;
+}
+
+
+function random_optional_list_GeometricalBrownianMotion () : GeometricalBrownianMotion[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_GeometricalBrownianMotion ();
+}
+
+
+function random_GeometricalBrownianMotionRef () : GeometricalBrownianMotionRef {
+    return new GeometricalBrownianMotionRef (
+        random_float(),
+        random_int(),
+        random_int()
+
+    );
+}
+
+
+function random_optional_GeometricalBrownianMotionRef () : GeometricalBrownianMotionRef|undefined {
+    if(yes_no())
+        return undefined;
+    return random_GeometricalBrownianMotionRef ();
+}
+
+
+function random_list_GeometricalBrownianMotionRef (min:number = 0, max:number = 3) : GeometricalBrownianMotionRef[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:GeometricalBrownianMotionRef[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_GeometricalBrownianMotionRef());
+    return list;
+}
+
+
+function random_optional_list_GeometricalBrownianMotionRef () : GeometricalBrownianMotionRef[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_GeometricalBrownianMotionRef ();
+}
+
+
+function random_ZeroCouponBond () : ZeroCouponBond {
+    return new ZeroCouponBond (
+        random_int(),
+        random_float()
+
+    );
+}
+
+
+function random_optional_ZeroCouponBond () : ZeroCouponBond|undefined {
+    if(yes_no())
+        return undefined;
+    return random_ZeroCouponBond ();
+}
+
+
+function random_list_ZeroCouponBond (min:number = 0, max:number = 3) : ZeroCouponBond[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:ZeroCouponBond[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_ZeroCouponBond());
+    return list;
+}
+
+
+function random_optional_list_ZeroCouponBond () : ZeroCouponBond[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_ZeroCouponBond ();
+}
+
+
+function random_Option () : Option {
+    return new Option (
+        random_int(),
+        random_float(),
+        random_int()
+
+    );
+}
+
+
+function random_optional_Option () : Option|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Option ();
+}
+
+
+function random_list_Option (min:number = 0, max:number = 3) : Option[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:Option[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_Option());
+    return list;
+}
+
+
+function random_optional_list_Option () : Option[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Option ();
 }
 
 
@@ -395,44 +598,6 @@ function random_optional_list_EvaluationPoint () : EvaluationPoint[]|undefined {
 }
 
 
-function random_EvaluationResults () : EvaluationResults {
-    return new EvaluationResults (
-        random_list_string(),
-        random_list_int(),
-        random_list_float(),
-        random_list_float(),
-        random_list_float(),
-        random_list_float(),
-        random_list_int(),
-        random_list_Histogram()
-
-    );
-}
-
-
-function random_optional_EvaluationResults () : EvaluationResults|undefined {
-    if(yes_no())
-        return undefined;
-    return random_EvaluationResults ();
-}
-
-
-function random_list_EvaluationResults (min:number = 0, max:number = 3) : EvaluationResults[] {
-    const size:number = Math.floor(min + Math.random()*(max-min));
-    const list:EvaluationResults[] = [];
-    for(let i=0; i<size; i++)
-        list.push(random_EvaluationResults());
-    return list;
-}
-
-
-function random_optional_list_EvaluationResults () : EvaluationResults[]|undefined {
-    if(yes_no())
-        return undefined;
-    return random_list_EvaluationResults ();
-}
-
-
 function random_Parameter () : Parameter {
     return new Parameter (
         random_float(),
@@ -504,6 +669,45 @@ function random_optional_list_Model () : Model[]|undefined {
 }
 
 
+function random_EvaluationResults () : EvaluationResults {
+    return new EvaluationResults (
+        random_list_string(),
+        random_list_int(),
+        random_list_float(),
+        random_list_float(),
+        random_list_float(),
+        random_list_float(),
+        random_list_int(),
+        random_list_Histogram(),
+        random_optional_Model()
+
+    );
+}
+
+
+function random_optional_EvaluationResults () : EvaluationResults|undefined {
+    if(yes_no())
+        return undefined;
+    return random_EvaluationResults ();
+}
+
+
+function random_list_EvaluationResults (min:number = 0, max:number = 3) : EvaluationResults[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:EvaluationResults[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_EvaluationResults());
+    return list;
+}
+
+
+function random_optional_list_EvaluationResults () : EvaluationResults[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_EvaluationResults ();
+}
+
+
 function create (struct_name:string, file_name:string){
     if(false){
 
@@ -567,6 +771,78 @@ function create (struct_name:string, file_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
+    } else if (struct_name === 'BrownianMotion') {
+        const obj1: BrownianMotion = random_BrownianMotion();
+        const j: object = {};
+        dto.BrownianMotion_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: BrownianMotion = new BrownianMotion();
+        dto.BrownianMotion_from_json(j,obj2);
+        if(!dto.BrownianMotion_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'BrownianMotionRef') {
+        const obj1: BrownianMotionRef = random_BrownianMotionRef();
+        const j: object = {};
+        dto.BrownianMotionRef_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: BrownianMotionRef = new BrownianMotionRef();
+        dto.BrownianMotionRef_from_json(j,obj2);
+        if(!dto.BrownianMotionRef_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'GeometricalBrownianMotion') {
+        const obj1: GeometricalBrownianMotion = random_GeometricalBrownianMotion();
+        const j: object = {};
+        dto.GeometricalBrownianMotion_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: GeometricalBrownianMotion = new GeometricalBrownianMotion();
+        dto.GeometricalBrownianMotion_from_json(j,obj2);
+        if(!dto.GeometricalBrownianMotion_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'GeometricalBrownianMotionRef') {
+        const obj1: GeometricalBrownianMotionRef = random_GeometricalBrownianMotionRef();
+        const j: object = {};
+        dto.GeometricalBrownianMotionRef_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: GeometricalBrownianMotionRef = new GeometricalBrownianMotionRef();
+        dto.GeometricalBrownianMotionRef_from_json(j,obj2);
+        if(!dto.GeometricalBrownianMotionRef_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'ZeroCouponBond') {
+        const obj1: ZeroCouponBond = random_ZeroCouponBond();
+        const j: object = {};
+        dto.ZeroCouponBond_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: ZeroCouponBond = new ZeroCouponBond();
+        dto.ZeroCouponBond_from_json(j,obj2);
+        if(!dto.ZeroCouponBond_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'Option') {
+        const obj1: Option = random_Option();
+        const j: object = {};
+        dto.Option_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: Option = new Option();
+        dto.Option_from_json(j,obj2);
+        if(!dto.Option_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
     } else if (struct_name === 'Barrier') {
         const obj1: Barrier = random_Barrier();
         const j: object = {};
@@ -615,18 +891,6 @@ function create (struct_name:string, file_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
-    } else if (struct_name === 'EvaluationResults') {
-        const obj1: EvaluationResults = random_EvaluationResults();
-        const j: object = {};
-        dto.EvaluationResults_to_json(j,obj1);
-
-        fs.writeFileSync (file_name, JSON.stringify (j));
-        const obj2: EvaluationResults = new EvaluationResults();
-        dto.EvaluationResults_from_json(j,obj2);
-        if(!dto.EvaluationResults_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
     } else if (struct_name === 'Parameter') {
         const obj1: Parameter = random_Parameter();
         const j: object = {};
@@ -648,6 +912,18 @@ function create (struct_name:string, file_name:string){
         const obj2: Model = new Model();
         dto.Model_from_json(j,obj2);
         if(!dto.Model_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'EvaluationResults') {
+        const obj1: EvaluationResults = random_EvaluationResults();
+        const j: object = {};
+        dto.EvaluationResults_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: EvaluationResults = new EvaluationResults();
+        dto.EvaluationResults_from_json(j,obj2);
+        if(!dto.EvaluationResults_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
     } else
@@ -687,6 +963,42 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
+    } else if (struct_name === 'BrownianMotion') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: BrownianMotion = dto.BrownianMotion_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
+    } else if (struct_name === 'BrownianMotionRef') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: BrownianMotionRef = dto.BrownianMotionRef_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
+    } else if (struct_name === 'GeometricalBrownianMotion') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: GeometricalBrownianMotion = dto.GeometricalBrownianMotion_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
+    } else if (struct_name === 'GeometricalBrownianMotionRef') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: GeometricalBrownianMotionRef = dto.GeometricalBrownianMotionRef_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
+    } else if (struct_name === 'ZeroCouponBond') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: ZeroCouponBond = dto.ZeroCouponBond_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
+    } else if (struct_name === 'Option') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: Option = dto.Option_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
     } else if (struct_name === 'Barrier') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Barrier = dto.Barrier_fromJSON_string(jstr);
@@ -711,12 +1023,6 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
-    } else if (struct_name === 'EvaluationResults') {
-        const jstr: string = fs.readFileSync(file1_name,'utf-8');
-        const obj: EvaluationResults = dto.EvaluationResults_fromJSON_string(jstr);
-        fs.writeFileSync(file2_name, JSON.stringify(obj));
-
-
     } else if (struct_name === 'Parameter') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Parameter = dto.Parameter_fromJSON_string(jstr);
@@ -726,6 +1032,12 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
     } else if (struct_name === 'Model') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Model = dto.Model_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
+    } else if (struct_name === 'EvaluationResults') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: EvaluationResults = dto.EvaluationResults_fromJSON_string(jstr);
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
     } else
@@ -780,6 +1092,60 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
+    } else if (struct_name === 'BrownianMotion') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: BrownianMotion = dto.BrownianMotion_fromJSON_string(jstr1);
+        const obj2: BrownianMotion = dto.BrownianMotion_fromJSON_string(jstr2);
+        if(!dto.BrownianMotion_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'BrownianMotionRef') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: BrownianMotionRef = dto.BrownianMotionRef_fromJSON_string(jstr1);
+        const obj2: BrownianMotionRef = dto.BrownianMotionRef_fromJSON_string(jstr2);
+        if(!dto.BrownianMotionRef_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'GeometricalBrownianMotion') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: GeometricalBrownianMotion = dto.GeometricalBrownianMotion_fromJSON_string(jstr1);
+        const obj2: GeometricalBrownianMotion = dto.GeometricalBrownianMotion_fromJSON_string(jstr2);
+        if(!dto.GeometricalBrownianMotion_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'GeometricalBrownianMotionRef') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: GeometricalBrownianMotionRef = dto.GeometricalBrownianMotionRef_fromJSON_string(jstr1);
+        const obj2: GeometricalBrownianMotionRef = dto.GeometricalBrownianMotionRef_fromJSON_string(jstr2);
+        if(!dto.GeometricalBrownianMotionRef_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'ZeroCouponBond') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: ZeroCouponBond = dto.ZeroCouponBond_fromJSON_string(jstr1);
+        const obj2: ZeroCouponBond = dto.ZeroCouponBond_fromJSON_string(jstr2);
+        if(!dto.ZeroCouponBond_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'Option') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: Option = dto.Option_fromJSON_string(jstr1);
+        const obj2: Option = dto.Option_fromJSON_string(jstr2);
+        if(!dto.Option_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
     } else if (struct_name === 'Barrier') {
         const jstr1: string = fs.readFileSync(file1_name,'utf-8');
         const jstr2: string = fs.readFileSync(file2_name,'utf-8');
@@ -816,15 +1182,6 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
-    } else if (struct_name === 'EvaluationResults') {
-        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
-        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
-        const obj1: EvaluationResults = dto.EvaluationResults_fromJSON_string(jstr1);
-        const obj2: EvaluationResults = dto.EvaluationResults_fromJSON_string(jstr2);
-        if(!dto.EvaluationResults_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
     } else if (struct_name === 'Parameter') {
         const jstr1: string = fs.readFileSync(file1_name,'utf-8');
         const jstr2: string = fs.readFileSync(file2_name,'utf-8');
@@ -840,6 +1197,15 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
         const obj1: Model = dto.Model_fromJSON_string(jstr1);
         const obj2: Model = dto.Model_fromJSON_string(jstr2);
         if(!dto.Model_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'EvaluationResults') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: EvaluationResults = dto.EvaluationResults_fromJSON_string(jstr1);
+        const obj2: EvaluationResults = dto.EvaluationResults_fromJSON_string(jstr2);
+        if(!dto.EvaluationResults_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
     } else

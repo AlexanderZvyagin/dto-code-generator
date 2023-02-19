@@ -120,7 +120,7 @@ class Updater (UpdaterDto):
         name = "",
         refs = [],
         args = [],
-        start = nan
+        start = None
     ):
         super().__init__(
             name,
@@ -142,18 +142,36 @@ class Updater (UpdaterDto):
         
         pass
 
+    def GetEquationNumber (
+        self,
+    ):
+        
+        if self._equation<0:
+            raise Exception(f'Updater {self.name} has no _equation.')
+        return self._equation
+        
+        pass
+
     def HasState (
         self,
     ):
         
-        return self._state>=0
+        return self.start is not None
+        
+        pass
+
+    def GetStart (
+        self,
+    ):
+        
+        if self.start is None:
+            raise ValueError()
+        return self.start
         
         pass
 
     def __eq__ (self, other):
         if not super().__eq__(other): return False
-        if self._equation != other._equation: return False
-        if self._state != other._state: return False
         return True
     def __neq__ (self, other):
         return not self==other
@@ -247,6 +265,239 @@ def CorrelatedGaussian_from_json (j:dict, obj:CorrelatedGaussian):
     assert isinstance(obj,CorrelatedGaussian)
     Updater_from_json(j,obj)
 def CorrelatedGaussian_to_json(j:dict, obj:CorrelatedGaussian):
+    Updater_to_json(j,obj)
+
+
+class BrownianMotion (Updater):
+
+    
+    def __init__ (
+        self,
+        start_ = nan,
+        drift_ = nan,
+        diffusion_ = nan
+    ):
+        super().__init__(
+            "BrownianMotion",
+            [],
+            [drift_,diffusion_],
+            start_,
+        )
+        pass
+
+    def __eq__ (self, other):
+        if not super().__eq__(other): return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+def BrownianMotion_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = BrownianMotion()
+    BrownianMotion_from_json(j,obj)
+    return obj
+
+def BrownianMotion_to_json_string (self:BrownianMotion):
+    j = {}
+    BrownianMotion_to_json(j,self)
+    return json.dumps(j)
+def BrownianMotion_from_json (j:dict, obj:BrownianMotion):
+    assert isinstance(obj,BrownianMotion)
+    Updater_from_json(j,obj)
+def BrownianMotion_to_json(j:dict, obj:BrownianMotion):
+    Updater_to_json(j,obj)
+
+
+class BrownianMotionRef (Updater):
+
+    
+    def __init__ (
+        self,
+        start_ = nan,
+        drift_ = -88,
+        diffusion_ = -88
+    ):
+        super().__init__(
+            "BrownianMotion",
+            [drift_,diffusion_],
+            [],
+            start_,
+        )
+        pass
+
+    def __eq__ (self, other):
+        if not super().__eq__(other): return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+def BrownianMotionRef_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = BrownianMotionRef()
+    BrownianMotionRef_from_json(j,obj)
+    return obj
+
+def BrownianMotionRef_to_json_string (self:BrownianMotionRef):
+    j = {}
+    BrownianMotionRef_to_json(j,self)
+    return json.dumps(j)
+def BrownianMotionRef_from_json (j:dict, obj:BrownianMotionRef):
+    assert isinstance(obj,BrownianMotionRef)
+    Updater_from_json(j,obj)
+def BrownianMotionRef_to_json(j:dict, obj:BrownianMotionRef):
+    Updater_to_json(j,obj)
+
+
+class GeometricalBrownianMotion (Updater):
+
+    
+    def __init__ (
+        self,
+        start_ = nan,
+        drift_ = nan,
+        diffusion_ = nan
+    ):
+        super().__init__(
+            "GeometricalBrownianMotion",
+            [],
+            [drift_,diffusion_],
+            start_,
+        )
+        pass
+
+    def __eq__ (self, other):
+        if not super().__eq__(other): return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+def GeometricalBrownianMotion_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = GeometricalBrownianMotion()
+    GeometricalBrownianMotion_from_json(j,obj)
+    return obj
+
+def GeometricalBrownianMotion_to_json_string (self:GeometricalBrownianMotion):
+    j = {}
+    GeometricalBrownianMotion_to_json(j,self)
+    return json.dumps(j)
+def GeometricalBrownianMotion_from_json (j:dict, obj:GeometricalBrownianMotion):
+    assert isinstance(obj,GeometricalBrownianMotion)
+    Updater_from_json(j,obj)
+def GeometricalBrownianMotion_to_json(j:dict, obj:GeometricalBrownianMotion):
+    Updater_to_json(j,obj)
+
+
+class GeometricalBrownianMotionRef (Updater):
+
+    
+    def __init__ (
+        self,
+        start_ = nan,
+        drift_ = -88,
+        diffusion_ = -88
+    ):
+        super().__init__(
+            "GeometricalBrownianMotion",
+            [drift_,diffusion_],
+            [],
+            start_,
+        )
+        pass
+
+    def __eq__ (self, other):
+        if not super().__eq__(other): return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+def GeometricalBrownianMotionRef_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = GeometricalBrownianMotionRef()
+    GeometricalBrownianMotionRef_from_json(j,obj)
+    return obj
+
+def GeometricalBrownianMotionRef_to_json_string (self:GeometricalBrownianMotionRef):
+    j = {}
+    GeometricalBrownianMotionRef_to_json(j,self)
+    return json.dumps(j)
+def GeometricalBrownianMotionRef_from_json (j:dict, obj:GeometricalBrownianMotionRef):
+    assert isinstance(obj,GeometricalBrownianMotionRef)
+    Updater_from_json(j,obj)
+def GeometricalBrownianMotionRef_to_json(j:dict, obj:GeometricalBrownianMotionRef):
+    Updater_to_json(j,obj)
+
+
+class ZeroCouponBond (Updater):
+
+    
+    def __init__ (
+        self,
+        underlying_ = -88,
+        start_ = nan
+    ):
+        super().__init__(
+            "ZeroCouponBond",
+            [underlying_],
+            [],
+            start_,
+        )
+        pass
+
+    def __eq__ (self, other):
+        if not super().__eq__(other): return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+def ZeroCouponBond_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = ZeroCouponBond()
+    ZeroCouponBond_from_json(j,obj)
+    return obj
+
+def ZeroCouponBond_to_json_string (self:ZeroCouponBond):
+    j = {}
+    ZeroCouponBond_to_json(j,self)
+    return json.dumps(j)
+def ZeroCouponBond_from_json (j:dict, obj:ZeroCouponBond):
+    assert isinstance(obj,ZeroCouponBond)
+    Updater_from_json(j,obj)
+def ZeroCouponBond_to_json(j:dict, obj:ZeroCouponBond):
+    Updater_to_json(j,obj)
+
+
+class Option (Updater):
+
+    
+    def __init__ (
+        self,
+        underlying_ = -88,
+        strike_ = nan,
+        call_put_ = -88
+    ):
+        super().__init__(
+            "Option",
+            [underlying_],
+            [strike_,call_put_],
+            None,
+        )
+        pass
+
+    def __eq__ (self, other):
+        if not super().__eq__(other): return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+def Option_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Option()
+    Option_from_json(j,obj)
+    return obj
+
+def Option_to_json_string (self:Option):
+    j = {}
+    Option_to_json(j,self)
+    return json.dumps(j)
+def Option_from_json (j:dict, obj:Option):
+    assert isinstance(obj,Option)
+    Updater_from_json(j,obj)
+def Option_to_json(j:dict, obj:Option):
     Updater_to_json(j,obj)
 
 
@@ -492,80 +743,6 @@ def EvaluationPoint_to_json(j:dict, obj:EvaluationPoint):
         j["histograms"].append(jj)
 
 
-class EvaluationResults:
-
-    
-    def __init__ (
-        self,
-        names_ = [],
-        npaths_ = [],
-        mean_ = [],
-        stddev_ = [],
-        skewness_ = [],
-        time_points_ = [],
-        time_steps_ = [],
-        histograms_ = []
-    ):
-        self.names : list[str] = names_
-        self.npaths : list[int] = npaths_
-        self.mean : list[float] = mean_
-        self.stddev : list[float] = stddev_
-        self.skewness : list[float] = skewness_
-        self.time_points : list[float] = time_points_
-        self.time_steps : list[int] = time_steps_
-        self.histograms : list[Histogram] = deepcopy(histograms_)
-        pass
-
-    def __eq__ (self, other):
-        if self.names != other.names: return False
-        if self.npaths != other.npaths: return False
-        if self.mean != other.mean: return False
-        if self.stddev != other.stddev: return False
-        if self.skewness != other.skewness: return False
-        if self.time_points != other.time_points: return False
-        if self.time_steps != other.time_steps: return False
-        if self.histograms != other.histograms: return False
-        return True
-    def __neq__ (self, other):
-        return not self==other
-def EvaluationResults_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = EvaluationResults()
-    EvaluationResults_from_json(j,obj)
-    return obj
-
-def EvaluationResults_to_json_string (self:EvaluationResults):
-    j = {}
-    EvaluationResults_to_json(j,self)
-    return json.dumps(j)
-def EvaluationResults_from_json (j:dict, obj:EvaluationResults):
-    assert isinstance(obj,EvaluationResults)
-    obj.names = j["names"]
-    obj.npaths = j["npaths"]
-    obj.mean = j["mean"]
-    obj.stddev = j["stddev"]
-    obj.skewness = j["skewness"]
-    obj.time_points = j["time_points"]
-    obj.time_steps = j["time_steps"]
-    for item in j["histograms"]:
-        v = Histogram()
-        Histogram_from_json(item,v)
-        obj.histograms.append(v)
-def EvaluationResults_to_json(j:dict, obj:EvaluationResults):
-    j["names"] = obj.names
-    j["npaths"] = obj.npaths
-    j["mean"] = obj.mean
-    j["stddev"] = obj.stddev
-    j["skewness"] = obj.skewness
-    j["time_points"] = obj.time_points
-    j["time_steps"] = obj.time_steps
-    j["histograms"] = []
-    for item in obj.histograms:
-        jj = {}
-        Histogram_to_json(jj,item)
-        j["histograms"].append(jj)
-
-
 class Parameter:
 
     
@@ -657,11 +834,9 @@ class Model:
     ):
         
         self.updaters.append(updater)
-        # title = getattr(updater,'_title',None)
-        # updater._equation = len(self.updaters)-1
-        # updater._state = self.NumStatefulProcesses()-1 if updater.HasState() else None
-        # self._titles[updater._state] = title
-        # return updater
+        updater._equation = self.GetNumberOfUpdaters()-1
+        updater._state = self.GetNumberOfStates()-1 if updater.HasState() else None
+        return updater
         
         pass
 
@@ -717,5 +892,91 @@ def Model_to_json(j:dict, obj:Model):
         j["evaluations"].append(jj)
     j["RunTimeoutSeconds"] = obj.RunTimeoutSeconds
     j["MemoryLimitKB"] = obj.MemoryLimitKB
+
+
+class EvaluationResults:
+
+    
+    def __init__ (
+        self,
+        names_ = [],
+        npaths_ = [],
+        mean_ = [],
+        stddev_ = [],
+        skewness_ = [],
+        time_points_ = [],
+        time_steps_ = [],
+        histograms_ = [],
+        model_ = None
+    ):
+        self.names : list[str] = names_
+        self.npaths : list[int] = npaths_
+        self.mean : list[float] = mean_
+        self.stddev : list[float] = stddev_
+        self.skewness : list[float] = skewness_
+        self.time_points : list[float] = time_points_
+        self.time_steps : list[int] = time_steps_
+        self.histograms : list[Histogram] = deepcopy(histograms_)
+        self.model : Model|None = deepcopy(model_)
+        pass
+
+    def __eq__ (self, other):
+        if self.names != other.names: return False
+        if self.npaths != other.npaths: return False
+        if self.mean != other.mean: return False
+        if self.stddev != other.stddev: return False
+        if self.skewness != other.skewness: return False
+        if self.time_points != other.time_points: return False
+        if self.time_steps != other.time_steps: return False
+        if self.histograms != other.histograms: return False
+        if self.model != other.model: return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+def EvaluationResults_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = EvaluationResults()
+    EvaluationResults_from_json(j,obj)
+    return obj
+
+def EvaluationResults_to_json_string (self:EvaluationResults):
+    j = {}
+    EvaluationResults_to_json(j,self)
+    return json.dumps(j)
+def EvaluationResults_from_json (j:dict, obj:EvaluationResults):
+    assert isinstance(obj,EvaluationResults)
+    obj.names = j["names"]
+    obj.npaths = j["npaths"]
+    obj.mean = j["mean"]
+    obj.stddev = j["stddev"]
+    obj.skewness = j["skewness"]
+    obj.time_points = j["time_points"]
+    obj.time_steps = j["time_steps"]
+    for item in j["histograms"]:
+        v = Histogram()
+        Histogram_from_json(item,v)
+        obj.histograms.append(v)
+    if j.get("model",None) is not None:
+        obj.model = Model()
+        Model_from_json(j["model"],obj.model)
+    else:
+        obj.model = None
+def EvaluationResults_to_json(j:dict, obj:EvaluationResults):
+    j["names"] = obj.names
+    j["npaths"] = obj.npaths
+    j["mean"] = obj.mean
+    j["stddev"] = obj.stddev
+    j["skewness"] = obj.skewness
+    j["time_points"] = obj.time_points
+    j["time_steps"] = obj.time_steps
+    j["histograms"] = []
+    for item in obj.histograms:
+        jj = {}
+        Histogram_to_json(jj,item)
+        j["histograms"].append(jj)
+    if obj.model is not None:
+        jj = {}
+        Model_to_json(jj,obj.model)
+        j["model"] = jj
 
 

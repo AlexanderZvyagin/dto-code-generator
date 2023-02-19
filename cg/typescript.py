@@ -20,7 +20,9 @@ def typescript_type_to_string (var:Variable):
     return type_str
 
 def typescript_value_to_string (arg):
-    if isinstance(arg,Variable):
+    if arg is None:
+        return 'undefined'
+    elif isinstance(arg,Variable):
         return arg.name
     elif isinstance(arg,list):
         x = [ f'{item.name}'   for item in arg]
@@ -170,6 +172,7 @@ def Struct_equal_typescript(self:Struct):
     if self.base:
         code.append(f'{indent}if(!{self.base.name}_equal(a,b)) return false;')
     for attr in self.attributes:
+        if attr.skip_dto: continue
         lvl=1
         if attr.optional:
             code.append(f'{indent*1}if(a.{attr.name}===undefined && b.{attr.name}!==undefined) return false;')

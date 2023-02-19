@@ -230,7 +230,7 @@ class Updater extends UpdaterDto {
         name : string  = "",
         refs : number[]  = [],
         args : number[]  = [],
-        start : number  = Number.NaN,
+        start : number|undefined  = undefined,
     ){
         super(
             name,
@@ -252,10 +252,28 @@ class Updater extends UpdaterDto {
         
     }
 
+    GetEquationNumber (
+    ) : number  {
+        
+        if(this._equation<0)
+            throw new Error(`Updater ${this.name} has no _equation.`);
+        return this._equation;
+        
+    }
+
     HasState (
     ) : boolean  {
         
-        return this._state>=0;
+        return this.start !== undefined;
+        
+    }
+
+    GetStart (
+    ) : number  {
+        
+        if( this.start === undefined )
+            throw new Error("start");
+        return this.start;
         
     }
 
@@ -263,8 +281,6 @@ class Updater extends UpdaterDto {
 export function
 Updater_equal (a: Updater, b: Updater) : boolean {
     if(!UpdaterDto_equal(a,b)) return false;
-    if(!int_equal(a._equation,b._equation)) return false;
-    if(!int_equal(a._state,b._state)) return false;
     return true;
 }
 
@@ -421,6 +437,371 @@ CorrelatedGaussian_from_json_string (jstr:string): CorrelatedGaussian {
     const j: object = JSON.parse(jstr);
     const obj: CorrelatedGaussian = new CorrelatedGaussian();
     CorrelatedGaussian_from_json(j,obj);
+    return obj;
+}
+
+
+class BrownianMotion extends Updater {
+
+
+    constructor(
+        start_ : number  = Number.NaN,
+        drift_ : number  = Number.NaN,
+        diffusion_ : number  = Number.NaN,
+    ){
+        super(
+            "BrownianMotion",
+            [],
+            [drift_,diffusion_],
+            start_,
+        );
+    
+    }
+
+}
+export function
+BrownianMotion_equal (a: BrownianMotion, b: BrownianMotion) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+BrownianMotion_fromJSON (j:any, obj: BrownianMotion): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+BrownianMotion_fromJSON_string (jstr:string): BrownianMotion {
+    const j = JSON.parse(jstr);
+    const obj = new BrownianMotion();
+    BrownianMotion_fromJSON(j,obj);
+    return obj;
+}
+export function
+BrownianMotion_to_json(j:object, obj:BrownianMotion) {
+    Updater_to_json(j,obj);
+}
+
+export function
+BrownianMotion_from_json(j:object, obj:BrownianMotion) {
+    Updater_from_json(j,obj);
+}
+
+export function
+BrownianMotion_to_json_string (self:BrownianMotion) {
+    const j = {};
+    BrownianMotion_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+BrownianMotion_from_json_string (jstr:string): BrownianMotion {
+    const j: object = JSON.parse(jstr);
+    const obj: BrownianMotion = new BrownianMotion();
+    BrownianMotion_from_json(j,obj);
+    return obj;
+}
+
+
+class BrownianMotionRef extends Updater {
+
+
+    constructor(
+        start_ : number  = Number.NaN,
+        drift_ : number  = -88,
+        diffusion_ : number  = -88,
+    ){
+        super(
+            "BrownianMotion",
+            [drift_,diffusion_],
+            [],
+            start_,
+        );
+    
+    }
+
+}
+export function
+BrownianMotionRef_equal (a: BrownianMotionRef, b: BrownianMotionRef) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+BrownianMotionRef_fromJSON (j:any, obj: BrownianMotionRef): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+BrownianMotionRef_fromJSON_string (jstr:string): BrownianMotionRef {
+    const j = JSON.parse(jstr);
+    const obj = new BrownianMotionRef();
+    BrownianMotionRef_fromJSON(j,obj);
+    return obj;
+}
+export function
+BrownianMotionRef_to_json(j:object, obj:BrownianMotionRef) {
+    Updater_to_json(j,obj);
+}
+
+export function
+BrownianMotionRef_from_json(j:object, obj:BrownianMotionRef) {
+    Updater_from_json(j,obj);
+}
+
+export function
+BrownianMotionRef_to_json_string (self:BrownianMotionRef) {
+    const j = {};
+    BrownianMotionRef_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+BrownianMotionRef_from_json_string (jstr:string): BrownianMotionRef {
+    const j: object = JSON.parse(jstr);
+    const obj: BrownianMotionRef = new BrownianMotionRef();
+    BrownianMotionRef_from_json(j,obj);
+    return obj;
+}
+
+
+class GeometricalBrownianMotion extends Updater {
+
+
+    constructor(
+        start_ : number  = Number.NaN,
+        drift_ : number  = Number.NaN,
+        diffusion_ : number  = Number.NaN,
+    ){
+        super(
+            "GeometricalBrownianMotion",
+            [],
+            [drift_,diffusion_],
+            start_,
+        );
+    
+    }
+
+}
+export function
+GeometricalBrownianMotion_equal (a: GeometricalBrownianMotion, b: GeometricalBrownianMotion) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+GeometricalBrownianMotion_fromJSON (j:any, obj: GeometricalBrownianMotion): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+GeometricalBrownianMotion_fromJSON_string (jstr:string): GeometricalBrownianMotion {
+    const j = JSON.parse(jstr);
+    const obj = new GeometricalBrownianMotion();
+    GeometricalBrownianMotion_fromJSON(j,obj);
+    return obj;
+}
+export function
+GeometricalBrownianMotion_to_json(j:object, obj:GeometricalBrownianMotion) {
+    Updater_to_json(j,obj);
+}
+
+export function
+GeometricalBrownianMotion_from_json(j:object, obj:GeometricalBrownianMotion) {
+    Updater_from_json(j,obj);
+}
+
+export function
+GeometricalBrownianMotion_to_json_string (self:GeometricalBrownianMotion) {
+    const j = {};
+    GeometricalBrownianMotion_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+GeometricalBrownianMotion_from_json_string (jstr:string): GeometricalBrownianMotion {
+    const j: object = JSON.parse(jstr);
+    const obj: GeometricalBrownianMotion = new GeometricalBrownianMotion();
+    GeometricalBrownianMotion_from_json(j,obj);
+    return obj;
+}
+
+
+class GeometricalBrownianMotionRef extends Updater {
+
+
+    constructor(
+        start_ : number  = Number.NaN,
+        drift_ : number  = -88,
+        diffusion_ : number  = -88,
+    ){
+        super(
+            "GeometricalBrownianMotion",
+            [drift_,diffusion_],
+            [],
+            start_,
+        );
+    
+    }
+
+}
+export function
+GeometricalBrownianMotionRef_equal (a: GeometricalBrownianMotionRef, b: GeometricalBrownianMotionRef) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+GeometricalBrownianMotionRef_fromJSON (j:any, obj: GeometricalBrownianMotionRef): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+GeometricalBrownianMotionRef_fromJSON_string (jstr:string): GeometricalBrownianMotionRef {
+    const j = JSON.parse(jstr);
+    const obj = new GeometricalBrownianMotionRef();
+    GeometricalBrownianMotionRef_fromJSON(j,obj);
+    return obj;
+}
+export function
+GeometricalBrownianMotionRef_to_json(j:object, obj:GeometricalBrownianMotionRef) {
+    Updater_to_json(j,obj);
+}
+
+export function
+GeometricalBrownianMotionRef_from_json(j:object, obj:GeometricalBrownianMotionRef) {
+    Updater_from_json(j,obj);
+}
+
+export function
+GeometricalBrownianMotionRef_to_json_string (self:GeometricalBrownianMotionRef) {
+    const j = {};
+    GeometricalBrownianMotionRef_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+GeometricalBrownianMotionRef_from_json_string (jstr:string): GeometricalBrownianMotionRef {
+    const j: object = JSON.parse(jstr);
+    const obj: GeometricalBrownianMotionRef = new GeometricalBrownianMotionRef();
+    GeometricalBrownianMotionRef_from_json(j,obj);
+    return obj;
+}
+
+
+class ZeroCouponBond extends Updater {
+
+
+    constructor(
+        underlying_ : number  = -88,
+        start_ : number  = Number.NaN,
+    ){
+        super(
+            "ZeroCouponBond",
+            [underlying_],
+            [],
+            start_,
+        );
+    
+    }
+
+}
+export function
+ZeroCouponBond_equal (a: ZeroCouponBond, b: ZeroCouponBond) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+ZeroCouponBond_fromJSON (j:any, obj: ZeroCouponBond): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+ZeroCouponBond_fromJSON_string (jstr:string): ZeroCouponBond {
+    const j = JSON.parse(jstr);
+    const obj = new ZeroCouponBond();
+    ZeroCouponBond_fromJSON(j,obj);
+    return obj;
+}
+export function
+ZeroCouponBond_to_json(j:object, obj:ZeroCouponBond) {
+    Updater_to_json(j,obj);
+}
+
+export function
+ZeroCouponBond_from_json(j:object, obj:ZeroCouponBond) {
+    Updater_from_json(j,obj);
+}
+
+export function
+ZeroCouponBond_to_json_string (self:ZeroCouponBond) {
+    const j = {};
+    ZeroCouponBond_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+ZeroCouponBond_from_json_string (jstr:string): ZeroCouponBond {
+    const j: object = JSON.parse(jstr);
+    const obj: ZeroCouponBond = new ZeroCouponBond();
+    ZeroCouponBond_from_json(j,obj);
+    return obj;
+}
+
+
+class Option extends Updater {
+
+
+    constructor(
+        underlying_ : number  = -88,
+        strike_ : number  = Number.NaN,
+        call_put_ : number  = -88,
+    ){
+        super(
+            "Option",
+            [underlying_],
+            [strike_,call_put_],
+            undefined,
+        );
+    
+    }
+
+}
+export function
+Option_equal (a: Option, b: Option) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+Option_fromJSON (j:any, obj: Option): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+Option_fromJSON_string (jstr:string): Option {
+    const j = JSON.parse(jstr);
+    const obj = new Option();
+    Option_fromJSON(j,obj);
+    return obj;
+}
+export function
+Option_to_json(j:object, obj:Option) {
+    Updater_to_json(j,obj);
+}
+
+export function
+Option_from_json(j:object, obj:Option) {
+    Updater_from_json(j,obj);
+}
+
+export function
+Option_to_json_string (self:Option) {
+    const j = {};
+    Option_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Option_from_json_string (jstr:string): Option {
+    const j: object = JSON.parse(jstr);
+    const obj: Option = new Option();
+    Option_from_json(j,obj);
     return obj;
 }
 
@@ -794,119 +1175,6 @@ EvaluationPoint_from_json_string (jstr:string): EvaluationPoint {
 }
 
 
-class EvaluationResults {
-
-    names : string[];
-    npaths : number[];
-    mean : number[];
-    stddev : number[];
-    skewness : number[];
-    time_points : number[];
-    time_steps : number[];
-    histograms : Histogram[];
-
-    constructor(
-        names_ : string[]  = [],
-        npaths_ : number[]  = [],
-        mean_ : number[]  = [],
-        stddev_ : number[]  = [],
-        skewness_ : number[]  = [],
-        time_points_ : number[]  = [],
-        time_steps_ : number[]  = [],
-        histograms_ : Histogram[]  = [],
-    ){
-        this.names = names_;
-        this.npaths = npaths_;
-        this.mean = mean_;
-        this.stddev = stddev_;
-        this.skewness = skewness_;
-        this.time_points = time_points_;
-        this.time_steps = time_steps_;
-        this.histograms = histograms_;
-    
-    }
-
-}
-export function
-EvaluationResults_equal (a: EvaluationResults, b: EvaluationResults) : boolean {
-    if(!list_equal(a.names,b.names,string_equal)) return false;
-    if(!list_equal(a.npaths,b.npaths,int_equal)) return false;
-    if(!list_equal(a.mean,b.mean,float_equal)) return false;
-    if(!list_equal(a.stddev,b.stddev,float_equal)) return false;
-    if(!list_equal(a.skewness,b.skewness,float_equal)) return false;
-    if(!list_equal(a.time_points,b.time_points,float_equal)) return false;
-    if(!list_equal(a.time_steps,b.time_steps,int_equal)) return false;
-    if(!list_equal(a.histograms,b.histograms,Histogram_equal)) return false;
-    return true;
-}
-
-export function
-EvaluationResults_fromJSON (j:any, obj: EvaluationResults): void {
-    obj.names = j["names"];
-    obj.npaths = j["npaths"];
-    obj.mean = j["mean"];
-    obj.stddev = j["stddev"];
-    obj.skewness = j["skewness"];
-    obj.time_points = j["time_points"];
-    obj.time_steps = j["time_steps"];
-    obj.histograms = j["histograms"];
-}
-export function
-EvaluationResults_fromJSON_string (jstr:string): EvaluationResults {
-    const j = JSON.parse(jstr);
-    const obj = new EvaluationResults();
-    EvaluationResults_fromJSON(j,obj);
-    return obj;
-}
-export function
-EvaluationResults_to_json(j:object, obj:EvaluationResults) {
-    j["names"] = obj.names;
-    j["npaths"] = obj.npaths;
-    j["mean"] = obj.mean;
-    j["stddev"] = obj.stddev;
-    j["skewness"] = obj.skewness;
-    j["time_points"] = obj.time_points;
-    j["time_steps"] = obj.time_steps;
-    j["histograms"] = [];
-    for(let item of obj.histograms) {
-        const jj = {};
-        Histogram_to_json(jj,item);
-        j["histograms"].push(jj);
-    }
-}
-
-export function
-EvaluationResults_from_json(j:object, obj:EvaluationResults) {
-    obj.names = j["names"]
-    obj.npaths = j["npaths"]
-    obj.mean = j["mean"]
-    obj.stddev = j["stddev"]
-    obj.skewness = j["skewness"]
-    obj.time_points = j["time_points"]
-    obj.time_steps = j["time_steps"]
-    for(let item of j["histograms"]) {
-        const v: Histogram = new Histogram();
-        Histogram_from_json(item,v);
-        obj.histograms.push(v);
-    }
-}
-
-export function
-EvaluationResults_to_json_string (self:EvaluationResults) {
-    const j = {};
-    EvaluationResults_to_json(j,self);
-    return JSON.stringify(j);
-}
-
-export function
-EvaluationResults_from_json_string (jstr:string): EvaluationResults {
-    const j: object = JSON.parse(jstr);
-    const obj: EvaluationResults = new EvaluationResults();
-    EvaluationResults_from_json(j,obj);
-    return obj;
-}
-
-
 class Parameter {
 
     value : number;
@@ -1031,7 +1299,14 @@ class Model {
     Add (
         
         updater : Updater,
-    ) : void  {
+    ) : Updater  {
+        
+        this.updaters.push(updater);
+        updater._equation = this.GetNumberOfUpdaters()-1;
+        if(updater.HasState())
+            updater._state = this.GetNumberOfStates()-1;
+        return updater;
+        
     }
 
 }
@@ -1120,17 +1395,154 @@ Model_from_json_string (jstr:string): Model {
 }
 
 
+class EvaluationResults {
+
+    names : string[];
+    npaths : number[];
+    mean : number[];
+    stddev : number[];
+    skewness : number[];
+    time_points : number[];
+    time_steps : number[];
+    histograms : Histogram[];
+    model : Model|undefined;
+
+    constructor(
+        names_ : string[]  = [],
+        npaths_ : number[]  = [],
+        mean_ : number[]  = [],
+        stddev_ : number[]  = [],
+        skewness_ : number[]  = [],
+        time_points_ : number[]  = [],
+        time_steps_ : number[]  = [],
+        histograms_ : Histogram[]  = [],
+        model_ : Model|undefined  = undefined,
+    ){
+        this.names = names_;
+        this.npaths = npaths_;
+        this.mean = mean_;
+        this.stddev = stddev_;
+        this.skewness = skewness_;
+        this.time_points = time_points_;
+        this.time_steps = time_steps_;
+        this.histograms = histograms_;
+        this.model = model_;
+    
+    }
+
+}
+export function
+EvaluationResults_equal (a: EvaluationResults, b: EvaluationResults) : boolean {
+    if(!list_equal(a.names,b.names,string_equal)) return false;
+    if(!list_equal(a.npaths,b.npaths,int_equal)) return false;
+    if(!list_equal(a.mean,b.mean,float_equal)) return false;
+    if(!list_equal(a.stddev,b.stddev,float_equal)) return false;
+    if(!list_equal(a.skewness,b.skewness,float_equal)) return false;
+    if(!list_equal(a.time_points,b.time_points,float_equal)) return false;
+    if(!list_equal(a.time_steps,b.time_steps,int_equal)) return false;
+    if(!list_equal(a.histograms,b.histograms,Histogram_equal)) return false;
+    if(a.model===undefined && b.model!==undefined) return false;
+    if(a.model!==undefined && b.model===undefined) return false;
+    if(a.model!==undefined && b.model!==undefined)
+    if(!Model_equal(a.model!,b.model!)) return false;
+    return true;
+}
+
+export function
+EvaluationResults_fromJSON (j:any, obj: EvaluationResults): void {
+    obj.names = j["names"];
+    obj.npaths = j["npaths"];
+    obj.mean = j["mean"];
+    obj.stddev = j["stddev"];
+    obj.skewness = j["skewness"];
+    obj.time_points = j["time_points"];
+    obj.time_steps = j["time_steps"];
+    obj.histograms = j["histograms"];
+    if("model" in j)
+        obj.model = j["model"];
+}
+export function
+EvaluationResults_fromJSON_string (jstr:string): EvaluationResults {
+    const j = JSON.parse(jstr);
+    const obj = new EvaluationResults();
+    EvaluationResults_fromJSON(j,obj);
+    return obj;
+}
+export function
+EvaluationResults_to_json(j:object, obj:EvaluationResults) {
+    j["names"] = obj.names;
+    j["npaths"] = obj.npaths;
+    j["mean"] = obj.mean;
+    j["stddev"] = obj.stddev;
+    j["skewness"] = obj.skewness;
+    j["time_points"] = obj.time_points;
+    j["time_steps"] = obj.time_steps;
+    j["histograms"] = [];
+    for(let item of obj.histograms) {
+        const jj = {};
+        Histogram_to_json(jj,item);
+        j["histograms"].push(jj);
+    }
+    if( obj.model !== undefined) {
+        {
+            const jj = {};
+            Model_to_json(jj,obj.model);
+            j["model"] = jj;
+        }
+    }
+}
+
+export function
+EvaluationResults_from_json(j:object, obj:EvaluationResults) {
+    obj.names = j["names"]
+    obj.npaths = j["npaths"]
+    obj.mean = j["mean"]
+    obj.stddev = j["stddev"]
+    obj.skewness = j["skewness"]
+    obj.time_points = j["time_points"]
+    obj.time_steps = j["time_steps"]
+    for(let item of j["histograms"]) {
+        const v: Histogram = new Histogram();
+        Histogram_from_json(item,v);
+        obj.histograms.push(v);
+    }
+    if( "model" in j)
+        obj.model = j["model"] as Model|undefined;
+}
+
+export function
+EvaluationResults_to_json_string (self:EvaluationResults) {
+    const j = {};
+    EvaluationResults_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+EvaluationResults_from_json_string (jstr:string): EvaluationResults {
+    const j: object = JSON.parse(jstr);
+    const obj: EvaluationResults = new EvaluationResults();
+    EvaluationResults_from_json(j,obj);
+    return obj;
+}
+
+
 export {
     UpdaterDoc,
     UpdaterDto,
     Updater,
     IndependentGaussian,
     CorrelatedGaussian,
+    BrownianMotion,
+    BrownianMotionRef,
+    GeometricalBrownianMotion,
+    GeometricalBrownianMotionRef,
+    ZeroCouponBond,
+    Option,
     Barrier,
     HistogramAxis,
     Histogram,
     EvaluationPoint,
-    EvaluationResults,
     Parameter,
     Model,
+    EvaluationResults,
 }
