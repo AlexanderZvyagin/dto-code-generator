@@ -231,7 +231,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
     obj = Struct('Histogram')
     Histogram = obj
     obj.attributes.append(Variable('x',HistogramAxis))
-    obj.attributes.append(Variable('y',HistogramAxis))
+    obj.attributes.append(Variable('y',HistogramAxis,optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',

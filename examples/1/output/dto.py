@@ -355,7 +355,7 @@ class Histogram:
         y = HistogramAxis()
     ):
         self.x : HistogramAxis = deepcopy(x)
-        self.y : HistogramAxis = deepcopy(y)
+        self.y : HistogramAxis|None = deepcopy(y)
         pass
 
     def __eq__ (self, other):
@@ -377,14 +377,18 @@ def Histogram_to_json_string (self:Histogram):
 def Histogram_from_json (j:dict, obj:Histogram):
     assert isinstance(obj,Histogram)
     HistogramAxis_from_json(j["x"],obj.x)
-    HistogramAxis_from_json(j["y"],obj.y)
+    if j.get("y",None) is not None:
+        HistogramAxis_from_json(j["y"],obj.y)
+    else:
+        obj.y = None
 def Histogram_to_json(j:dict, obj:Histogram):
     jj = {}
     HistogramAxis_to_json(jj,obj.x)
     j["x"] = jj
-    jj = {}
-    HistogramAxis_to_json(jj,obj.y)
-    j["y"] = jj
+    if obj.y is not None:
+        jj = {}
+        HistogramAxis_to_json(jj,obj.y)
+        j["y"] = jj
 
 
 class EvaluationPoint:

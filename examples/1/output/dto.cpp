@@ -432,7 +432,7 @@ class Histogram {
 public:
 
     HistogramAxis x;
-    HistogramAxis y;
+    std::optional<HistogramAxis> y;
 
     
     Histogram (
@@ -457,7 +457,8 @@ public:
 };
 void to_json(json &j, const Histogram &obj) {
     j["x"] = obj.x;
-    j["y"] = obj.y;
+    if(obj.y.has_value())
+        j["y"] = obj.y.value();
 }
 
 std::string to_json(const Histogram &obj) {
@@ -467,7 +468,8 @@ std::string to_json(const Histogram &obj) {
 }
 void from_json(const json &j, Histogram &obj) {
     j.at("x").get_to(obj.x);
-    j.at("y").get_to(obj.y);
+    if(auto it=j.find("y"); it!=j.end() and !it->is_null())
+        obj.y = *it;
 }
 Histogram Histogram_from_json(const json &j) {
     Histogram obj;

@@ -194,8 +194,13 @@ def Struct_from_json_python (self) -> list[str]:
     for attr in self.attributes:
         if attr.skip_dto: continue
         if isinstance(attr.type,Struct):
-            if attr.optional:
-                assert False
+            if attr.optional and not attr.list:
+                code.append(f'{indent*1}if j.get("{attr.name}",None) is not None:')
+                # code.append(f'{indent*2}jj = ')
+                code.append(f'{indent*2}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
+                # code.append(f'{indent*2}obj.{attr.name} = jj')
+                code.append(f'{indent*1}else:')
+                code.append(f'{indent*2}obj.{attr.name} = None')
             elif not attr.optional and attr.list:
                 code.append(f'{indent*1}for item in j["{attr.name}"]:')
                 code.append(f'{indent*2}v = {attr.TypeName()}()')

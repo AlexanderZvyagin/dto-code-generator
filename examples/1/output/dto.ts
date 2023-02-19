@@ -616,7 +616,7 @@ HistogramAxis_from_json_string (jstr:string): HistogramAxis {
 class Histogram {
 
     x : HistogramAxis;
-    y : HistogramAxis;
+    y : HistogramAxis|undefined;
 
     constructor(
         // defval: Variable(name=HistogramAxis(),type=Struct('HistogramAxis',base=None) #attributes=4 #methods=1,defval=None,list=False,optional=False,skip_dto=False)
@@ -634,15 +634,18 @@ export function
 Histogram_equal (a: Histogram, b: Histogram) : boolean {
     // 
     if(!HistogramAxis_equal(a.x,b.x)) return false;
-    // 
-    if(!HistogramAxis_equal(a.y,b.y)) return false;
+    if(a.y===undefined && b.y!==undefined) return false;
+    if(a.y!==undefined && b.y===undefined) return false;
+    if(a.y!==undefined && b.y!==undefined)
+    if(!HistogramAxis_equal(a.y!,b.y!)) return false;
     return true;
 }
 
 export function
 Histogram_fromJSON (j:any, obj: Histogram): void {
     obj.x = j["x"];
-    obj.y = j["y"];
+    if("y" in j)
+        obj.y = j["y"];
 }
 export function
 Histogram_fromJSON_string (jstr:string): Histogram {
@@ -658,17 +661,20 @@ Histogram_to_json(j:object, obj:Histogram) {
         HistogramAxis_to_json(jj,obj.x);
         j["x"] = jj;
     }
-    {
-        const jj = {};
-        HistogramAxis_to_json(jj,obj.y);
-        j["y"] = jj;
+    if( obj.y !== undefined) {
+        {
+            const jj = {};
+            HistogramAxis_to_json(jj,obj.y);
+            j["y"] = jj;
+        }
     }
 }
 
 export function
 Histogram_from_json(j:object, obj:Histogram) {
     HistogramAxis_from_json(j["x"],obj.x);
-    HistogramAxis_from_json(j["y"],obj.y);
+    if( "y" in j)
+        obj.y = j["y"] as HistogramAxis|undefined;
 }
 
 export function

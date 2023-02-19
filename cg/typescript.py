@@ -310,7 +310,8 @@ def Struct_from_json_typescript (self:Struct):
         if attr.skip_dto: continue
         if isinstance(attr.type,Struct):
             if attr.optional:
-                assert False
+                code.append(f'{indent*1}if( "{attr.name}" in j)')
+                code.append(f'{indent*2}obj.{attr.name} = j["{attr.name}"] as {typescript_type_to_string(attr)};')
             elif not attr.optional and attr.list:
                 code.append(f'{indent*1}for(let item of j["{attr.name}"]) {{')
                 code.append(f'{indent*2}const v: {attr.TypeName()} = new {attr.TypeName()}();')
