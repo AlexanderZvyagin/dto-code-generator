@@ -444,8 +444,7 @@ self.updaters.append(updater)
 
 if __name__ == '__main__':
 
-    languages = ['python','cpp']
-    # languages = ['typescript']
+    languages = ['python','cpp','typescript']
     objs = create_dto('output/dto',languages)
     for lang1 in languages:
         for lang2 in languages:

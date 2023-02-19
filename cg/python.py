@@ -1,6 +1,6 @@
 from .all import *
 
-def python_type_to_string (var:Variable):
+def python_type_to_string (var:Variable) -> str:
 
     tname = var.TypeName()
 
@@ -18,7 +18,7 @@ def python_type_to_string (var:Variable):
         type_str = f'{type_str}|None'
     return type_str
 
-def python_value_to_string (arg):
+def python_value_to_string (arg) -> str:
     if isinstance(arg,Variable):
         return arg.name
     elif isinstance(arg,list):
@@ -30,7 +30,7 @@ def python_value_to_string (arg):
     else:
         return str(arg)
 
-def File_prefix_python (objs):
+def File_prefix_python (objs)  -> list[str]:
     return f'''
 # {autogen_text}
 from copy import deepcopy
@@ -46,7 +46,7 @@ JSONEncoder.default = _default
 
 '''.split('\n')
 
-def Constructor_python(ctor:Function,base:Struct):
+def Constructor_python(ctor:Function,base:Struct) -> list[str]:
 
     assert ctor.name == base.name
 
@@ -88,7 +88,7 @@ def Constructor_python(ctor:Function,base:Struct):
 
     return code
 
-def Function_python(self:Function, obj:Struct=None):
+def Function_python(self:Function, obj:Struct=None) -> list[str]:
     code = []
 
     if obj and self.name==obj.name:
@@ -110,7 +110,7 @@ def Function_python(self:Function, obj:Struct=None):
     code.append(f'{indent}pass')
     return code
 
-def Struct_python (self:Struct):
+def Struct_python (self:Struct) -> list[str]:
     code = []
     if self.base:
         code.append(f'class {self.name} ({self.base.name}):')
@@ -133,14 +133,15 @@ def Struct_python (self:Struct):
     code.append(f'{indent}def __neq__ (self, other):')
     code.append(f'{indent*2}return not self==other')
 
-    code.extend(Struct_to_json_string_python(self))
     code.extend(Struct_from_json_string_python(self))
+    code.extend(Struct_to_json_string_python(self))
 
-    code.extend(Struct_to_JSON_python(self))
+    code.extend(Struct_from_json_python(self))
+    code.extend(Struct_to_json_python(self))
 
     return code
 
-def Struct_to_JSON_python (self:Struct):
+def Struct_to_json_python (self:Struct) -> list[str]:
     code = []
     code.append(f'def {self.name}_to_json(j:dict, obj:{self.name}):')
     if self.base:
@@ -174,7 +175,7 @@ def Struct_to_JSON_python (self:Struct):
     code.append('')
     return code
 
-def Struct_to_json_string_python (self:Struct):
+def Struct_to_json_string_python (self:Struct) -> list[str]:
     code = []
     code.append(f'def {self.name}_to_json_string (self:{self.name}):')
     code.append(f'{indent}j = {{}}')
@@ -182,25 +183,14 @@ def Struct_to_json_string_python (self:Struct):
     code.append(f'{indent}return json.dumps(j)')
     return code
 
-def old_Struct_to_json_string_python (self:Struct):
-    code = []
-    code.append(f'def {self.name}_to_json_string (self):')
-    skip_dto = [attr.name for attr in self.attributes if attr.skip_dto]
-    optional_attributes = [attr.name for attr in self.attributes if attr.optional]
-    code.append(f'{indent*1}def is_serialisable(k,v):')
-    code.append(f'{indent*2}if k in {optional_attributes} and v is None: return False')
-    code.append(f'{indent*2}if k in {skip_dto}: return False')
-    code.append(f'{indent*2}return True')
-    code.append(f'{indent}return json.dumps(self,default=lambda x: {{k:v for k,v in x.__dict__.items() if is_serialisable(k,v) }})')
-    return code
-
-def Struct_from_json_string_python (self):
+def Struct_from_json_python (self) -> list[str]:
     code = []
 
     code.append(f'def {self.name}_from_json (j:dict, obj:{self.name}):')
     code.append(f'{indent}assert isinstance(obj,{self.name})')
     if self.base:
         code.append(f'{indent}{self.base.name}_from_json(j,obj)')
+
     for attr in self.attributes:
         if attr.skip_dto: continue
         if isinstance(attr.type,Struct):
@@ -219,6 +209,10 @@ def Struct_from_json_string_python (self):
             else:
                 code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
 
+    return code
+
+def Struct_from_json_string_python (self) -> list[str]:
+    code = []
     code.append(f'def {self.name}_from_json_string (jstr):')
     code.append(f'{indent}j = json.loads(jstr)')
     code.append(f'{indent}obj = {self.name}()')
@@ -227,7 +221,7 @@ def Struct_from_json_string_python (self):
     code.append('')
     return code
 
-def Tests_python (objs):
+def Tests_python (objs) -> list[str]:
 
     struct_names = []
     code_construct_random = []

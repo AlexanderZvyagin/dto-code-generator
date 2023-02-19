@@ -3,13 +3,15 @@ import math
 
 def typescript_type_to_string (var:Variable):
 
+    tname = var.TypeName()
+
     type_str = {
         'void'    : 'void',
         'string'  : 'string',
         'boolean' : 'boolean',
         'int'     : 'number',
         'float'   : 'number',
-    } .get(var.type,var.type)
+    } .get(tname,tname)
 
     if var.list:
         type_str = f'{type_str}[]'
@@ -18,18 +20,15 @@ def typescript_type_to_string (var:Variable):
     return type_str
 
 def typescript_value_to_string (arg):
-    if type(arg)==Variable:
-        if arg.type=='type':
-            return f'new {arg.name}'
-        else:
-            return arg.name
+    if isinstance(arg,Variable):
+        return arg.name
     elif isinstance(arg,list):
         x = [ f'{item.name}'   for item in arg]
         y = ','.join(x)
         return f'[{y}]'
     elif isinstance(arg,str):
         return f'"{arg}"'
-    elif type(arg)==float:
+    elif isinstance(arg,float):
         if math.isnan(arg):
             return 'Number.NaN'
         else:
@@ -37,18 +36,91 @@ def typescript_value_to_string (arg):
     else:
         return str(arg)
 
+# def typescript_type_to_string (var:Variable):
+
+#     type_str = {
+#         'void'    : 'void',
+#         'string'  : 'string',
+#         'boolean' : 'boolean',
+#         'int'     : 'number',
+#         'float'   : 'number',
+#     } .get(var.type,var.type)
+
+#     if var.list:
+#         type_str = f'{type_str}[]'
+#     if var.optional:
+#         type_str = f'{type_str}|undefined'
+#     return type_str
+
+# def typescript_value_to_string (arg):
+#     if isinstance(arg,Variable):
+#         if arg.type=='type':
+#             return f'new {arg.name}'
+#         else:
+#             return arg.name
+#     elif isinstance(arg,list):
+#         x = [ f'{item.name}'   for item in arg]
+#         y = ','.join(x)
+#         return f'[{y}]'
+#     elif isinstance(arg,str):
+#         return f'"{arg}"'
+#     elif isinstance(arg,float):
+#         if math.isnan(arg):
+#             return 'Number.NaN'
+#         else:
+#             return str(arg)
+#     else:
+#         return str(arg)
 
 def File_prefix_typescript (objs):
-    return [
-        f'// {autogen_text}',
-        ''
-    ]
+    code = [f'// {autogen_text}']
+    code.extend('''
+
+function list_equal<Type> (
+    a:Type[],
+    b:Type[],
+    eq:(a:Type,b:Type)=>boolean
+): boolean {
+    if(a.length!==b.length)
+        return false;
+    for(let i=0; i<a.length; i++)
+        if(!eq(a[i],b[i]))
+            return false;
+    return true;
+}
+
+//function optional_equal<Type> (
+//    a:Type|undefined,
+//    b:Type|undefined,
+//    eq:(a:Type,b:Type)=>boolean
+//) : boolean {
+//    if(a===undefined && b===undefined) return true;
+//    if(a!==undefined && b!==undefined) return eq(a,b);
+//    return false;
+//}
+
+function float_equal (a:number, b:number) : boolean {
+    if(Number.isNaN(a) && Number.isNaN(b)) return true;
+    return a===b;
+}
+
+function int_equal (a:number, b:number) : boolean {
+    return a===b;
+}
+
+function string_equal (a:string, b:string) : boolean {
+    return a===b;
+}
+
+'''.split('\n'))
+    return code
+
 
 def File_suffix_typescript (objs):
     code = []
     code.append('export {')
     for obj in objs:
-        if type(obj) in [Struct,Function]:
+        if isinstance(obj,Struct) or isinstance(obj,Function):
             code.append(f'{indent}{obj.name},')
     code.append('}')
     return code
@@ -58,7 +130,16 @@ def Constructor_typescript(ctor:Function,base:Struct):
     code.append(f'constructor(')
 
     for arg in ctor.args:
-        defval = '' if arg.defval is None else f' = {typescript_value_to_string(arg.defval)}'
+        if arg.defval is not None:
+            code.append(f'{indent}// defval: {arg.defval}')
+            if isinstance(arg.defval,Variable) and isinstance(arg.defval.type,Struct):
+                defval = f' = new {typescript_value_to_string(arg.defval)}'
+            else:
+                defval = f' = {typescript_value_to_string(arg.defval)}'
+        elif arg.optional:
+            defval = ' = undefined'
+        else:
+            defval = ''
         code.append(f'{indent}{arg.name} : {typescript_type_to_string(arg)} {defval},')
     code.append('){')
 
@@ -118,7 +199,200 @@ def Struct_typescript (self:Struct):
         code.append('')
 
     code.append(f'}}')
+    code.extend(Struct_equal_typescript(self))
+    code.extend(Struct_fromJSON_string_typescript(self))
 
+    code.extend(Struct_to_json_typescript(self))
+    code.extend(Struct_from_json_typescript(self))
+
+    code.extend(Struct_to_json_string_typescript(self))
+    code.extend(Struct_from_json_string_typescript(self))
+
+    return code
+
+def Struct_equal_typescript(self:Struct):
+    code = []
+    code.append(f'export function')
+    code.append(f'{self.name}_equal (a: {self.name}, b: {self.name}) : boolean {{')
+    if self.base:
+        code.append(f'{indent}if(!{self.base.name}_equal(a,b)) return false;')
+    for attr in self.attributes:
+        lvl=1
+        if attr.optional:
+            code.append(f'{indent*1}if(a.{attr.name}===undefined && b.{attr.name}!==undefined) return false;')
+            code.append(f'{indent*1}if(a.{attr.name}!==undefined && b.{attr.name}===undefined) return false;')
+            code.append(f'{indent*1}if(a.{attr.name}!==undefined && b.{attr.name}!==undefined)')
+            if attr.list:
+                code.append(f'{indent*2}if(!list_equal(a.{attr.name}!,b.{attr.name}!,{attr.TypeName()}_equal)) return false;')
+            else:
+                code.append(f'{indent*lvl}if(!{attr.TypeName()}_equal(a.{attr.name}!,b.{attr.name}!)) return false;')
+        elif attr.list:
+            code.append(f'{indent*1}if(!list_equal(a.{attr.name},b.{attr.name},{attr.TypeName()}_equal)) return false;')
+        else:
+            code.append(f'{indent*lvl}// ')
+            code.append(f'{indent*lvl}if(!{attr.TypeName()}_equal(a.{attr.name},b.{attr.name})) return false;')
+    code.append(f'{indent*1}return true;')
+    code.append(f'}}')
+    code.append(f'')
+    return code
+
+def Struct_to_json_string_typescript (self:Struct) -> list[str]:
+    code = []
+    code.append(f'export function')
+    code.append(f'{self.name}_to_json_string (self:{self.name}) {{')
+    code.append(f'{indent}const j = {{}};')
+    code.append(f'{indent}{self.name}_to_json(j,self);')
+    code.append(f'{indent}return JSON.stringify(j);')
+    code.append(f'}}')
+    code.append(f'')
+    return code
+
+def Struct_from_json_string_typescript (self) -> list[str]:
+    code = []
+    code.append(f'export function')
+    code.append(f'{self.name}_from_json_string (jstr:string): {self.name} {{')
+    code.append(f'{indent}const j: object = JSON.parse(jstr);')
+    code.append(f'{indent}const obj: {self.name} = new {self.name}();')
+    code.append(f'{indent}{self.name}_from_json(j,obj);')
+    code.append(f'{indent}return obj;')
+    code.append(f'}}')
+    code.append(f'')
+    return code
+
+def Struct_to_json_typescript (self:Struct):
+    code = []
+    code.append(f'export function')
+    code.append(f'{self.name}_to_json(j:object, obj:{self.name}) {{')
+    if self.base:
+        code.append(f'{indent}{self.base.name}_to_json(j,obj);')
+
+    for attr in self.attributes:
+        if attr.skip_dto: continue
+        var_code = []
+        if isinstance(attr.type,str):
+            var_code.append(f'j["{attr.name}"] = obj.{attr.name};')
+        elif isinstance(attr.type,Struct) and not attr.list:
+            var_code.append(f'{{')
+            var_code.append(f'{indent}const jj = {{}};')
+            var_code.append(f'{indent}{attr.TypeName()}_to_json(jj,obj.{attr.name});')
+            var_code.append(f'{indent}j["{attr.name}"] = jj;')
+            var_code.append(f'}}')
+        elif isinstance(attr.type,Struct) and attr.list:
+            var_code.append(f'j["{attr.name}"] = [];')
+            var_code.append(f'for(let item of obj.{attr.name}) {{')
+            var_code.append(f'{indent}const jj = {{}};')
+            var_code.append(f'{indent}{attr.TypeName()}_to_json(jj,item);')
+            var_code.append(f'{indent}j["{attr.name}"].push(jj);')
+            var_code.append(f'}}')
+        else:
+            raise NotImplementedError()
+        if attr.optional:
+            code.append(f'{indent*1}if( obj.{attr.name} !== undefined) {{')
+            for line in var_code:
+                code.append(f'{indent*2}{line}')
+            code.append(f'{indent*1}}}')
+        else:
+            for line in var_code:
+                code.append(f'{indent*1}{line}')
+
+    code.append(f'}}')
+    code.append(f'')
+    return code
+
+def Struct_from_json_typescript (self:Struct):
+    code = []
+    code.append(f'export function')
+    code.append(f'{self.name}_from_json(j:object, obj:{self.name}) {{')
+    if self.base:
+        code.append(f'{indent}{self.base.name}_from_json(j,obj);')
+
+    for attr in self.attributes:
+        if attr.skip_dto: continue
+        if isinstance(attr.type,Struct):
+            if attr.optional:
+                assert False
+            elif not attr.optional and attr.list:
+                code.append(f'{indent*1}for(let item of j["{attr.name}"]) {{')
+                code.append(f'{indent*2}const v: {attr.TypeName()} = new {attr.TypeName()}();')
+                code.append(f'{indent*2}{attr.TypeName()}_from_json(item,v);')
+                code.append(f'{indent*2}obj.{attr.name}.push(v);')
+                code.append(f'{indent*1}}}')
+            else:
+                code.append(f'{indent}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name});')
+        else:
+            if attr.optional:
+                code.append(f'{indent*1}if("{attr.name}" in j)')
+                code.append(f'{indent*2}obj.{attr.name} = j["{attr.name}"] as {typescript_type_to_string(attr)};')
+                code.append(f'{indent*1}else')
+                code.append(f'{indent*2}obj.{attr.name} = undefined;')
+            # elif attr.optional and attr.list:
+            #     code.append(f'{indent*1}if("{attr.name}" in j) {{')
+            #     code.append(f'{indent*2}obj.{attr.name} = j["{attr.name}"] as {typescript_type_to_string(attr)};')
+            #     code.append(f'{indent*1}}} else {{')
+            #     code.append(f'{indent*2}obj.{attr.name} = undefined;')
+            #     code.append(f'{indent*1}}}')
+            else:
+                code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
+
+    code.append(f'}}')
+    code.append(f'')
+    return code
+
+
+def old_Struct_to_json_string_typescript (self:Struct):
+    code = []
+    code.append(f'{indent*1}toJSON () : object {{')
+    if self.base is None:
+        code.append(f'{indent*2}const obj = {{}};')
+    else:
+        code.append(f'{indent*2}const obj = super.toJSON();')
+    for attr in self.attributes:
+        if attr.skip_dto: continue
+        if attr.optional:
+            code.append(f'{indent*2}if(this.{attr.name}!==undefined)')
+            code.append(f'{indent*3}obj["{attr.name}"] = this.{attr.name};')
+        else:
+            code.append(f'{indent*2}obj["{attr.name}"] = this.{attr.name};')
+    code.append(f'{indent*2}return obj;')
+    # code.append(f'{indent*2}return JSON.stringify(obj);')
+    code.append(f'{indent*1}}}')
+    return code
+
+        #     code.append(f'{indent*2}if(this.{attr.name}!==undefined)')
+        #     if attr.type=='int':
+        #         code.append(f'{indent*3}obj["{attr.name}"] = Math.round(this.{attr.name});')
+        #     else:
+        #         code.append(f'{indent*3}obj["{attr.name}"] = this.{attr.name};')
+        # else:
+        #     if attr.type=='int':
+        #         code.append(f'{indent*2}obj["{attr.name}"] = Math.round(this.{attr.name});')
+        #     else:
+        #         code.append(f'{indent*2}obj["{attr.name}"] = this.{attr.name};')
+
+
+def Struct_fromJSON_string_typescript (self:Struct):
+    code = []
+
+    code.append(f'export function')
+    code.append(f'{self.name}_fromJSON (j:any, obj: {self.name}): void {{')
+    if self.base:
+        code.append(f'{indent}{self.base.name}_fromJSON(j,obj)')
+    for attr in self.attributes:
+        if attr.skip_dto: continue
+        if attr.optional:
+            code.append(f'{indent*1}if("{attr.name}" in j)')
+            code.append(f'{indent*2}obj.{attr.name} = j["{attr.name}"];')
+        else:
+            code.append(f'{indent*1}obj.{attr.name} = j["{attr.name}"];')
+    code.append('}')
+
+    code.append(f'export function')
+    code.append(f'{self.name}_fromJSON_string (jstr:string): {self.name} {{')
+    code.append(f'{indent}const j = JSON.parse(jstr);')
+    code.append(f'{indent}const obj = new {self.name}();')
+    code.append(f'{indent}{self.name}_fromJSON(j,obj);')
+    code.append(f'{indent}return obj;')
+    code.append(f'}}')
     return code
 
 def Tests_typescript (objs):
@@ -130,7 +404,7 @@ def Tests_typescript (objs):
     code_compare = []
 
     for obj in objs:
-        if type(obj)!=Struct:
+        if not isinstance(obj,Struct):
             continue
 
         struct_names.append(obj.name)
@@ -141,50 +415,17 @@ def Tests_typescript (objs):
         assert len(ctors)==1
 
         for i,arg in enumerate(ctors[0].args):
-            if arg.optional:
-                if arg.list:
-                    if arg.type=='string':
-                        random_arg = 'random_optional_list_of_strings()'
-                    elif arg.type=='float':
-                        random_arg = 'random_optional_list_of_floats()'
-                    elif arg.type=='int':
-                        random_arg = 'random_optional_list_of_ints()'
-                    elif arg.type in struct_names:
-                        random_arg = f'random_optional_list_of_{arg.type}()'
-                    else:
-                        raise Exception(f'Unknown type {arg.type}')
-                elif arg.type=='string':
-                    random_arg = 'random_optional_string()'
-                elif arg.type=='float':
-                    random_arg = 'random_optional_float()'
-                elif arg.type=='int':
-                    random_arg = 'random_optional_int()'
-                elif arg.type in struct_names:
-                    random_arg = f'random_optional_{arg.type}()'
-                else:
-                    raise Exception(f'Unknown type {arg.type}')
+            tname = arg.TypeName()
+            if arg.optional and arg.list:
+                random_arg = f'random_optional_list_{tname}()'
+            elif arg.optional and not arg.list:
+                random_arg = f'random_optional_{tname}()'
+            elif not arg.optional and arg.list:
+                random_arg = f'random_list_{tname}()'
+            elif not arg.optional and not arg.list:
+                random_arg = f'random_{tname}()'
             else:
-                if arg.list:
-                    if arg.type=='string':
-                        random_arg = 'random_list_of_strings()'
-                    elif arg.type=='float':
-                        random_arg = 'random_list_of_floats()'
-                    elif arg.type=='int':
-                        random_arg = 'random_list_of_ints()'
-                    elif arg.type in struct_names:
-                        random_arg = f'random_list_of_{arg.type}()'
-                    else:
-                        raise Exception(f'Unknown type {arg.type}')
-                elif arg.type=='string':
-                    random_arg = 'random_string()'
-                elif arg.type=='float':
-                    random_arg = 'random_float()'
-                elif arg.type=='int':
-                    random_arg = 'random_int()'
-                elif arg.type in struct_names:
-                    random_arg = f'random_{arg.type}()'
-                else:
-                    raise Exception(f'Unknown type {arg.type}')
+                raise Exception('Development error')
             ending = '' if (i+1)==len(ctors[0].args) else ','
             random_args += f'{indent*2}{random_arg}{ending}\n'
 
@@ -197,7 +438,7 @@ function random_{obj.name} () : {obj.name} {{
 '''.split('\n'))
 
         code_construct_random.extend(f'''
-function random_list_of_{obj.name} (min:number = 0, max:number = 3) : {obj.name}[] {{
+function random_list_{obj.name} (min:number = 0, max:number = 3) : {obj.name}[] {{
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:{obj.name}[] = [];
     for(let i=0; i<size; i++)
@@ -208,21 +449,34 @@ function random_list_of_{obj.name} (min:number = 0, max:number = 3) : {obj.name}
 
         code_create.append(f'''
     }} else if (struct_name === '{obj.name}') {{
-        fs.writeFileSync(
-            file_name,
-            JSON.stringify (random_{obj.name}()));
+        const obj1: {obj.name} = random_{obj.name}();
+        const j: object = {{}};
+        dto.{obj.name}_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
+        const obj2: {obj.name} = new {obj.name}();
+        dto.{obj.name}_from_json(j,obj2);
+        // const jstr: string = fs.readFileSync(file_name,'utf-8');
+        // const obj2: {obj.name} = dto.{obj.name}_fromJSON_string(jstr);
+        if(!dto.{obj.name}_equal(obj1,obj2))
+            throw new Error(`${{struct_name}} objects are not equal.`);
 ''')
 
         code_convert.extend(f'''
     }} else if (struct_name === '{obj.name}') {{
-        const obj = JSON.parse((fs.readFileSync(file1_name,'utf-8')));
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: {obj.name} = dto.{obj.name}_fromJSON_string(jstr);
+        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 '''.split('\n'))
         code_compare.extend(f'''
     }} else if (struct_name === '{obj.name}') {{
-        const obj1 = JSON.parse((fs.readFileSync(file1_name,'utf-8')));
-        const obj2 = JSON.parse((fs.readFileSync(file2_name,'utf-8')));
-        if(!object_equals(obj1,obj2))
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: {obj.name} = dto.{obj.name}_fromJSON_string(jstr1);
+        const obj2: {obj.name} = dto.{obj.name}_fromJSON_string(jstr2);
+        if(!dto.{obj.name}_equal(obj1,obj2))
             throw new Error(`${{struct_name}} objects are not equal.`);
 '''.split('\n'))
 
@@ -248,6 +502,8 @@ typescript_test_template = '''
 // - from <DTO-s spec>
 
 import * as fs from 'fs'
+
+import * as dto from './dto'
 import {
 //structs//
 } from './dto'
@@ -284,7 +540,7 @@ function random_optional_string() : string|undefined {
     return yes_no() ? random_string() : undefined;
 }
 
-function random_list_of_ints (min:number = 0, max:number = 3) : number[] {
+function random_list_int (min:number = 0, max:number = 3) : number[] {
     const size = random_int(min,max);
     let list:number[] = [];
     for(let i=0; i<size; i++)
@@ -292,11 +548,11 @@ function random_list_of_ints (min:number = 0, max:number = 3) : number[] {
     return list;
 }
 
-function random_optional_list_of_ints() : number[]|undefined {
-    return yes_no() ? random_list_of_ints() : undefined;
+function random_optional_list_int() : number[]|undefined {
+    return yes_no() ? random_list_int() : undefined;
 }
 
-function random_list_of_floats (min:number = 0, max:number = 3) : number[] {
+function random_list_float (min:number = 0, max:number = 3) : number[] {
     const size = random_int(min,max);
     let list:number[] = [];
     for(let i=0; i<size; i++)
@@ -304,11 +560,11 @@ function random_list_of_floats (min:number = 0, max:number = 3) : number[] {
     return list;
 }
 
-function random_optional_list_of_floats() : number[]|undefined {
-    return yes_no() ? random_list_of_floats() : undefined;
+function random_optional_list_float() : number[]|undefined {
+    return yes_no() ? random_list_float() : undefined;
 }
 
-function random_list_of_strings (min:number = 0, max:number = 3) : string[] {
+function random_list_string (min:number = 0, max:number = 3) : string[] {
     const size = random_int(min,max);
     let list:string[] = [];
     for(let i=0; i<size; i++)
@@ -316,46 +572,46 @@ function random_list_of_strings (min:number = 0, max:number = 3) : string[] {
     return list;
 }
 
-function random_optional_list_of_strings() : string[]|undefined {
-    return yes_no() ? random_list_of_strings() : undefined;
+function random_optional_list_string() : string[]|undefined {
+    return yes_no() ? random_list_string() : undefined;
 }
 
 // https://stackoverflow.com/questions/1068834/object-comparison-in-javascript/6713782#6713782
-function object_equals( x, y ) {
-    if ( x === y ) return true;
-      // if both x and y are null or undefined and exactly the same
-  
-    if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
-      // if they are not strictly equal, they both need to be Objects
-  
-    if ( x.constructor !== y.constructor ) return false;
-      // they must have the exact same prototype chain, the closest we can do is
-      // test there constructor.
-  
-    for ( var p in x ) {
-      if ( ! x.hasOwnProperty( p ) ) continue;
-        // other properties were tested using x.constructor === y.constructor
-  
-      if ( ! y.hasOwnProperty( p ) ) return false;
-        // allows to compare x[ p ] and y[ p ] when set to undefined
-  
-      if ( x[ p ] === y[ p ] ) continue;
-        // if they have the same strict value or identity then they are equal
-  
-      if ( typeof( x[ p ] ) !== "object" ) return false;
-        // Numbers, Strings, Functions, Booleans must be strictly equal
-  
-      if ( ! object_equals( x[ p ],  y[ p ] ) ) return false;
-        // Objects and Arrays must be tested recursively
-    }
-  
-    for ( p in y )
-      if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) )
-        return false;
-          // allows x[ p ] to be set to undefined
-  
-    return true;
-}
+// function object_equals( x, y ) {
+//     if ( x === y ) return true;
+//       // if both x and y are null or undefined and exactly the same
+//   
+//     if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
+//       // if they are not strictly equal, they both need to be Objects
+//   
+//     if ( x.constructor !== y.constructor ) return false;
+//       // they must have the exact same prototype chain, the closest we can do is
+//       // test there constructor.
+//   
+//     for ( var p in x ) {
+//       if ( ! x.hasOwnProperty( p ) ) continue;
+//         // other properties were tested using x.constructor === y.constructor
+//   
+//       if ( ! y.hasOwnProperty( p ) ) return false;
+//         // allows to compare x[ p ] and y[ p ] when set to undefined
+//   
+//       if ( x[ p ] === y[ p ] ) continue;
+//         // if they have the same strict value or identity then they are equal
+//   
+//       if ( typeof( x[ p ] ) !== "object" ) return false;
+//         // Numbers, Strings, Functions, Booleans must be strictly equal
+//   
+//       if ( ! object_equals( x[ p ],  y[ p ] ) ) return false;
+//         // Objects and Arrays must be tested recursively
+//     }
+//   
+//     for ( p in y )
+//       if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) )
+//         return false;
+//           // allows x[ p ] to be set to undefined
+//   
+//     return true;
+// }
 
 //create-struct-random//
 

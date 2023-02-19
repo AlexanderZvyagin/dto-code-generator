@@ -42,6 +42,12 @@ class UpdaterDoc:
         return True
     def __neq__ (self, other):
         return not self==other
+def UpdaterDoc_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = UpdaterDoc()
+    UpdaterDoc_from_json(j,obj)
+    return obj
+
 def UpdaterDoc_to_json_string (self:UpdaterDoc):
     j = {}
     UpdaterDoc_to_json(j,self)
@@ -54,12 +60,6 @@ def UpdaterDoc_from_json (j:dict, obj:UpdaterDoc):
     obj.start = j["start"]
     obj.nargs_min = j["nargs_min"]
     obj.nrefs_min = j["nrefs_min"]
-def UpdaterDoc_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = UpdaterDoc()
-    UpdaterDoc_from_json(j,obj)
-    return obj
-
 def UpdaterDoc_to_json(j:dict, obj:UpdaterDoc):
     j["name"] = obj.name
     j["title"] = obj.title
@@ -93,6 +93,12 @@ class UpdaterDto:
         return True
     def __neq__ (self, other):
         return not self==other
+def UpdaterDto_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = UpdaterDto()
+    UpdaterDto_from_json(j,obj)
+    return obj
+
 def UpdaterDto_to_json_string (self:UpdaterDto):
     j = {}
     UpdaterDto_to_json(j,self)
@@ -103,12 +109,6 @@ def UpdaterDto_from_json (j:dict, obj:UpdaterDto):
     obj.refs = j.get("refs",None)
     obj.args = j.get("args",None)
     obj.start = j.get("start",None)
-def UpdaterDto_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = UpdaterDto()
-    UpdaterDto_from_json(j,obj)
-    return obj
-
 def UpdaterDto_to_json(j:dict, obj:UpdaterDto):
     j["name"] = obj.name
     if obj.refs is not None:
@@ -164,6 +164,12 @@ class Updater (UpdaterDto):
         return True
     def __neq__ (self, other):
         return not self==other
+def Updater_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Updater()
+    Updater_from_json(j,obj)
+    return obj
+
 def Updater_to_json_string (self:Updater):
     j = {}
     Updater_to_json(j,self)
@@ -171,12 +177,6 @@ def Updater_to_json_string (self:Updater):
 def Updater_from_json (j:dict, obj:Updater):
     assert isinstance(obj,Updater)
     UpdaterDto_from_json(j,obj)
-def Updater_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = Updater()
-    Updater_from_json(j,obj)
-    return obj
-
 def Updater_to_json(j:dict, obj:Updater):
     UpdaterDto_to_json(j,obj)
 
@@ -201,6 +201,12 @@ class IndependentGaussian (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+def IndependentGaussian_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = IndependentGaussian()
+    IndependentGaussian_from_json(j,obj)
+    return obj
+
 def IndependentGaussian_to_json_string (self:IndependentGaussian):
     j = {}
     IndependentGaussian_to_json(j,self)
@@ -208,12 +214,6 @@ def IndependentGaussian_to_json_string (self:IndependentGaussian):
 def IndependentGaussian_from_json (j:dict, obj:IndependentGaussian):
     assert isinstance(obj,IndependentGaussian)
     Updater_from_json(j,obj)
-def IndependentGaussian_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = IndependentGaussian()
-    IndependentGaussian_from_json(j,obj)
-    return obj
-
 def IndependentGaussian_to_json(j:dict, obj:IndependentGaussian):
     Updater_to_json(j,obj)
 
@@ -240,6 +240,12 @@ class CorrelatedGaussian (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+def CorrelatedGaussian_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = CorrelatedGaussian()
+    CorrelatedGaussian_from_json(j,obj)
+    return obj
+
 def CorrelatedGaussian_to_json_string (self:CorrelatedGaussian):
     j = {}
     CorrelatedGaussian_to_json(j,self)
@@ -247,12 +253,6 @@ def CorrelatedGaussian_to_json_string (self:CorrelatedGaussian):
 def CorrelatedGaussian_from_json (j:dict, obj:CorrelatedGaussian):
     assert isinstance(obj,CorrelatedGaussian)
     Updater_from_json(j,obj)
-def CorrelatedGaussian_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = CorrelatedGaussian()
-    CorrelatedGaussian_from_json(j,obj)
-    return obj
-
 def CorrelatedGaussian_to_json(j:dict, obj:CorrelatedGaussian):
     Updater_to_json(j,obj)
 
@@ -282,6 +282,12 @@ class Barrier (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+def Barrier_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Barrier()
+    Barrier_from_json(j,obj)
+    return obj
+
 def Barrier_to_json_string (self:Barrier):
     j = {}
     Barrier_to_json(j,self)
@@ -289,12 +295,6 @@ def Barrier_to_json_string (self:Barrier):
 def Barrier_from_json (j:dict, obj:Barrier):
     assert isinstance(obj,Barrier)
     Updater_from_json(j,obj)
-def Barrier_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = Barrier()
-    Barrier_from_json(j,obj)
-    return obj
-
 def Barrier_to_json(j:dict, obj:Barrier):
     Updater_to_json(j,obj)
 
@@ -323,6 +323,12 @@ class HistogramAxis:
         return True
     def __neq__ (self, other):
         return not self==other
+def HistogramAxis_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = HistogramAxis()
+    HistogramAxis_from_json(j,obj)
+    return obj
+
 def HistogramAxis_to_json_string (self:HistogramAxis):
     j = {}
     HistogramAxis_to_json(j,self)
@@ -333,12 +339,6 @@ def HistogramAxis_from_json (j:dict, obj:HistogramAxis):
     obj.nbins = j["nbins"]
     obj.min = j["min"]
     obj.max = j["max"]
-def HistogramAxis_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = HistogramAxis()
-    HistogramAxis_from_json(j,obj)
-    return obj
-
 def HistogramAxis_to_json(j:dict, obj:HistogramAxis):
     j["state"] = obj.state
     j["nbins"] = obj.nbins
@@ -364,6 +364,12 @@ class Histogram:
         return True
     def __neq__ (self, other):
         return not self==other
+def Histogram_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Histogram()
+    Histogram_from_json(j,obj)
+    return obj
+
 def Histogram_to_json_string (self:Histogram):
     j = {}
     Histogram_to_json(j,self)
@@ -372,12 +378,6 @@ def Histogram_from_json (j:dict, obj:Histogram):
     assert isinstance(obj,Histogram)
     HistogramAxis_from_json(j["x"],obj.x)
     HistogramAxis_from_json(j["y"],obj.y)
-def Histogram_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = Histogram()
-    Histogram_from_json(j,obj)
-    return obj
-
 def Histogram_to_json(j:dict, obj:Histogram):
     jj = {}
     HistogramAxis_to_json(jj,obj.x)
@@ -411,6 +411,12 @@ class EvaluationPoint:
         return True
     def __neq__ (self, other):
         return not self==other
+def EvaluationPoint_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = EvaluationPoint()
+    EvaluationPoint_from_json(j,obj)
+    return obj
+
 def EvaluationPoint_to_json_string (self:EvaluationPoint):
     j = {}
     EvaluationPoint_to_json(j,self)
@@ -421,12 +427,6 @@ def EvaluationPoint_from_json (j:dict, obj:EvaluationPoint):
     obj.time = j["time"]
     obj.value = j["value"]
     obj.error = j["error"]
-def EvaluationPoint_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = EvaluationPoint()
-    EvaluationPoint_from_json(j,obj)
-    return obj
-
 def EvaluationPoint_to_json(j:dict, obj:EvaluationPoint):
     j["state"] = obj.state
     j["time"] = obj.time
@@ -470,6 +470,12 @@ class EvaluationResults:
         return True
     def __neq__ (self, other):
         return not self==other
+def EvaluationResults_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = EvaluationResults()
+    EvaluationResults_from_json(j,obj)
+    return obj
+
 def EvaluationResults_to_json_string (self:EvaluationResults):
     j = {}
     EvaluationResults_to_json(j,self)
@@ -487,12 +493,6 @@ def EvaluationResults_from_json (j:dict, obj:EvaluationResults):
         v = Histogram()
         Histogram_from_json(item,v)
         obj.histograms.append(v)
-def EvaluationResults_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = EvaluationResults()
-    EvaluationResults_from_json(j,obj)
-    return obj
-
 def EvaluationResults_to_json(j:dict, obj:EvaluationResults):
     j["names"] = obj.names
     j["npaths"] = obj.npaths
@@ -532,6 +532,12 @@ class Parameter:
         return True
     def __neq__ (self, other):
         return not self==other
+def Parameter_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Parameter()
+    Parameter_from_json(j,obj)
+    return obj
+
 def Parameter_to_json_string (self:Parameter):
     j = {}
     Parameter_to_json(j,self)
@@ -542,12 +548,6 @@ def Parameter_from_json (j:dict, obj:Parameter):
     obj.step = j["step"]
     obj.min = j["min"]
     obj.max = j["max"]
-def Parameter_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = Parameter()
-    Parameter_from_json(j,obj)
-    return obj
-
 def Parameter_to_json(j:dict, obj:Parameter):
     j["value"] = obj.value
     j["step"] = obj.step
@@ -618,6 +618,12 @@ class Model:
         return True
     def __neq__ (self, other):
         return not self==other
+def Model_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Model()
+    Model_from_json(j,obj)
+    return obj
+
 def Model_to_json_string (self:Model):
     j = {}
     Model_to_json(j,self)
@@ -637,12 +643,6 @@ def Model_from_json (j:dict, obj:Model):
         obj.evaluations.append(v)
     obj.RunTimeoutSeconds = j["RunTimeoutSeconds"]
     obj.MemoryLimitKB = j["MemoryLimitKB"]
-def Model_from_json_string (jstr):
-    j = json.loads(jstr)
-    obj = Model()
-    Model_from_json(j,obj)
-    return obj
-
 def Model_to_json(j:dict, obj:Model):
     j["TimeStart"] = obj.TimeStart
     j["TimeSteps"] = obj.TimeSteps

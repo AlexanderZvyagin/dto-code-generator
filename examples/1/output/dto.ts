@@ -1,5 +1,43 @@
 // This is an automatically generated file.
 
+
+function list_equal<Type> (
+    a:Type[],
+    b:Type[],
+    eq:(a:Type,b:Type)=>boolean
+): boolean {
+    if(a.length!==b.length)
+        return false;
+    for(let i=0; i<a.length; i++)
+        if(!eq(a[i],b[i]))
+            return false;
+    return true;
+}
+
+//function optional_equal<Type> (
+//    a:Type|undefined,
+//    b:Type|undefined,
+//    eq:(a:Type,b:Type)=>boolean
+//) : boolean {
+//    if(a===undefined && b===undefined) return true;
+//    if(a!==undefined && b!==undefined) return eq(a,b);
+//    return false;
+//}
+
+function float_equal (a:number, b:number) : boolean {
+    if(Number.isNaN(a) && Number.isNaN(b)) return true;
+    return a===b;
+}
+
+function int_equal (a:number, b:number) : boolean {
+    return a===b;
+}
+
+function string_equal (a:string, b:string) : boolean {
+    return a===b;
+}
+
+
 class UpdaterDoc {
 
     name : string;
@@ -10,11 +48,17 @@ class UpdaterDoc {
     nrefs_min : number;
 
     constructor(
+        // defval: 
         name_ : string  = "",
+        // defval: 
         title_ : string  = "",
+        // defval: 
         doc_md_ : string  = "",
+        // defval: 
         start_ : string  = "",
+        // defval: -88
         nargs_min_ : number  = -88,
+        // defval: -88
         nrefs_min_ : number  = -88,
     ){
         this.name = name_;
@@ -27,6 +71,74 @@ class UpdaterDoc {
     }
 
 }
+export function
+UpdaterDoc_equal (a: UpdaterDoc, b: UpdaterDoc) : boolean {
+    // 
+    if(!string_equal(a.name,b.name)) return false;
+    // 
+    if(!string_equal(a.title,b.title)) return false;
+    // 
+    if(!string_equal(a.doc_md,b.doc_md)) return false;
+    // 
+    if(!string_equal(a.start,b.start)) return false;
+    // 
+    if(!int_equal(a.nargs_min,b.nargs_min)) return false;
+    // 
+    if(!int_equal(a.nrefs_min,b.nrefs_min)) return false;
+    return true;
+}
+
+export function
+UpdaterDoc_fromJSON (j:any, obj: UpdaterDoc): void {
+    obj.name = j["name"];
+    obj.title = j["title"];
+    obj.doc_md = j["doc_md"];
+    obj.start = j["start"];
+    obj.nargs_min = j["nargs_min"];
+    obj.nrefs_min = j["nrefs_min"];
+}
+export function
+UpdaterDoc_fromJSON_string (jstr:string): UpdaterDoc {
+    const j = JSON.parse(jstr);
+    const obj = new UpdaterDoc();
+    UpdaterDoc_fromJSON(j,obj);
+    return obj;
+}
+export function
+UpdaterDoc_to_json(j:object, obj:UpdaterDoc) {
+    j["name"] = obj.name;
+    j["title"] = obj.title;
+    j["doc_md"] = obj.doc_md;
+    j["start"] = obj.start;
+    j["nargs_min"] = obj.nargs_min;
+    j["nrefs_min"] = obj.nrefs_min;
+}
+
+export function
+UpdaterDoc_from_json(j:object, obj:UpdaterDoc) {
+    obj.name = j["name"]
+    obj.title = j["title"]
+    obj.doc_md = j["doc_md"]
+    obj.start = j["start"]
+    obj.nargs_min = j["nargs_min"]
+    obj.nrefs_min = j["nrefs_min"]
+}
+
+export function
+UpdaterDoc_to_json_string (self:UpdaterDoc) {
+    const j = {};
+    UpdaterDoc_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+UpdaterDoc_from_json_string (jstr:string): UpdaterDoc {
+    const j: object = JSON.parse(jstr);
+    const obj: UpdaterDoc = new UpdaterDoc();
+    UpdaterDoc_from_json(j,obj);
+    return obj;
+}
+
 
 class UpdaterDto {
 
@@ -36,10 +148,11 @@ class UpdaterDto {
     start : number|undefined;
 
     constructor(
+        // defval: 
         name_ : string  = "",
-        refs_ : number[]|undefined ,
-        args_ : number[]|undefined ,
-        start_ : number|undefined ,
+        refs_ : number[]|undefined  = undefined,
+        args_ : number[]|undefined  = undefined,
+        start_ : number|undefined  = undefined,
     ){
         this.name = name_;
         this.refs = refs_;
@@ -49,6 +162,88 @@ class UpdaterDto {
     }
 
 }
+export function
+UpdaterDto_equal (a: UpdaterDto, b: UpdaterDto) : boolean {
+    // 
+    if(!string_equal(a.name,b.name)) return false;
+    if(a.refs===undefined && b.refs!==undefined) return false;
+    if(a.refs!==undefined && b.refs===undefined) return false;
+    if(a.refs!==undefined && b.refs!==undefined)
+        if(!list_equal(a.refs!,b.refs!,int_equal)) return false;
+    if(a.args===undefined && b.args!==undefined) return false;
+    if(a.args!==undefined && b.args===undefined) return false;
+    if(a.args!==undefined && b.args!==undefined)
+        if(!list_equal(a.args!,b.args!,float_equal)) return false;
+    if(a.start===undefined && b.start!==undefined) return false;
+    if(a.start!==undefined && b.start===undefined) return false;
+    if(a.start!==undefined && b.start!==undefined)
+    if(!float_equal(a.start!,b.start!)) return false;
+    return true;
+}
+
+export function
+UpdaterDto_fromJSON (j:any, obj: UpdaterDto): void {
+    obj.name = j["name"];
+    if("refs" in j)
+        obj.refs = j["refs"];
+    if("args" in j)
+        obj.args = j["args"];
+    if("start" in j)
+        obj.start = j["start"];
+}
+export function
+UpdaterDto_fromJSON_string (jstr:string): UpdaterDto {
+    const j = JSON.parse(jstr);
+    const obj = new UpdaterDto();
+    UpdaterDto_fromJSON(j,obj);
+    return obj;
+}
+export function
+UpdaterDto_to_json(j:object, obj:UpdaterDto) {
+    j["name"] = obj.name;
+    if( obj.refs !== undefined) {
+        j["refs"] = obj.refs;
+    }
+    if( obj.args !== undefined) {
+        j["args"] = obj.args;
+    }
+    if( obj.start !== undefined) {
+        j["start"] = obj.start;
+    }
+}
+
+export function
+UpdaterDto_from_json(j:object, obj:UpdaterDto) {
+    obj.name = j["name"]
+    if("refs" in j)
+        obj.refs = j["refs"] as number[]|undefined;
+    else
+        obj.refs = undefined;
+    if("args" in j)
+        obj.args = j["args"] as number[]|undefined;
+    else
+        obj.args = undefined;
+    if("start" in j)
+        obj.start = j["start"] as number|undefined;
+    else
+        obj.start = undefined;
+}
+
+export function
+UpdaterDto_to_json_string (self:UpdaterDto) {
+    const j = {};
+    UpdaterDto_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+UpdaterDto_from_json_string (jstr:string): UpdaterDto {
+    const j: object = JSON.parse(jstr);
+    const obj: UpdaterDto = new UpdaterDto();
+    UpdaterDto_from_json(j,obj);
+    return obj;
+}
+
 
 class Updater extends UpdaterDto {
 
@@ -56,9 +251,13 @@ class Updater extends UpdaterDto {
     _state : number;
 
     constructor(
+        // defval: 
         name : string  = "",
+        // defval: []
         refs : number[]  = [],
+        // defval: []
         args : number[]  = [],
+        // defval: nan
         start : number  = Number.NaN,
     ){
         super(
@@ -89,11 +288,58 @@ class Updater extends UpdaterDto {
     }
 
 }
+export function
+Updater_equal (a: Updater, b: Updater) : boolean {
+    if(!UpdaterDto_equal(a,b)) return false;
+    // 
+    if(!int_equal(a._equation,b._equation)) return false;
+    // 
+    if(!int_equal(a._state,b._state)) return false;
+    return true;
+}
+
+export function
+Updater_fromJSON (j:any, obj: Updater): void {
+    UpdaterDto_fromJSON(j,obj)
+}
+export function
+Updater_fromJSON_string (jstr:string): Updater {
+    const j = JSON.parse(jstr);
+    const obj = new Updater();
+    Updater_fromJSON(j,obj);
+    return obj;
+}
+export function
+Updater_to_json(j:object, obj:Updater) {
+    UpdaterDto_to_json(j,obj);
+}
+
+export function
+Updater_from_json(j:object, obj:Updater) {
+    UpdaterDto_from_json(j,obj);
+}
+
+export function
+Updater_to_json_string (self:Updater) {
+    const j = {};
+    Updater_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Updater_from_json_string (jstr:string): Updater {
+    const j: object = JSON.parse(jstr);
+    const obj: Updater = new Updater();
+    Updater_from_json(j,obj);
+    return obj;
+}
+
 
 class IndependentGaussian extends Updater {
 
 
     constructor(
+        // defval: []
         refs_ : number[]  = [],
     ){
         super(
@@ -106,13 +352,58 @@ class IndependentGaussian extends Updater {
     }
 
 }
+export function
+IndependentGaussian_equal (a: IndependentGaussian, b: IndependentGaussian) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+IndependentGaussian_fromJSON (j:any, obj: IndependentGaussian): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+IndependentGaussian_fromJSON_string (jstr:string): IndependentGaussian {
+    const j = JSON.parse(jstr);
+    const obj = new IndependentGaussian();
+    IndependentGaussian_fromJSON(j,obj);
+    return obj;
+}
+export function
+IndependentGaussian_to_json(j:object, obj:IndependentGaussian) {
+    Updater_to_json(j,obj);
+}
+
+export function
+IndependentGaussian_from_json(j:object, obj:IndependentGaussian) {
+    Updater_from_json(j,obj);
+}
+
+export function
+IndependentGaussian_to_json_string (self:IndependentGaussian) {
+    const j = {};
+    IndependentGaussian_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+IndependentGaussian_from_json_string (jstr:string): IndependentGaussian {
+    const j: object = JSON.parse(jstr);
+    const obj: IndependentGaussian = new IndependentGaussian();
+    IndependentGaussian_from_json(j,obj);
+    return obj;
+}
+
 
 class CorrelatedGaussian extends Updater {
 
 
     constructor(
+        // defval: nan
         correlation : number  = Number.NaN,
+        // defval: -88
         state1 : number  = -88,
+        // defval: -88
         state2 : number  = -88,
     ){
         super(
@@ -125,16 +416,64 @@ class CorrelatedGaussian extends Updater {
     }
 
 }
+export function
+CorrelatedGaussian_equal (a: CorrelatedGaussian, b: CorrelatedGaussian) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+CorrelatedGaussian_fromJSON (j:any, obj: CorrelatedGaussian): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+CorrelatedGaussian_fromJSON_string (jstr:string): CorrelatedGaussian {
+    const j = JSON.parse(jstr);
+    const obj = new CorrelatedGaussian();
+    CorrelatedGaussian_fromJSON(j,obj);
+    return obj;
+}
+export function
+CorrelatedGaussian_to_json(j:object, obj:CorrelatedGaussian) {
+    Updater_to_json(j,obj);
+}
+
+export function
+CorrelatedGaussian_from_json(j:object, obj:CorrelatedGaussian) {
+    Updater_from_json(j,obj);
+}
+
+export function
+CorrelatedGaussian_to_json_string (self:CorrelatedGaussian) {
+    const j = {};
+    CorrelatedGaussian_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+CorrelatedGaussian_from_json_string (jstr:string): CorrelatedGaussian {
+    const j: object = JSON.parse(jstr);
+    const obj: CorrelatedGaussian = new CorrelatedGaussian();
+    CorrelatedGaussian_from_json(j,obj);
+    return obj;
+}
+
 
 class Barrier extends Updater {
 
 
     constructor(
+        // defval: -88
         underlying : number  = -88,
+        // defval: nan
         start : number  = Number.NaN,
+        // defval: nan
         level : number  = Number.NaN,
+        // defval: -88
         direction : number  = -88,
+        // defval: -88
         action : number  = -88,
+        // defval: nan
         value : number  = Number.NaN,
     ){
         super(
@@ -147,6 +486,48 @@ class Barrier extends Updater {
     }
 
 }
+export function
+Barrier_equal (a: Barrier, b: Barrier) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+Barrier_fromJSON (j:any, obj: Barrier): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+Barrier_fromJSON_string (jstr:string): Barrier {
+    const j = JSON.parse(jstr);
+    const obj = new Barrier();
+    Barrier_fromJSON(j,obj);
+    return obj;
+}
+export function
+Barrier_to_json(j:object, obj:Barrier) {
+    Updater_to_json(j,obj);
+}
+
+export function
+Barrier_from_json(j:object, obj:Barrier) {
+    Updater_from_json(j,obj);
+}
+
+export function
+Barrier_to_json_string (self:Barrier) {
+    const j = {};
+    Barrier_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Barrier_from_json_string (jstr:string): Barrier {
+    const j: object = JSON.parse(jstr);
+    const obj: Barrier = new Barrier();
+    Barrier_from_json(j,obj);
+    return obj;
+}
+
 
 class HistogramAxis {
 
@@ -156,9 +537,13 @@ class HistogramAxis {
     max : number;
 
     constructor(
+        // defval: -88
         _state : number  = -88,
+        // defval: -88
         _nbins : number  = -88,
+        // defval: -88
         _min : number  = -88,
+        // defval: -88
         _max : number  = -88,
     ){
         this.state = _state;
@@ -169,6 +554,64 @@ class HistogramAxis {
     }
 
 }
+export function
+HistogramAxis_equal (a: HistogramAxis, b: HistogramAxis) : boolean {
+    // 
+    if(!int_equal(a.state,b.state)) return false;
+    // 
+    if(!int_equal(a.nbins,b.nbins)) return false;
+    // 
+    if(!float_equal(a.min,b.min)) return false;
+    // 
+    if(!float_equal(a.max,b.max)) return false;
+    return true;
+}
+
+export function
+HistogramAxis_fromJSON (j:any, obj: HistogramAxis): void {
+    obj.state = j["state"];
+    obj.nbins = j["nbins"];
+    obj.min = j["min"];
+    obj.max = j["max"];
+}
+export function
+HistogramAxis_fromJSON_string (jstr:string): HistogramAxis {
+    const j = JSON.parse(jstr);
+    const obj = new HistogramAxis();
+    HistogramAxis_fromJSON(j,obj);
+    return obj;
+}
+export function
+HistogramAxis_to_json(j:object, obj:HistogramAxis) {
+    j["state"] = obj.state;
+    j["nbins"] = obj.nbins;
+    j["min"] = obj.min;
+    j["max"] = obj.max;
+}
+
+export function
+HistogramAxis_from_json(j:object, obj:HistogramAxis) {
+    obj.state = j["state"]
+    obj.nbins = j["nbins"]
+    obj.min = j["min"]
+    obj.max = j["max"]
+}
+
+export function
+HistogramAxis_to_json_string (self:HistogramAxis) {
+    const j = {};
+    HistogramAxis_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+HistogramAxis_from_json_string (jstr:string): HistogramAxis {
+    const j: object = JSON.parse(jstr);
+    const obj: HistogramAxis = new HistogramAxis();
+    HistogramAxis_from_json(j,obj);
+    return obj;
+}
+
 
 class Histogram {
 
@@ -176,7 +619,9 @@ class Histogram {
     y : HistogramAxis;
 
     constructor(
+        // defval: Variable(name=HistogramAxis(),type=Struct('HistogramAxis',base=None) #attributes=4 #methods=1,defval=None,list=False,optional=False,skip_dto=False)
         x : HistogramAxis  = new HistogramAxis(),
+        // defval: Variable(name=HistogramAxis(),type=Struct('HistogramAxis',base=None) #attributes=4 #methods=1,defval=None,list=False,optional=False,skip_dto=False)
         y : HistogramAxis  = new HistogramAxis(),
     ){
         this.x = x;
@@ -185,6 +630,62 @@ class Histogram {
     }
 
 }
+export function
+Histogram_equal (a: Histogram, b: Histogram) : boolean {
+    // 
+    if(!HistogramAxis_equal(a.x,b.x)) return false;
+    // 
+    if(!HistogramAxis_equal(a.y,b.y)) return false;
+    return true;
+}
+
+export function
+Histogram_fromJSON (j:any, obj: Histogram): void {
+    obj.x = j["x"];
+    obj.y = j["y"];
+}
+export function
+Histogram_fromJSON_string (jstr:string): Histogram {
+    const j = JSON.parse(jstr);
+    const obj = new Histogram();
+    Histogram_fromJSON(j,obj);
+    return obj;
+}
+export function
+Histogram_to_json(j:object, obj:Histogram) {
+    {
+        const jj = {};
+        HistogramAxis_to_json(jj,obj.x);
+        j["x"] = jj;
+    }
+    {
+        const jj = {};
+        HistogramAxis_to_json(jj,obj.y);
+        j["y"] = jj;
+    }
+}
+
+export function
+Histogram_from_json(j:object, obj:Histogram) {
+    HistogramAxis_from_json(j["x"],obj.x);
+    HistogramAxis_from_json(j["y"],obj.y);
+}
+
+export function
+Histogram_to_json_string (self:Histogram) {
+    const j = {};
+    Histogram_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Histogram_from_json_string (jstr:string): Histogram {
+    const j: object = JSON.parse(jstr);
+    const obj: Histogram = new Histogram();
+    Histogram_from_json(j,obj);
+    return obj;
+}
+
 
 class EvaluationPoint {
 
@@ -194,9 +695,13 @@ class EvaluationPoint {
     error : number;
 
     constructor(
+        // defval: -88
         state_ : number  = -88,
+        // defval: nan
         time_ : number  = Number.NaN,
+        // defval: nan
         value_ : number  = Number.NaN,
+        // defval: nan
         error_ : number  = Number.NaN,
     ){
         this.state = state_;
@@ -207,6 +712,64 @@ class EvaluationPoint {
     }
 
 }
+export function
+EvaluationPoint_equal (a: EvaluationPoint, b: EvaluationPoint) : boolean {
+    // 
+    if(!int_equal(a.state,b.state)) return false;
+    // 
+    if(!float_equal(a.time,b.time)) return false;
+    // 
+    if(!float_equal(a.value,b.value)) return false;
+    // 
+    if(!float_equal(a.error,b.error)) return false;
+    return true;
+}
+
+export function
+EvaluationPoint_fromJSON (j:any, obj: EvaluationPoint): void {
+    obj.state = j["state"];
+    obj.time = j["time"];
+    obj.value = j["value"];
+    obj.error = j["error"];
+}
+export function
+EvaluationPoint_fromJSON_string (jstr:string): EvaluationPoint {
+    const j = JSON.parse(jstr);
+    const obj = new EvaluationPoint();
+    EvaluationPoint_fromJSON(j,obj);
+    return obj;
+}
+export function
+EvaluationPoint_to_json(j:object, obj:EvaluationPoint) {
+    j["state"] = obj.state;
+    j["time"] = obj.time;
+    j["value"] = obj.value;
+    j["error"] = obj.error;
+}
+
+export function
+EvaluationPoint_from_json(j:object, obj:EvaluationPoint) {
+    obj.state = j["state"]
+    obj.time = j["time"]
+    obj.value = j["value"]
+    obj.error = j["error"]
+}
+
+export function
+EvaluationPoint_to_json_string (self:EvaluationPoint) {
+    const j = {};
+    EvaluationPoint_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+EvaluationPoint_from_json_string (jstr:string): EvaluationPoint {
+    const j: object = JSON.parse(jstr);
+    const obj: EvaluationPoint = new EvaluationPoint();
+    EvaluationPoint_from_json(j,obj);
+    return obj;
+}
+
 
 class EvaluationResults {
 
@@ -220,13 +783,21 @@ class EvaluationResults {
     histograms : Histogram[];
 
     constructor(
+        // defval: []
         names_ : string[]  = [],
+        // defval: []
         npaths_ : number[]  = [],
+        // defval: []
         mean_ : number[]  = [],
+        // defval: []
         stddev_ : number[]  = [],
+        // defval: []
         skewness_ : number[]  = [],
+        // defval: []
         time_points_ : number[]  = [],
+        // defval: []
         time_steps_ : number[]  = [],
+        // defval: []
         histograms_ : Histogram[]  = [],
     ){
         this.names = names_;
@@ -241,6 +812,85 @@ class EvaluationResults {
     }
 
 }
+export function
+EvaluationResults_equal (a: EvaluationResults, b: EvaluationResults) : boolean {
+    if(!list_equal(a.names,b.names,string_equal)) return false;
+    if(!list_equal(a.npaths,b.npaths,int_equal)) return false;
+    if(!list_equal(a.mean,b.mean,float_equal)) return false;
+    if(!list_equal(a.stddev,b.stddev,float_equal)) return false;
+    if(!list_equal(a.skewness,b.skewness,float_equal)) return false;
+    if(!list_equal(a.time_points,b.time_points,float_equal)) return false;
+    if(!list_equal(a.time_steps,b.time_steps,int_equal)) return false;
+    if(!list_equal(a.histograms,b.histograms,Histogram_equal)) return false;
+    return true;
+}
+
+export function
+EvaluationResults_fromJSON (j:any, obj: EvaluationResults): void {
+    obj.names = j["names"];
+    obj.npaths = j["npaths"];
+    obj.mean = j["mean"];
+    obj.stddev = j["stddev"];
+    obj.skewness = j["skewness"];
+    obj.time_points = j["time_points"];
+    obj.time_steps = j["time_steps"];
+    obj.histograms = j["histograms"];
+}
+export function
+EvaluationResults_fromJSON_string (jstr:string): EvaluationResults {
+    const j = JSON.parse(jstr);
+    const obj = new EvaluationResults();
+    EvaluationResults_fromJSON(j,obj);
+    return obj;
+}
+export function
+EvaluationResults_to_json(j:object, obj:EvaluationResults) {
+    j["names"] = obj.names;
+    j["npaths"] = obj.npaths;
+    j["mean"] = obj.mean;
+    j["stddev"] = obj.stddev;
+    j["skewness"] = obj.skewness;
+    j["time_points"] = obj.time_points;
+    j["time_steps"] = obj.time_steps;
+    j["histograms"] = [];
+    for(let item of obj.histograms) {
+        const jj = {};
+        Histogram_to_json(jj,item);
+        j["histograms"].push(jj);
+    }
+}
+
+export function
+EvaluationResults_from_json(j:object, obj:EvaluationResults) {
+    obj.names = j["names"]
+    obj.npaths = j["npaths"]
+    obj.mean = j["mean"]
+    obj.stddev = j["stddev"]
+    obj.skewness = j["skewness"]
+    obj.time_points = j["time_points"]
+    obj.time_steps = j["time_steps"]
+    for(let item of j["histograms"]) {
+        const v: Histogram = new Histogram();
+        Histogram_from_json(item,v);
+        obj.histograms.push(v);
+    }
+}
+
+export function
+EvaluationResults_to_json_string (self:EvaluationResults) {
+    const j = {};
+    EvaluationResults_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+EvaluationResults_from_json_string (jstr:string): EvaluationResults {
+    const j: object = JSON.parse(jstr);
+    const obj: EvaluationResults = new EvaluationResults();
+    EvaluationResults_from_json(j,obj);
+    return obj;
+}
+
 
 class Parameter {
 
@@ -250,9 +900,13 @@ class Parameter {
     max : number;
 
     constructor(
+        // defval: nan
         value_ : number  = Number.NaN,
+        // defval: nan
         step_ : number  = Number.NaN,
+        // defval: nan
         min_ : number  = Number.NaN,
+        // defval: nan
         max_ : number  = Number.NaN,
     ){
         this.value = value_;
@@ -263,6 +917,64 @@ class Parameter {
     }
 
 }
+export function
+Parameter_equal (a: Parameter, b: Parameter) : boolean {
+    // 
+    if(!float_equal(a.value,b.value)) return false;
+    // 
+    if(!float_equal(a.step,b.step)) return false;
+    // 
+    if(!float_equal(a.min,b.min)) return false;
+    // 
+    if(!float_equal(a.max,b.max)) return false;
+    return true;
+}
+
+export function
+Parameter_fromJSON (j:any, obj: Parameter): void {
+    obj.value = j["value"];
+    obj.step = j["step"];
+    obj.min = j["min"];
+    obj.max = j["max"];
+}
+export function
+Parameter_fromJSON_string (jstr:string): Parameter {
+    const j = JSON.parse(jstr);
+    const obj = new Parameter();
+    Parameter_fromJSON(j,obj);
+    return obj;
+}
+export function
+Parameter_to_json(j:object, obj:Parameter) {
+    j["value"] = obj.value;
+    j["step"] = obj.step;
+    j["min"] = obj.min;
+    j["max"] = obj.max;
+}
+
+export function
+Parameter_from_json(j:object, obj:Parameter) {
+    obj.value = j["value"]
+    obj.step = j["step"]
+    obj.min = j["min"]
+    obj.max = j["max"]
+}
+
+export function
+Parameter_to_json_string (self:Parameter) {
+    const j = {};
+    Parameter_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Parameter_from_json_string (jstr:string): Parameter {
+    const j: object = JSON.parse(jstr);
+    const obj: Parameter = new Parameter();
+    Parameter_from_json(j,obj);
+    return obj;
+}
+
 
 class Model {
 
@@ -275,12 +987,19 @@ class Model {
     MemoryLimitKB : number;
 
     constructor(
+        // defval: nan
         TimeStart_ : number  = Number.NaN,
+        // defval: 0
         TimeSteps_ : number  = 0,
+        // defval: 0
         NumPaths_ : number  = 0,
+        // defval: []
         updaters_ : Updater[]  = [],
+        // defval: []
         evaluations_ : EvaluationPoint[]  = [],
+        // defval: 1
         RunTimeoutSeconds_ : number  = 1,
+        // defval: 1
         MemoryLimitKB_ : number  = 1,
     ){
         this.TimeStart = TimeStart_;
@@ -316,6 +1035,95 @@ class Model {
     }
 
 }
+export function
+Model_equal (a: Model, b: Model) : boolean {
+    // 
+    if(!float_equal(a.TimeStart,b.TimeStart)) return false;
+    // 
+    if(!int_equal(a.TimeSteps,b.TimeSteps)) return false;
+    // 
+    if(!int_equal(a.NumPaths,b.NumPaths)) return false;
+    if(!list_equal(a.updaters,b.updaters,Updater_equal)) return false;
+    if(!list_equal(a.evaluations,b.evaluations,EvaluationPoint_equal)) return false;
+    // 
+    if(!float_equal(a.RunTimeoutSeconds,b.RunTimeoutSeconds)) return false;
+    // 
+    if(!int_equal(a.MemoryLimitKB,b.MemoryLimitKB)) return false;
+    return true;
+}
+
+export function
+Model_fromJSON (j:any, obj: Model): void {
+    obj.TimeStart = j["TimeStart"];
+    obj.TimeSteps = j["TimeSteps"];
+    obj.NumPaths = j["NumPaths"];
+    obj.updaters = j["updaters"];
+    obj.evaluations = j["evaluations"];
+    obj.RunTimeoutSeconds = j["RunTimeoutSeconds"];
+    obj.MemoryLimitKB = j["MemoryLimitKB"];
+}
+export function
+Model_fromJSON_string (jstr:string): Model {
+    const j = JSON.parse(jstr);
+    const obj = new Model();
+    Model_fromJSON(j,obj);
+    return obj;
+}
+export function
+Model_to_json(j:object, obj:Model) {
+    j["TimeStart"] = obj.TimeStart;
+    j["TimeSteps"] = obj.TimeSteps;
+    j["NumPaths"] = obj.NumPaths;
+    j["updaters"] = [];
+    for(let item of obj.updaters) {
+        const jj = {};
+        Updater_to_json(jj,item);
+        j["updaters"].push(jj);
+    }
+    j["evaluations"] = [];
+    for(let item of obj.evaluations) {
+        const jj = {};
+        EvaluationPoint_to_json(jj,item);
+        j["evaluations"].push(jj);
+    }
+    j["RunTimeoutSeconds"] = obj.RunTimeoutSeconds;
+    j["MemoryLimitKB"] = obj.MemoryLimitKB;
+}
+
+export function
+Model_from_json(j:object, obj:Model) {
+    obj.TimeStart = j["TimeStart"]
+    obj.TimeSteps = j["TimeSteps"]
+    obj.NumPaths = j["NumPaths"]
+    for(let item of j["updaters"]) {
+        const v: Updater = new Updater();
+        Updater_from_json(item,v);
+        obj.updaters.push(v);
+    }
+    for(let item of j["evaluations"]) {
+        const v: EvaluationPoint = new EvaluationPoint();
+        EvaluationPoint_from_json(item,v);
+        obj.evaluations.push(v);
+    }
+    obj.RunTimeoutSeconds = j["RunTimeoutSeconds"]
+    obj.MemoryLimitKB = j["MemoryLimitKB"]
+}
+
+export function
+Model_to_json_string (self:Model) {
+    const j = {};
+    Model_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Model_from_json_string (jstr:string): Model {
+    const j: object = JSON.parse(jstr);
+    const obj: Model = new Model();
+    Model_from_json(j,obj);
+    return obj;
+}
+
 
 export {
     UpdaterDoc,
