@@ -393,12 +393,14 @@ class EvaluationPoint:
         state_ = -88,
         time_ = nan,
         value_ = None,
-        error_ = None
+        error_ = None,
+        histograms_ = []
     ):
         self.state : int = state_
         self.time : float = time_
         self.value : float|None = value_
         self.error : float|None = error_
+        self.histograms : list[Histogram] = deepcopy(histograms_)
         pass
 
     def GetState (
@@ -442,7 +444,7 @@ class EvaluationPoint:
         histogram
     ):
         
-        # self.histograms.append(histogram)
+        self.histograms.append(histogram)
         return self
         
         pass
@@ -452,6 +454,7 @@ class EvaluationPoint:
         if self.time != other.time: return False
         if self.value != other.value: return False
         if self.error != other.error: return False
+        if self.histograms != other.histograms: return False
         return True
     def __neq__ (self, other):
         return not self==other
@@ -471,6 +474,10 @@ def EvaluationPoint_from_json (j:dict, obj:EvaluationPoint):
     obj.time = j["time"]
     obj.value = j.get("value",None)
     obj.error = j.get("error",None)
+    for item in j["histograms"]:
+        v = Histogram()
+        Histogram_from_json(item,v)
+        obj.histograms.append(v)
 def EvaluationPoint_to_json(j:dict, obj:EvaluationPoint):
     j["state"] = obj.state
     j["time"] = obj.time
@@ -478,6 +485,11 @@ def EvaluationPoint_to_json(j:dict, obj:EvaluationPoint):
         j["value"] = obj.value
     if obj.error is not None:
         j["error"] = obj.error
+    j["histograms"] = []
+    for item in obj.histograms:
+        jj = {}
+        Histogram_to_json(jj,item)
+        j["histograms"].append(jj)
 
 
 class EvaluationResults:

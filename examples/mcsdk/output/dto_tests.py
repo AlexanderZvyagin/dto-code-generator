@@ -262,7 +262,8 @@ def random_EvaluationPoint ():
         random_int(),
         random_float(),
         random_optional_float(),
-        random_optional_float()
+        random_optional_float(),
+        random_list_Histogram()
 
     )
 

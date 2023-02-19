@@ -648,17 +648,20 @@ class EvaluationPoint {
     time : number;
     value : number|undefined;
     error : number|undefined;
+    histograms : Histogram[];
 
     constructor(
         state_ : number  = -88,
         time_ : number  = Number.NaN,
         value_ : number|undefined  = undefined,
         error_ : number|undefined  = undefined,
+        histograms_ : Histogram[]  = [],
     ){
         this.state = state_;
         this.time = time_;
         this.value = value_;
         this.error = error_;
+        this.histograms = histograms_;
     
     }
 
@@ -699,7 +702,7 @@ class EvaluationPoint {
         histogram : Histogram,
     ) : EvaluationPoint  {
         
-        // this.histograms.push(histogram);
+        this.histograms.push(histogram);
         return this;
         
     }
@@ -717,6 +720,7 @@ EvaluationPoint_equal (a: EvaluationPoint, b: EvaluationPoint) : boolean {
     if(a.error!==undefined && b.error===undefined) return false;
     if(a.error!==undefined && b.error!==undefined)
     if(!float_equal(a.error!,b.error!)) return false;
+    if(!list_equal(a.histograms,b.histograms,Histogram_equal)) return false;
     return true;
 }
 
@@ -728,6 +732,7 @@ EvaluationPoint_fromJSON (j:any, obj: EvaluationPoint): void {
         obj.value = j["value"];
     if("error" in j)
         obj.error = j["error"];
+    obj.histograms = j["histograms"];
 }
 export function
 EvaluationPoint_fromJSON_string (jstr:string): EvaluationPoint {
@@ -746,6 +751,12 @@ EvaluationPoint_to_json(j:object, obj:EvaluationPoint) {
     if( obj.error !== undefined) {
         j["error"] = obj.error;
     }
+    j["histograms"] = [];
+    for(let item of obj.histograms) {
+        const jj = {};
+        Histogram_to_json(jj,item);
+        j["histograms"].push(jj);
+    }
 }
 
 export function
@@ -760,6 +771,11 @@ EvaluationPoint_from_json(j:object, obj:EvaluationPoint) {
         obj.error = j["error"] as number|undefined;
     else
         obj.error = undefined;
+    for(let item of j["histograms"]) {
+        const v: Histogram = new Histogram();
+        Histogram_from_json(item,v);
+        obj.histograms.push(v);
+    }
 }
 
 export function

@@ -69,6 +69,8 @@ def Function_cpp(self:Function, obj:Struct=None):
         code = Constructor_cpp(self,obj)
     else:
         ftype = cpp_type_to_string(Variable('',self.type))+' '
+        if self.type==obj and not self.const:
+            ftype += '& '
 
         code = []
         code.append(f'{ftype}{self.name} (')

@@ -262,7 +262,7 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     obj.attributes.append(Variable('time','float'))
     obj.attributes.append(Variable('value','float',optional=True))
     obj.attributes.append(Variable('error','float',optional=True))
-    # obj.attributes.append(Variable('histograms',Histogram,list=True))
+    obj.attributes.append(Variable('histograms',Histogram,list=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -271,13 +271,14 @@ void from_json(const json &j, std::vector<Histogram> &u) {
             Variable('time_','float',nan),
             Variable('value_','float',None,optional=True),
             Variable('error_','float',None,optional=True),
-            # Variable('histogram_',Histogram),
+            Variable('histograms_',Histogram,[],list=True),
         ],
         mapping = [
             ('state',[Variable('state_')]),
             ('time',[Variable('time_')]),
             ('value',[Variable('value_')]),
             ('error',[Variable('error_')]),
+            ('histograms',[Variable('histograms_')]),
         ]
     ))
     obj.methods.append(Function (
@@ -375,17 +376,17 @@ return this.error;
         code = {
             'python':
 '''
-# self.histograms.append(histogram)
+self.histograms.append(histogram)
 return self
 ''',
             'cpp':
 '''
-// histograms.push_back(histogram);
+histograms.push_back(histogram);
 return *this;
 ''',
             'typescript':
 '''
-// this.histograms.push(histogram);
+this.histograms.push(histogram);
 return this;
 ''',
         }

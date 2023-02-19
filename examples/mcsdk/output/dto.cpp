@@ -490,13 +490,15 @@ public:
     float time;
     std::optional<float> value;
     std::optional<float> error;
+    std::vector<Histogram> histograms;
 
     
     EvaluationPoint (
         int state_ = -88,
         float time_ = NAN,
         std::optional<float> value_ = {},
-        std::optional<float> error_ = {}
+        std::optional<float> error_ = {},
+        std::vector<Histogram> histograms_ = {}
     )
     : state (
         state_
@@ -509,6 +511,9 @@ public:
     )
     , error (
         error_
+    )
+    , histograms (
+        histograms_
     )
     {
     }
@@ -549,12 +554,12 @@ public:
         
     }
 
-    EvaluationPoint Add (
+    EvaluationPoint & Add (
         Histogram histogram
     )
     {
         
-        // histograms.push_back(histogram);
+        histograms.push_back(histogram);
         return *this;
         
     }
@@ -564,6 +569,7 @@ public:
         if (time != other.time) return false;
         if (value != other.value) return false;
         if (error != other.error) return false;
+        if (histograms != other.histograms) return false;
         return true;
     }
     bool operator != (const EvaluationPoint &other) const {return not(*this==other);}
@@ -575,6 +581,7 @@ void to_json(json &j, const EvaluationPoint &obj) {
         j["value"] = obj.value.value();
     if(obj.error.has_value())
         j["error"] = obj.error.value();
+    j["histograms"] = obj.histograms;
 }
 
 std::string to_json(const EvaluationPoint &obj) {
@@ -589,6 +596,7 @@ void from_json(const json &j, EvaluationPoint &obj) {
         obj.value = *it;
     if(auto it=j.find("error"); it!=j.end() and !it->is_null())
         obj.error = *it;
+    j.at("histograms").get_to(obj.histograms);
 }
 EvaluationPoint EvaluationPoint_from_json(const json &j) {
     EvaluationPoint obj;

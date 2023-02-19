@@ -432,7 +432,8 @@ EvaluationPoint random_EvaluationPoint (void) {
         random_int(),
         random_float(),
         random_optional_float(),
-        random_optional_float()
+        random_optional_float(),
+        random_list_Histogram()
 
     );
 }
