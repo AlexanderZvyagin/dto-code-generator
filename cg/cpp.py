@@ -3,13 +3,15 @@ import math
 
 def cpp_type_to_string (var:Variable):
 
+    tname = var.TypeName()
+
     type_str = {
         'void'    : 'void',
         'string'  : 'std::string',
         'boolean' : 'bool',
         'int'     : 'int',
         'float'   : 'float',
-    } .get(var.type,var.type)
+    } .get(tname,tname)
 
     if var.list:
         type_str = f'std::vector<{type_str}>'
@@ -18,7 +20,7 @@ def cpp_type_to_string (var:Variable):
     return type_str
 
 def cpp_value_to_string (arg):
-    if type(arg)==Variable:
+    if isinstance(arg,Variable):
         return arg.name
     elif isinstance(arg,list):
         x = [ f'{item.name}'   for item in arg]
@@ -26,7 +28,7 @@ def cpp_value_to_string (arg):
         return f'{{{y}}}'
     elif isinstance(arg,str):
         return f'"{arg}"'
-    elif type(arg)==float:
+    elif isinstance(arg,float):
         if math.isnan(arg):
             return 'NAN'
         else:
@@ -41,7 +43,6 @@ def Constructor_cpp(ctor:Function,base:Struct):
     
     code.append(f'{ctor.name} (')
     for i,arg in enumerate(ctor.args):
-        defval = ''
         if arg.defval is not None:
             defval = f' = {cpp_value_to_string(arg.defval)}'
         elif arg.optional:
@@ -114,11 +115,10 @@ def Struct_cpp (self:Struct):
 
     code.append(f'}};')
 
-    if self.generate_json:
-        code.extend(Struct_to_JSON_cpp(self))
-        code.extend(Struct_to_JSON_string_cpp(self))
-        code.extend(Struct_from_JSON_cpp(self))
-        code.extend(Struct_from_JSON_string_cpp(self))
+    code.extend(Struct_to_JSON_cpp(self))
+    code.extend(Struct_to_JSON_string_cpp(self))
+    code.extend(Struct_from_JSON_cpp(self))
+    code.extend(Struct_from_JSON_string_cpp(self))
 
     return code
 
@@ -207,7 +207,7 @@ def Tests_cpp (objs):
     code_compare = []
 
     for obj in objs:
-        if type(obj)!=Struct:
+        if not isinstance(obj,Struct):
             continue
 
         struct_names.append(obj.name)
@@ -218,50 +218,17 @@ def Tests_cpp (objs):
         assert len(ctors)==1
 
         for i,arg in enumerate(ctors[0].args):
-            if arg.optional:
-                if arg.list:
-                    if arg.type=='string':
-                        random_arg = 'random_optional_list_of_strings()'
-                    elif arg.type=='float':
-                        random_arg = 'random_optional_list_of_floats()'
-                    elif arg.type=='int':
-                        random_arg = 'random_optional_list_of_ints()'
-                    elif arg.type in struct_names:
-                        random_arg = f'random_optional_list_of_{arg.type}()'
-                    else:
-                        raise Exception(f'Unknown type {arg.type}')
-                elif arg.type=='string':
-                    random_arg = 'random_optional_string()'
-                elif arg.type=='float':
-                    random_arg = 'random_optional_float()'
-                elif arg.type=='int':
-                    random_arg = 'random_optional_int()'
-                elif arg.type in struct_names:
-                    random_arg = f'random_optional_{arg.type}()'
-                else:
-                    raise Exception(f'Unknown type {arg.type}')
+            tname = arg.TypeName()
+            if arg.optional and arg.list:
+                random_arg = f'random_optional_list_{tname}()'
+            elif arg.optional and not arg.list:
+                random_arg = f'random_optional_{tname}()'
+            elif not arg.optional and arg.list:
+                random_arg = f'random_list_{tname}()'
+            elif not arg.optional and not arg.list:
+                random_arg = f'random_{tname}()'
             else:
-                if arg.list:
-                    if arg.type=='string':
-                        random_arg = 'random_list_of_strings()'
-                    elif arg.type=='float':
-                        random_arg = 'random_list_of_floats()'
-                    elif arg.type=='int':
-                        random_arg = 'random_list_of_ints()'
-                    elif arg.type in struct_names:
-                        random_arg = f'random_list_of_{arg.type}()'
-                    else:
-                        raise Exception(f'Unknown type {arg.type}')
-                elif arg.type=='string':
-                    random_arg = 'random_string()'
-                elif arg.type=='float':
-                    random_arg = 'random_float()'
-                elif arg.type=='int':
-                    random_arg = 'random_int()'
-                elif arg.type in struct_names:
-                    random_arg = f'random_{arg.type}()'
-                else:
-                    raise Exception(f'Unknown type {arg.type}')
+                raise Exception('Development error')
             ending = '' if (i+1)==len(ctors[0].args) else ','
             random_args += f'{indent*2}{random_arg}{ending}\n'
 
@@ -274,7 +241,7 @@ def Tests_cpp (objs):
 '''.split('\n'))
 
         code_construct_random.extend(f'''
-std::vector<{obj.name}> random_list_of_{obj.name} (int min = 0, int max = 3) {{
+std::vector<{obj.name}> random_list_{obj.name} (int min = 0, int max = 3) {{
     const auto size = random_int(min,max);
     std::vector<{obj.name}> list;
     for(int i=0; i<size; i++)
@@ -284,7 +251,7 @@ std::vector<{obj.name}> random_list_of_{obj.name} (int min = 0, int max = 3) {{
 '''.split('\n'))
 
         code_construct_random.extend(f'''
-std::vector<{obj.name}> random_optional_list_of_{obj.name} (int min = 0, int max = 3) {{
+std::vector<{obj.name}> random_optional_list_{obj.name} (int min = 0, int max = 3) {{
     if(yes_no())
         return {{}};
     const auto size = random_int(min,max);
@@ -297,7 +264,16 @@ std::vector<{obj.name}> random_optional_list_of_{obj.name} (int min = 0, int max
 
         code_create.append(f'''
         }} else if (struct_name == "{obj.name}") {{
-            f << to_json(random_{obj.name}());
+            auto obj1 = random_{obj.name}();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                {obj.name}_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 ''')
 
         code_convert.extend(f'''
@@ -380,7 +356,7 @@ std::optional<int> random_optional_int (
         return {};
 }
 
-std::vector<int> random_list_of_ints (
+std::vector<int> random_list_int (
     int len_min = 0,
     int len_max = 3,
     int int_min = -1000,
@@ -393,14 +369,14 @@ std::vector<int> random_list_of_ints (
     return list;
 }
 
-std::optional<std::vector<int>> random_optional_list_of_ints (
+std::optional<std::vector<int>> random_optional_list_int (
     int len_min = 0,
     int len_max = 3,
     int int_min = -1000,
     int int_max = 1000
 ) {
     if(yes_no())
-        return random_list_of_ints(len_min,len_max,int_min,int_max);
+        return random_list_int(len_min,len_max,int_min,int_max);
     else
         return {};
 }
@@ -437,7 +413,7 @@ std::optional<float> random_optional_float (
         return {};
 }
 
-std::vector<float> random_list_of_floats (
+std::vector<float> random_list_float (
     int   len_min         = 0,
     int   len_max         = 3,
     float min             = -1e6,
@@ -452,7 +428,7 @@ std::vector<float> random_list_of_floats (
     return list;
 }
 
-std::optional<std::vector<float>> random_optional_list_of_floats (
+std::optional<std::vector<float>> random_optional_list_float (
     int   len_min         = 0,
     int   len_max         = 3,
     float min             = -1e6,
@@ -461,7 +437,7 @@ std::optional<std::vector<float>> random_optional_list_of_floats (
     bool  can_be_infinity = false
 ) {
     if(yes_no())
-        return random_list_of_floats(len_min,len_max,min,max,can_be_nan,can_be_infinity);
+        return random_list_float(len_min,len_max,min,max,can_be_nan,can_be_infinity);
     else
         return {};
 }
@@ -480,7 +456,7 @@ std::optional<std::string> random_optional_string (int len=16) {
         return {};
 }
 
-std::vector<std::string> random_list_of_strings (
+std::vector<std::string> random_list_string (
     int len_min = 0,
     int len_max = 3,
     int strlen_max = 16
@@ -492,13 +468,13 @@ std::vector<std::string> random_list_of_strings (
     return list;
 }
 
-std::optional<std::vector<std::string>> random_optional_list_of_strings (
+std::optional<std::vector<std::string>> random_optional_list_string (
     int len_min = 0,
     int len_max = 3,
     int strlen_max = 16
 ) {
     if(yes_no())
-        return random_list_of_strings(len_min,len_max,strlen_max);
+        return random_list_string(len_min,len_max,strlen_max);
     else
         return {};
 }

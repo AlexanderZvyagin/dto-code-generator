@@ -1,7 +1,16 @@
+
 # This is an automatically generated file.
+from copy import deepcopy
 from math import nan
 import json
-# 1
+from json import JSONEncoder
+
+def _default(self, obj):
+    return getattr(obj.__class__, "to_json", _default.default)(obj)
+
+_default.default = JSONEncoder().default
+JSONEncoder.default = _default
+
 
 class UpdaterDoc:
 
@@ -32,14 +41,13 @@ class UpdaterDoc:
         if self.nrefs_min != other.nrefs_min: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def UpdaterDoc_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def UpdaterDoc_from_json (j, obj):
+        return not self==other
+def UpdaterDoc_to_json_string (self:UpdaterDoc):
+    j = {}
+    UpdaterDoc_to_json(j,self)
+    return json.dumps(j)
+def UpdaterDoc_from_json (j:dict, obj:UpdaterDoc):
+    assert isinstance(obj,UpdaterDoc)
     obj.name = j["name"]
     obj.title = j["title"]
     obj.doc_md = j["doc_md"]
@@ -51,6 +59,14 @@ def UpdaterDoc_from_json_string (jstr):
     obj = UpdaterDoc()
     UpdaterDoc_from_json(j,obj)
     return obj
+
+def UpdaterDoc_to_json(j:dict, obj:UpdaterDoc):
+    j["name"] = obj.name
+    j["title"] = obj.title
+    j["doc_md"] = obj.doc_md
+    j["start"] = obj.start
+    j["nargs_min"] = obj.nargs_min
+    j["nrefs_min"] = obj.nrefs_min
 
 
 class UpdaterDto:
@@ -76,14 +92,13 @@ class UpdaterDto:
         if self.start != other.start: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def UpdaterDto_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in ['refs', 'args', 'start'] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def UpdaterDto_from_json (j, obj):
+        return not self==other
+def UpdaterDto_to_json_string (self:UpdaterDto):
+    j = {}
+    UpdaterDto_to_json(j,self)
+    return json.dumps(j)
+def UpdaterDto_from_json (j:dict, obj:UpdaterDto):
+    assert isinstance(obj,UpdaterDto)
     obj.name = j["name"]
     obj.refs = j.get("refs",None)
     obj.args = j.get("args",None)
@@ -93,6 +108,15 @@ def UpdaterDto_from_json_string (jstr):
     obj = UpdaterDto()
     UpdaterDto_from_json(j,obj)
     return obj
+
+def UpdaterDto_to_json(j:dict, obj:UpdaterDto):
+    j["name"] = obj.name
+    if obj.refs is not None:
+        j["refs"] = obj.refs
+    if obj.args is not None:
+        j["args"] = obj.args
+    if obj.start is not None:
+        j["start"] = obj.start
 
 
 class Updater (UpdaterDto):
@@ -139,22 +163,22 @@ class Updater (UpdaterDto):
         if self._state != other._state: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def Updater_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def Updater_from_json (j, obj):
+        return not self==other
+def Updater_to_json_string (self:Updater):
+    j = {}
+    Updater_to_json(j,self)
+    return json.dumps(j)
+def Updater_from_json (j:dict, obj:Updater):
+    assert isinstance(obj,Updater)
     UpdaterDto_from_json(j,obj)
-    obj._equation = j["_equation"]
-    obj._state = j["_state"]
 def Updater_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Updater()
     Updater_from_json(j,obj)
     return obj
+
+def Updater_to_json(j:dict, obj:Updater):
+    UpdaterDto_to_json(j,obj)
 
 
 class IndependentGaussian (Updater):
@@ -176,20 +200,22 @@ class IndependentGaussian (Updater):
         if not super().__eq__(other): return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def IndependentGaussian_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def IndependentGaussian_from_json (j, obj):
+        return not self==other
+def IndependentGaussian_to_json_string (self:IndependentGaussian):
+    j = {}
+    IndependentGaussian_to_json(j,self)
+    return json.dumps(j)
+def IndependentGaussian_from_json (j:dict, obj:IndependentGaussian):
+    assert isinstance(obj,IndependentGaussian)
     Updater_from_json(j,obj)
 def IndependentGaussian_from_json_string (jstr):
     j = json.loads(jstr)
     obj = IndependentGaussian()
     IndependentGaussian_from_json(j,obj)
     return obj
+
+def IndependentGaussian_to_json(j:dict, obj:IndependentGaussian):
+    Updater_to_json(j,obj)
 
 
 class CorrelatedGaussian (Updater):
@@ -213,20 +239,22 @@ class CorrelatedGaussian (Updater):
         if not super().__eq__(other): return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def CorrelatedGaussian_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def CorrelatedGaussian_from_json (j, obj):
+        return not self==other
+def CorrelatedGaussian_to_json_string (self:CorrelatedGaussian):
+    j = {}
+    CorrelatedGaussian_to_json(j,self)
+    return json.dumps(j)
+def CorrelatedGaussian_from_json (j:dict, obj:CorrelatedGaussian):
+    assert isinstance(obj,CorrelatedGaussian)
     Updater_from_json(j,obj)
 def CorrelatedGaussian_from_json_string (jstr):
     j = json.loads(jstr)
     obj = CorrelatedGaussian()
     CorrelatedGaussian_from_json(j,obj)
     return obj
+
+def CorrelatedGaussian_to_json(j:dict, obj:CorrelatedGaussian):
+    Updater_to_json(j,obj)
 
 
 class Barrier (Updater):
@@ -253,20 +281,22 @@ class Barrier (Updater):
         if not super().__eq__(other): return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def Barrier_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def Barrier_from_json (j, obj):
+        return not self==other
+def Barrier_to_json_string (self:Barrier):
+    j = {}
+    Barrier_to_json(j,self)
+    return json.dumps(j)
+def Barrier_from_json (j:dict, obj:Barrier):
+    assert isinstance(obj,Barrier)
     Updater_from_json(j,obj)
 def Barrier_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Barrier()
     Barrier_from_json(j,obj)
     return obj
+
+def Barrier_to_json(j:dict, obj:Barrier):
+    Updater_to_json(j,obj)
 
 
 class HistogramAxis:
@@ -292,14 +322,13 @@ class HistogramAxis:
         if self.max != other.max: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def HistogramAxis_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def HistogramAxis_from_json (j, obj):
+        return not self==other
+def HistogramAxis_to_json_string (self:HistogramAxis):
+    j = {}
+    HistogramAxis_to_json(j,self)
+    return json.dumps(j)
+def HistogramAxis_from_json (j:dict, obj:HistogramAxis):
+    assert isinstance(obj,HistogramAxis)
     obj.state = j["state"]
     obj.nbins = j["nbins"]
     obj.min = j["min"]
@@ -310,6 +339,12 @@ def HistogramAxis_from_json_string (jstr):
     HistogramAxis_from_json(j,obj)
     return obj
 
+def HistogramAxis_to_json(j:dict, obj:HistogramAxis):
+    j["state"] = obj.state
+    j["nbins"] = obj.nbins
+    j["min"] = obj.min
+    j["max"] = obj.max
+
 
 class Histogram:
 
@@ -319,8 +354,8 @@ class Histogram:
         x = HistogramAxis(),
         y = HistogramAxis()
     ):
-        self.x : HistogramAxis = x
-        self.y : HistogramAxis = y
+        self.x : HistogramAxis = deepcopy(x)
+        self.y : HistogramAxis = deepcopy(y)
         pass
 
     def __eq__ (self, other):
@@ -328,21 +363,28 @@ class Histogram:
         if self.y != other.y: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def Histogram_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def Histogram_from_json (j, obj):
-    obj.x = j["x"]
-    obj.y = j["y"]
+        return not self==other
+def Histogram_to_json_string (self:Histogram):
+    j = {}
+    Histogram_to_json(j,self)
+    return json.dumps(j)
+def Histogram_from_json (j:dict, obj:Histogram):
+    assert isinstance(obj,Histogram)
+    HistogramAxis_from_json(j["x"],obj.x)
+    HistogramAxis_from_json(j["y"],obj.y)
 def Histogram_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Histogram()
     Histogram_from_json(j,obj)
     return obj
+
+def Histogram_to_json(j:dict, obj:Histogram):
+    jj = {}
+    HistogramAxis_to_json(jj,obj.x)
+    j["x"] = jj
+    jj = {}
+    HistogramAxis_to_json(jj,obj.y)
+    j["y"] = jj
 
 
 class EvaluationPoint:
@@ -368,14 +410,13 @@ class EvaluationPoint:
         if self.error != other.error: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def EvaluationPoint_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def EvaluationPoint_from_json (j, obj):
+        return not self==other
+def EvaluationPoint_to_json_string (self:EvaluationPoint):
+    j = {}
+    EvaluationPoint_to_json(j,self)
+    return json.dumps(j)
+def EvaluationPoint_from_json (j:dict, obj:EvaluationPoint):
+    assert isinstance(obj,EvaluationPoint)
     obj.state = j["state"]
     obj.time = j["time"]
     obj.value = j["value"]
@@ -385,6 +426,12 @@ def EvaluationPoint_from_json_string (jstr):
     obj = EvaluationPoint()
     EvaluationPoint_from_json(j,obj)
     return obj
+
+def EvaluationPoint_to_json(j:dict, obj:EvaluationPoint):
+    j["state"] = obj.state
+    j["time"] = obj.time
+    j["value"] = obj.value
+    j["error"] = obj.error
 
 
 class EvaluationResults:
@@ -408,7 +455,7 @@ class EvaluationResults:
         self.skewness : list[float] = skewness_
         self.time_points : list[float] = time_points_
         self.time_steps : list[int] = time_steps_
-        self.histograms : list[Histogram] = histograms_
+        self.histograms : list[Histogram] = deepcopy(histograms_)
         pass
 
     def __eq__ (self, other):
@@ -422,14 +469,13 @@ class EvaluationResults:
         if self.histograms != other.histograms: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def EvaluationResults_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def EvaluationResults_from_json (j, obj):
+        return not self==other
+def EvaluationResults_to_json_string (self:EvaluationResults):
+    j = {}
+    EvaluationResults_to_json(j,self)
+    return json.dumps(j)
+def EvaluationResults_from_json (j:dict, obj:EvaluationResults):
+    assert isinstance(obj,EvaluationResults)
     obj.names = j["names"]
     obj.npaths = j["npaths"]
     obj.mean = j["mean"]
@@ -437,12 +483,29 @@ def EvaluationResults_from_json (j, obj):
     obj.skewness = j["skewness"]
     obj.time_points = j["time_points"]
     obj.time_steps = j["time_steps"]
-    obj.histograms = j["histograms"]
+    for item in j["histograms"]:
+        v = Histogram()
+        Histogram_from_json(item,v)
+        obj.histograms.append(v)
 def EvaluationResults_from_json_string (jstr):
     j = json.loads(jstr)
     obj = EvaluationResults()
     EvaluationResults_from_json(j,obj)
     return obj
+
+def EvaluationResults_to_json(j:dict, obj:EvaluationResults):
+    j["names"] = obj.names
+    j["npaths"] = obj.npaths
+    j["mean"] = obj.mean
+    j["stddev"] = obj.stddev
+    j["skewness"] = obj.skewness
+    j["time_points"] = obj.time_points
+    j["time_steps"] = obj.time_steps
+    j["histograms"] = []
+    for item in obj.histograms:
+        jj = {}
+        Histogram_to_json(jj,item)
+        j["histograms"].append(jj)
 
 
 class Parameter:
@@ -468,14 +531,13 @@ class Parameter:
         if self.max != other.max: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def Parameter_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def Parameter_from_json (j, obj):
+        return not self==other
+def Parameter_to_json_string (self:Parameter):
+    j = {}
+    Parameter_to_json(j,self)
+    return json.dumps(j)
+def Parameter_from_json (j:dict, obj:Parameter):
+    assert isinstance(obj,Parameter)
     obj.value = j["value"]
     obj.step = j["step"]
     obj.min = j["min"]
@@ -485,6 +547,12 @@ def Parameter_from_json_string (jstr):
     obj = Parameter()
     Parameter_from_json(j,obj)
     return obj
+
+def Parameter_to_json(j:dict, obj:Parameter):
+    j["value"] = obj.value
+    j["step"] = obj.step
+    j["min"] = obj.min
+    j["max"] = obj.max
 
 
 class Model:
@@ -503,8 +571,8 @@ class Model:
         self.TimeStart : float = TimeStart_
         self.TimeSteps : int = TimeSteps_
         self.NumPaths : int = NumPaths_
-        self.updaters : list[Updater] = updaters_
-        self.evaluations : list[EvaluationPoint] = evaluations_
+        self.updaters : list[Updater] = deepcopy(updaters_)
+        self.evaluations : list[EvaluationPoint] = deepcopy(evaluations_)
         self.RunTimeoutSeconds : float = RunTimeoutSeconds_
         self.MemoryLimitKB : int = MemoryLimitKB_
         pass
@@ -549,19 +617,24 @@ class Model:
         if self.MemoryLimitKB != other.MemoryLimitKB: return False
         return True
     def __neq__ (self, other):
-        return not (self==other)
-def Model_to_json_string (self):
-    def is_serialisable(k,v):
-        if k in [] and v is None: return False
-        if k in []: return False
-        return True
-    return json.dumps(self,default=lambda x: {k:v for k,v in x.__dict__.items() if is_serialisable(k,v) })
-def Model_from_json (j, obj):
+        return not self==other
+def Model_to_json_string (self:Model):
+    j = {}
+    Model_to_json(j,self)
+    return json.dumps(j)
+def Model_from_json (j:dict, obj:Model):
+    assert isinstance(obj,Model)
     obj.TimeStart = j["TimeStart"]
     obj.TimeSteps = j["TimeSteps"]
     obj.NumPaths = j["NumPaths"]
-    obj.updaters = j["updaters"]
-    obj.evaluations = j["evaluations"]
+    for item in j["updaters"]:
+        v = Updater()
+        Updater_from_json(item,v)
+        obj.updaters.append(v)
+    for item in j["evaluations"]:
+        v = EvaluationPoint()
+        EvaluationPoint_from_json(item,v)
+        obj.evaluations.append(v)
     obj.RunTimeoutSeconds = j["RunTimeoutSeconds"]
     obj.MemoryLimitKB = j["MemoryLimitKB"]
 def Model_from_json_string (jstr):
@@ -569,5 +642,22 @@ def Model_from_json_string (jstr):
     obj = Model()
     Model_from_json(j,obj)
     return obj
+
+def Model_to_json(j:dict, obj:Model):
+    j["TimeStart"] = obj.TimeStart
+    j["TimeSteps"] = obj.TimeSteps
+    j["NumPaths"] = obj.NumPaths
+    j["updaters"] = []
+    for item in obj.updaters:
+        jj = {}
+        Updater_to_json(jj,item)
+        j["updaters"].append(jj)
+    j["evaluations"] = []
+    for item in obj.evaluations:
+        jj = {}
+        EvaluationPoint_to_json(jj,item)
+        j["evaluations"].append(jj)
+    j["RunTimeoutSeconds"] = obj.RunTimeoutSeconds
+    j["MemoryLimitKB"] = obj.MemoryLimitKB
 
 

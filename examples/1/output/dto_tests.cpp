@@ -33,7 +33,7 @@ std::optional<int> random_optional_int (
         return {};
 }
 
-std::vector<int> random_list_of_ints (
+std::vector<int> random_list_int (
     int len_min = 0,
     int len_max = 3,
     int int_min = -1000,
@@ -46,14 +46,14 @@ std::vector<int> random_list_of_ints (
     return list;
 }
 
-std::optional<std::vector<int>> random_optional_list_of_ints (
+std::optional<std::vector<int>> random_optional_list_int (
     int len_min = 0,
     int len_max = 3,
     int int_min = -1000,
     int int_max = 1000
 ) {
     if(yes_no())
-        return random_list_of_ints(len_min,len_max,int_min,int_max);
+        return random_list_int(len_min,len_max,int_min,int_max);
     else
         return {};
 }
@@ -90,7 +90,7 @@ std::optional<float> random_optional_float (
         return {};
 }
 
-std::vector<float> random_list_of_floats (
+std::vector<float> random_list_float (
     int   len_min         = 0,
     int   len_max         = 3,
     float min             = -1e6,
@@ -105,7 +105,7 @@ std::vector<float> random_list_of_floats (
     return list;
 }
 
-std::optional<std::vector<float>> random_optional_list_of_floats (
+std::optional<std::vector<float>> random_optional_list_float (
     int   len_min         = 0,
     int   len_max         = 3,
     float min             = -1e6,
@@ -114,7 +114,7 @@ std::optional<std::vector<float>> random_optional_list_of_floats (
     bool  can_be_infinity = false
 ) {
     if(yes_no())
-        return random_list_of_floats(len_min,len_max,min,max,can_be_nan,can_be_infinity);
+        return random_list_float(len_min,len_max,min,max,can_be_nan,can_be_infinity);
     else
         return {};
 }
@@ -133,7 +133,7 @@ std::optional<std::string> random_optional_string (int len=16) {
         return {};
 }
 
-std::vector<std::string> random_list_of_strings (
+std::vector<std::string> random_list_string (
     int len_min = 0,
     int len_max = 3,
     int strlen_max = 16
@@ -145,13 +145,13 @@ std::vector<std::string> random_list_of_strings (
     return list;
 }
 
-std::optional<std::vector<std::string>> random_optional_list_of_strings (
+std::optional<std::vector<std::string>> random_optional_list_string (
     int len_min = 0,
     int len_max = 3,
     int strlen_max = 16
 ) {
     if(yes_no())
-        return random_list_of_strings(len_min,len_max,strlen_max);
+        return random_list_string(len_min,len_max,strlen_max);
     else
         return {};
 }
@@ -170,7 +170,7 @@ UpdaterDoc random_UpdaterDoc (void) {
 }
 
 
-std::vector<UpdaterDoc> random_list_of_UpdaterDoc (int min = 0, int max = 3) {
+std::vector<UpdaterDoc> random_list_UpdaterDoc (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<UpdaterDoc> list;
     for(int i=0; i<size; i++)
@@ -179,7 +179,7 @@ std::vector<UpdaterDoc> random_list_of_UpdaterDoc (int min = 0, int max = 3) {
 }
 
 
-std::vector<UpdaterDoc> random_optional_list_of_UpdaterDoc (int min = 0, int max = 3) {
+std::vector<UpdaterDoc> random_optional_list_UpdaterDoc (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -193,15 +193,15 @@ std::vector<UpdaterDoc> random_optional_list_of_UpdaterDoc (int min = 0, int max
 UpdaterDto random_UpdaterDto (void) {
     return UpdaterDto (
         random_string(),
-        random_optional_list_of_ints(),
-        random_optional_list_of_floats(),
+        random_optional_list_int(),
+        random_optional_list_float(),
         random_optional_float()
 
     );
 }
 
 
-std::vector<UpdaterDto> random_list_of_UpdaterDto (int min = 0, int max = 3) {
+std::vector<UpdaterDto> random_list_UpdaterDto (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<UpdaterDto> list;
     for(int i=0; i<size; i++)
@@ -210,7 +210,7 @@ std::vector<UpdaterDto> random_list_of_UpdaterDto (int min = 0, int max = 3) {
 }
 
 
-std::vector<UpdaterDto> random_optional_list_of_UpdaterDto (int min = 0, int max = 3) {
+std::vector<UpdaterDto> random_optional_list_UpdaterDto (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -224,15 +224,15 @@ std::vector<UpdaterDto> random_optional_list_of_UpdaterDto (int min = 0, int max
 Updater random_Updater (void) {
     return Updater (
         random_string(),
-        random_list_of_ints(),
-        random_list_of_floats(),
+        random_list_int(),
+        random_list_float(),
         random_float()
 
     );
 }
 
 
-std::vector<Updater> random_list_of_Updater (int min = 0, int max = 3) {
+std::vector<Updater> random_list_Updater (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<Updater> list;
     for(int i=0; i<size; i++)
@@ -241,7 +241,7 @@ std::vector<Updater> random_list_of_Updater (int min = 0, int max = 3) {
 }
 
 
-std::vector<Updater> random_optional_list_of_Updater (int min = 0, int max = 3) {
+std::vector<Updater> random_optional_list_Updater (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -254,13 +254,13 @@ std::vector<Updater> random_optional_list_of_Updater (int min = 0, int max = 3) 
 
 IndependentGaussian random_IndependentGaussian (void) {
     return IndependentGaussian (
-        random_list_of_ints()
+        random_list_int()
 
     );
 }
 
 
-std::vector<IndependentGaussian> random_list_of_IndependentGaussian (int min = 0, int max = 3) {
+std::vector<IndependentGaussian> random_list_IndependentGaussian (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<IndependentGaussian> list;
     for(int i=0; i<size; i++)
@@ -269,7 +269,7 @@ std::vector<IndependentGaussian> random_list_of_IndependentGaussian (int min = 0
 }
 
 
-std::vector<IndependentGaussian> random_optional_list_of_IndependentGaussian (int min = 0, int max = 3) {
+std::vector<IndependentGaussian> random_optional_list_IndependentGaussian (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -290,7 +290,7 @@ CorrelatedGaussian random_CorrelatedGaussian (void) {
 }
 
 
-std::vector<CorrelatedGaussian> random_list_of_CorrelatedGaussian (int min = 0, int max = 3) {
+std::vector<CorrelatedGaussian> random_list_CorrelatedGaussian (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<CorrelatedGaussian> list;
     for(int i=0; i<size; i++)
@@ -299,7 +299,7 @@ std::vector<CorrelatedGaussian> random_list_of_CorrelatedGaussian (int min = 0, 
 }
 
 
-std::vector<CorrelatedGaussian> random_optional_list_of_CorrelatedGaussian (int min = 0, int max = 3) {
+std::vector<CorrelatedGaussian> random_optional_list_CorrelatedGaussian (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -323,7 +323,7 @@ Barrier random_Barrier (void) {
 }
 
 
-std::vector<Barrier> random_list_of_Barrier (int min = 0, int max = 3) {
+std::vector<Barrier> random_list_Barrier (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<Barrier> list;
     for(int i=0; i<size; i++)
@@ -332,7 +332,7 @@ std::vector<Barrier> random_list_of_Barrier (int min = 0, int max = 3) {
 }
 
 
-std::vector<Barrier> random_optional_list_of_Barrier (int min = 0, int max = 3) {
+std::vector<Barrier> random_optional_list_Barrier (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -354,7 +354,7 @@ HistogramAxis random_HistogramAxis (void) {
 }
 
 
-std::vector<HistogramAxis> random_list_of_HistogramAxis (int min = 0, int max = 3) {
+std::vector<HistogramAxis> random_list_HistogramAxis (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<HistogramAxis> list;
     for(int i=0; i<size; i++)
@@ -363,7 +363,7 @@ std::vector<HistogramAxis> random_list_of_HistogramAxis (int min = 0, int max = 
 }
 
 
-std::vector<HistogramAxis> random_optional_list_of_HistogramAxis (int min = 0, int max = 3) {
+std::vector<HistogramAxis> random_optional_list_HistogramAxis (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -383,7 +383,7 @@ Histogram random_Histogram (void) {
 }
 
 
-std::vector<Histogram> random_list_of_Histogram (int min = 0, int max = 3) {
+std::vector<Histogram> random_list_Histogram (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<Histogram> list;
     for(int i=0; i<size; i++)
@@ -392,7 +392,7 @@ std::vector<Histogram> random_list_of_Histogram (int min = 0, int max = 3) {
 }
 
 
-std::vector<Histogram> random_optional_list_of_Histogram (int min = 0, int max = 3) {
+std::vector<Histogram> random_optional_list_Histogram (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -414,7 +414,7 @@ EvaluationPoint random_EvaluationPoint (void) {
 }
 
 
-std::vector<EvaluationPoint> random_list_of_EvaluationPoint (int min = 0, int max = 3) {
+std::vector<EvaluationPoint> random_list_EvaluationPoint (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<EvaluationPoint> list;
     for(int i=0; i<size; i++)
@@ -423,7 +423,7 @@ std::vector<EvaluationPoint> random_list_of_EvaluationPoint (int min = 0, int ma
 }
 
 
-std::vector<EvaluationPoint> random_optional_list_of_EvaluationPoint (int min = 0, int max = 3) {
+std::vector<EvaluationPoint> random_optional_list_EvaluationPoint (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -436,20 +436,20 @@ std::vector<EvaluationPoint> random_optional_list_of_EvaluationPoint (int min = 
 
 EvaluationResults random_EvaluationResults (void) {
     return EvaluationResults (
-        random_list_of_strings(),
-        random_list_of_ints(),
-        random_list_of_floats(),
-        random_list_of_floats(),
-        random_list_of_floats(),
-        random_list_of_floats(),
-        random_list_of_ints(),
-        random_list_of_Histogram()
+        random_list_string(),
+        random_list_int(),
+        random_list_float(),
+        random_list_float(),
+        random_list_float(),
+        random_list_float(),
+        random_list_int(),
+        random_list_Histogram()
 
     );
 }
 
 
-std::vector<EvaluationResults> random_list_of_EvaluationResults (int min = 0, int max = 3) {
+std::vector<EvaluationResults> random_list_EvaluationResults (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<EvaluationResults> list;
     for(int i=0; i<size; i++)
@@ -458,7 +458,7 @@ std::vector<EvaluationResults> random_list_of_EvaluationResults (int min = 0, in
 }
 
 
-std::vector<EvaluationResults> random_optional_list_of_EvaluationResults (int min = 0, int max = 3) {
+std::vector<EvaluationResults> random_optional_list_EvaluationResults (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -480,7 +480,7 @@ Parameter random_Parameter (void) {
 }
 
 
-std::vector<Parameter> random_list_of_Parameter (int min = 0, int max = 3) {
+std::vector<Parameter> random_list_Parameter (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<Parameter> list;
     for(int i=0; i<size; i++)
@@ -489,7 +489,7 @@ std::vector<Parameter> random_list_of_Parameter (int min = 0, int max = 3) {
 }
 
 
-std::vector<Parameter> random_optional_list_of_Parameter (int min = 0, int max = 3) {
+std::vector<Parameter> random_optional_list_Parameter (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -505,8 +505,8 @@ Model random_Model (void) {
         random_float(),
         random_int(),
         random_int(),
-        random_list_of_Updater(),
-        random_list_of_EvaluationPoint(),
+        random_list_Updater(),
+        random_list_EvaluationPoint(),
         random_float(),
         random_int()
 
@@ -514,7 +514,7 @@ Model random_Model (void) {
 }
 
 
-std::vector<Model> random_list_of_Model (int min = 0, int max = 3) {
+std::vector<Model> random_list_Model (int min = 0, int max = 3) {
     const auto size = random_int(min,max);
     std::vector<Model> list;
     for(int i=0; i<size; i++)
@@ -523,7 +523,7 @@ std::vector<Model> random_list_of_Model (int min = 0, int max = 3) {
 }
 
 
-std::vector<Model> random_optional_list_of_Model (int min = 0, int max = 3) {
+std::vector<Model> random_optional_list_Model (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     const auto size = random_int(min,max);
@@ -552,51 +552,159 @@ int main (int argc, const char **argv) try {
         if (false) {
 
         } else if (struct_name == "UpdaterDoc") {
-            f << to_json(random_UpdaterDoc());
+            auto obj1 = random_UpdaterDoc();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                UpdaterDoc_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "UpdaterDto") {
-            f << to_json(random_UpdaterDto());
+            auto obj1 = random_UpdaterDto();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                UpdaterDto_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "Updater") {
-            f << to_json(random_Updater());
+            auto obj1 = random_Updater();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                Updater_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "IndependentGaussian") {
-            f << to_json(random_IndependentGaussian());
+            auto obj1 = random_IndependentGaussian();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                IndependentGaussian_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "CorrelatedGaussian") {
-            f << to_json(random_CorrelatedGaussian());
+            auto obj1 = random_CorrelatedGaussian();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                CorrelatedGaussian_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "Barrier") {
-            f << to_json(random_Barrier());
+            auto obj1 = random_Barrier();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                Barrier_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "HistogramAxis") {
-            f << to_json(random_HistogramAxis());
+            auto obj1 = random_HistogramAxis();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                HistogramAxis_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "Histogram") {
-            f << to_json(random_Histogram());
+            auto obj1 = random_Histogram();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                Histogram_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "EvaluationPoint") {
-            f << to_json(random_EvaluationPoint());
+            auto obj1 = random_EvaluationPoint();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                EvaluationPoint_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "EvaluationResults") {
-            f << to_json(random_EvaluationResults());
+            auto obj1 = random_EvaluationResults();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                EvaluationResults_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "Parameter") {
-            f << to_json(random_Parameter());
+            auto obj1 = random_Parameter();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                Parameter_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
         } else if (struct_name == "Model") {
-            f << to_json(random_Model());
+            auto obj1 = random_Model();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
         } else {
             throw std::runtime_error("Not supported operation 'create' on struct " + struct_name);

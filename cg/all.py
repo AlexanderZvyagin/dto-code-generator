@@ -7,11 +7,33 @@ from collections import namedtuple
 indent = ' '*4
 autogen_text = 'This is an automatically generated file.'
 
-Variable = namedtuple(
-    'Variable',
-    ['name','type','defval','list','optional','skip_dto'],
-    defaults=['',None,None,False,False,False]
-)
+class Variable:
+
+    def __init__ (
+        self,
+        name:str = '',
+        type     = None,
+        defval   = None,
+        list     = False,
+        optional = False,
+        skip_dto = False
+    ):
+        self.name     = name
+        self.type     = type
+        self.defval   = defval
+        self.list     = list
+        self.optional = optional
+        self.skip_dto = skip_dto
+
+    def TypeName (self) -> str:
+        if isinstance(self.type,Struct):
+            return self.type.name
+        else:
+            assert isinstance(self.type,str)
+            return self.type
+    
+    def __repr__ (self):
+        return f'Variable(name={self.name},type={self.type},defval={self.defval},list={self.list},optional={self.optional},skip_dto={self.skip_dto})'
 
 ext = {
     'cpp'           : 'cpp',
@@ -25,12 +47,11 @@ class Struct:
     
     Should contain info enough to generate code for all languages.
     '''
-    def __init__ (self, name:str, base=None, generate_json=True):
+    def __init__ (self, name:str, base=None):
         self.name : str = name
         self.attributes : list[Variable] = []
         self.methods : list [Function] = []
         self.base : Struct|None = base
-        self.generate_json : bool = generate_json
     def __repr__ (self):
         return f"Struct('{self.name}',base={self.base}) #attributes={len(self.attributes)} #methods={len(self.methods)}"
     def GetAllAttributes (self):
@@ -65,7 +86,7 @@ class Function:
 def get_code (body):
     if body is None:
         return []
-    elif type(body)==str:
+    elif isinstance(body,str):
         return body.split('\n')
     else:
         return body
@@ -95,7 +116,7 @@ def run_round_trip_tests(lang1,lang2,objs,outdir):
         run_test(lang,'build')
 
     for obj in objs:
-        if type(obj)!=Struct:
+        if not isinstance(obj,Struct):
             continue
         struct_name = obj.name
         json_file1 = f'{outdir}/{struct_name}-created-by-{lang1}.json'

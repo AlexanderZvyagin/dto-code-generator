@@ -213,8 +213,6 @@ public:
 };
 void to_json(json &j, const Updater &obj) {
     to_json(j,static_cast<const UpdaterDto &>(obj));
-    j["_equation"] = obj._equation;
-    j["_state"] = obj._state;
 }
 
 std::string to_json(const Updater &obj) {
@@ -224,8 +222,6 @@ std::string to_json(const Updater &obj) {
 }
 void from_json(const json &j, Updater &obj) {
     from_json(j,static_cast<UpdaterDto &>(obj));
-    j.at("_equation").get_to(obj._equation);
-    j.at("_state").get_to(obj._state);
 }
 Updater Updater_from_json(const json &j) {
     Updater obj;

@@ -2,13 +2,15 @@ from .all import *
 
 def python_type_to_string (var:Variable):
 
+    tname = var.TypeName()
+
     type_str = {
         'void'    : 'void',
         'string'  : 'str',
         'boolean' : 'bool',
         'int'     : 'int',
         'float'   : 'float',
-    } .get(var.type,var.type)
+    } .get(tname,tname)
 
     if var.list:
         type_str = f'list[{type_str}]'
@@ -17,25 +19,32 @@ def python_type_to_string (var:Variable):
     return type_str
 
 def python_value_to_string (arg):
-    if type(arg)==Variable:
+    if isinstance(arg,Variable):
         return arg.name
     elif isinstance(arg,list):
         x = [ f'{item.name}'   for item in arg]
         y = ','.join(x)
         return f'[{y}]'
-    elif type(arg)==str:
+    elif isinstance(arg,str):
         return f'"{arg}"'
     else:
         return str(arg)
 
 def File_prefix_python (objs):
-    return [
-        f'# {autogen_text}',
-        'from math import nan',
-        'import json',
-        '# 1',
-        ''
-    ]
+    return f'''
+# {autogen_text}
+from copy import deepcopy
+from math import nan
+import json
+from json import JSONEncoder
+
+def _default(self, obj):
+    return getattr(obj.__class__, "to_json", _default.default)(obj)
+
+_default.default = JSONEncoder().default
+JSONEncoder.default = _default
+
+'''.split('\n')
 
 def Constructor_python(ctor:Function,base:Struct):
 
@@ -47,7 +56,6 @@ def Constructor_python(ctor:Function,base:Struct):
     code.append(f'def __init__ (')
     code.append(f'{indent}self,')
     for i,arg in enumerate(ctor.args):
-        # defval = '' if arg.defval is None else f' = {python_value_to_string(arg.defval)}'
         defval = ''
         if arg.defval is not None:
             defval = f' = {python_value_to_string(arg.defval)}'
@@ -73,12 +81,10 @@ def Constructor_python(ctor:Function,base:Struct):
                 if a.name == name:
                     attr = a
             assert attr is not None
-
-            # if attr.optional:
-            #     code.append(f'{indent*1}if {python_value_to_string(arg)} is not None:')
-            #     code.append(f'{indent*2}self.{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(arg)}')
-            # else:
-            code.append(f'{indent*1}self.{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(arg)}')
+            if isinstance(attr.type,Struct) and isinstance(arg,Variable):# and isinstance(arg.defval,Struct):
+                code.append(f'{indent*1}self.{attr.name} : {python_type_to_string(attr)} = deepcopy({python_value_to_string(arg)})')
+            else:
+                code.append(f'{indent*1}self.{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(arg)}')
 
     return code
 
@@ -125,15 +131,58 @@ def Struct_python (self:Struct):
     code.append(f'{indent*2}return True')
 
     code.append(f'{indent}def __neq__ (self, other):')
-    code.append(f'{indent*2}return not (self==other)')
+    code.append(f'{indent*2}return not self==other')
 
-    if self.generate_json:
-        code.extend(Struct_to_json_string_python(self))
-        code.extend(Struct_from_json_string_python(self))
+    code.extend(Struct_to_json_string_python(self))
+    code.extend(Struct_from_json_string_python(self))
+
+    code.extend(Struct_to_JSON_python(self))
 
     return code
 
+def Struct_to_JSON_python (self:Struct):
+    code = []
+    code.append(f'def {self.name}_to_json(j:dict, obj:{self.name}):')
+    if self.base:
+        code.append(f'{indent}{self.base.name}_to_json(j,obj)')
+    for attr in self.attributes:
+        if attr.skip_dto: continue
+        var_code = []
+        if isinstance(attr.type,str):
+            var_code.append(f'j["{attr.name}"] = obj.{attr.name}')
+        elif isinstance(attr.type,Struct) and not attr.list:
+            var_code.append(f'jj = {{}}')
+            var_code.append(f'{attr.TypeName()}_to_json(jj,obj.{attr.name})')
+            var_code.append(f'j["{attr.name}"] = jj')
+        elif isinstance(attr.type,Struct) and attr.list:
+            var_code.append(f'j["{attr.name}"] = []')
+            var_code.append(f'for item in obj.{attr.name}:')
+            var_code.append(f'{indent}jj = {{}}')
+            var_code.append(f'{indent}{attr.TypeName()}_to_json(jj,item)')
+            var_code.append(f'{indent}j["{attr.name}"].append(jj)')
+        else:
+            raise NotImplementedError()
+        if attr.optional:
+            code.append(f'{indent*1}if obj.{attr.name} is not None:')
+            for line in var_code:
+                code.append(f'{indent*2}{line}')
+        else:
+            for line in var_code:
+                code.append(f'{indent*1}{line}')
+    if not code:
+        code.append(f'{indent}pass')
+    code.append('')
+    return code
+
 def Struct_to_json_string_python (self:Struct):
+    code = []
+    code.append(f'def {self.name}_to_json_string (self:{self.name}):')
+    code.append(f'{indent}j = {{}}')
+    code.append(f'{indent}{self.name}_to_json(j,self)')
+    code.append(f'{indent}return json.dumps(j)')
+    return code
+
+def old_Struct_to_json_string_python (self:Struct):
     code = []
     code.append(f'def {self.name}_to_json_string (self):')
     skip_dto = [attr.name for attr in self.attributes if attr.skip_dto]
@@ -148,17 +197,27 @@ def Struct_to_json_string_python (self:Struct):
 def Struct_from_json_string_python (self):
     code = []
 
-    code.append(f'def {self.name}_from_json (j, obj):')
+    code.append(f'def {self.name}_from_json (j:dict, obj:{self.name}):')
+    code.append(f'{indent}assert isinstance(obj,{self.name})')
     if self.base:
         code.append(f'{indent}{self.base.name}_from_json(j,obj)')
     for attr in self.attributes:
-        # TODO
         if attr.skip_dto: continue
-        if attr.optional:
-            code.append(f'{indent}obj.{attr.name} = j.get("{attr.name}",None)')
+        if isinstance(attr.type,Struct):
+            if attr.optional:
+                assert False
+            elif not attr.optional and attr.list:
+                code.append(f'{indent*1}for item in j["{attr.name}"]:')
+                code.append(f'{indent*2}v = {attr.TypeName()}()')
+                code.append(f'{indent*2}{attr.TypeName()}_from_json(item,v)')
+                code.append(f'{indent*2}obj.{attr.name}.append(v)')
+            else:
+                code.append(f'{indent}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
         else:
-            code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
-    # code.append(f'{indent}return')
+            if attr.optional:
+                code.append(f'{indent}obj.{attr.name} = j.get("{attr.name}",None)')
+            else:
+                code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
 
     code.append(f'def {self.name}_from_json_string (jstr):')
     code.append(f'{indent}j = json.loads(jstr)')
@@ -177,7 +236,7 @@ def Tests_python (objs):
     code_compare = []
 
     for obj in objs:
-        if type(obj)!=Struct:
+        if not isinstance(obj,Struct):
             continue
 
         struct_names.append(obj.name)
@@ -188,50 +247,17 @@ def Tests_python (objs):
         assert len(ctors)==1
 
         for i,arg in enumerate(ctors[0].args):
-            if arg.optional:
-                if arg.list:
-                    if arg.type=='string':
-                        random_arg = 'random_optional_list_of_strings()'
-                    elif arg.type=='float':
-                        random_arg = 'random_optional_list_of_floats()'
-                    elif arg.type=='int':
-                        random_arg = 'random_optional_list_of_ints()'
-                    elif arg.type in struct_names:
-                        random_arg = f'random_optional_list_of_{arg.type}()'
-                    else:
-                        raise Exception(f'Unknown type {arg.type}')
-                elif arg.type=='string':
-                    random_arg = 'random_optional_string()'
-                elif arg.type=='float':
-                    random_arg = 'random_optional_float()'
-                elif arg.type=='int':
-                    random_arg = 'random_optional_int()'
-                elif arg.type in struct_names:
-                    random_arg = f'random_optional_{arg.type}()'
-                else:
-                    raise Exception(f'Unknown type {arg.type}')
+            tname = arg.TypeName()
+            if arg.optional and arg.list:
+                random_arg = f'random_optional_list_{tname}()'
+            elif arg.optional and not arg.list:
+                random_arg = f'random_optional_{tname}()'
+            elif not arg.optional and arg.list:
+                random_arg = f'random_list_{tname}()'
+            elif not arg.optional and not arg.list:
+                random_arg = f'random_{tname}()'
             else:
-                if arg.list:
-                    if arg.type=='string':
-                        random_arg = 'random_list_of_strings()'
-                    elif arg.type=='float':
-                        random_arg = 'random_list_of_floats()'
-                    elif arg.type=='int':
-                        random_arg = 'random_list_of_ints()'
-                    elif arg.type in struct_names:
-                        random_arg = f'random_list_of_{arg.type}()'
-                    else:
-                        raise Exception(f'Unknown type {arg.type}')
-                elif arg.type=='string':
-                    random_arg = 'random_string()'
-                elif arg.type=='float':
-                    random_arg = 'random_float()'
-                elif arg.type=='int':
-                    random_arg = 'random_int()'
-                elif arg.type in struct_names:
-                    random_arg = f'random_{arg.type}()'
-                else:
-                    raise Exception(f'Unknown type {arg.type}')
+                raise Exception('Development error')
             ending = '' if (i+1)==len(ctors[0].args) else ','
             random_args += f'{indent*2}{random_arg}{ending}\n'
 
@@ -243,15 +269,19 @@ def random_{obj.name} ():
 '''.split('\n'))
 
         code_construct_random.extend(f'''
-def random_list_of_{obj.name} (min:int = 0, max:int = 3):
+def random_list_{obj.name} (min:int = 0, max:int = 3):
     size = random.randint(min,max)
     return [random_{obj.name}() for i in range(size)]
 '''.split('\n'))
 
         code_create.append(f'''
         elif struct_name=='{obj.name}':
-            obj = {obj.name}_to_json_string(random_{obj.name}())
-            open(file1_name,'w').write(obj)
+            obj1 = random_{obj.name}()
+            open(file1_name,'w').write({obj.name}_to_json_string(obj1))
+            obj2 = {obj.name}_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,{obj.name})
+            assert isinstance(obj2,{obj.name})
+            assert obj1==obj2
 ''')
 
         code_convert.extend(f'''
@@ -288,18 +318,18 @@ from output.dto import *
 def random_string(len_max=5):
     return str(uuid.uuid4())[0:random.randint(0,len_max)]
 
-def random_list_of_strings(min = 0, max = 3):
+def random_list_string(min = 0, max = 3):
     n = random.randint(min,max)
     return [random_string() for i in range(n)]
 
 def random_int (min = -1000, max = 1000):
     return random.randint(min,max)
 
-def random_list_of_ints(min = 0, max = 3):
+def random_list_int(min = 0, max = 3):
     n = random.randint(min,max)
     return [random_int() for i in range(n)]
 
-def random_optional_list_of_ints(min = 0, max = 3):
+def random_optional_list_int(min = 0, max = 3):
     if random.randint(0,1): return None
     n = random.randint(min,max)
     return [random_int() for i in range(n)]
@@ -315,11 +345,11 @@ def random_optional_float (min = -1e6, max = 1e6):
     # FIXME
     # return random.uniform(min,max)
 
-def random_list_of_floats (min = 0, max = 3):
+def random_list_float (min = 0, max = 3):
     n = random.randint(min,max)
     return [random_float() for i in range(n)]
 
-def random_optional_list_of_floats (min = 0, max = 3):
+def random_optional_list_float (min = 0, max = 3):
     if random.randint(0,1): return None
     n = random.randint(min,max)
     return [random_float() for i in range(n)]

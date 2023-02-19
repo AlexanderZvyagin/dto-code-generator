@@ -61,8 +61,8 @@ def create_dto(fname, languages):
     UpdaterDto = obj
 
     obj = Struct('Updater',UpdaterDto)
-    obj.attributes.append(Variable('_equation','int'))
-    obj.attributes.append(Variable('_state','int'))
+    obj.attributes.append(Variable('_equation','int',skip_dto=True))
+    obj.attributes.append(Variable('_state','int',skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -141,7 +141,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
         }
     }))
 
-    obj = Struct('IndependentGaussian',Updater,generate_json=True)
+    obj = Struct('IndependentGaussian',Updater)
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -157,7 +157,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
     ))
     objs.append(obj)
     
-    obj = Struct('CorrelatedGaussian',Updater,generate_json=True)
+    obj = Struct('CorrelatedGaussian',Updater)
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -175,7 +175,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
     ))
     objs.append(obj)
 
-    obj = Struct('Barrier',Updater,generate_json=True)
+    obj = Struct('Barrier',Updater)
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -205,6 +205,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('HistogramAxis')
+    HistogramAxis = obj
     obj.attributes.append(Variable('state','int'))
     obj.attributes.append(Variable('nbins','int'))
     obj.attributes.append(Variable('min','float'))
@@ -228,42 +229,21 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('Histogram')
-    obj.attributes.append(Variable('x','HistogramAxis'))
-    obj.attributes.append(Variable('y','HistogramAxis'))
+    Histogram = obj
+    obj.attributes.append(Variable('x',HistogramAxis))
+    obj.attributes.append(Variable('y',HistogramAxis))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('x','HistogramAxis',Variable('HistogramAxis()','type')),
-            Variable('y','HistogramAxis',Variable('HistogramAxis()','type')),
+            Variable('x','HistogramAxis',Variable('HistogramAxis()',HistogramAxis)),
+            Variable('y','HistogramAxis',Variable('HistogramAxis()',HistogramAxis)),
         ],
         mapping = [
             ('x',[Variable('x')]),
             ('y',[Variable('y')])
         ]
     ))
-    # obj.methods.append(Function (
-    #     obj.name,
-    #     'constructor',
-    #     args = [
-    #         Variable('x','HistogramAxis',None),
-    #     ],
-    #     mapping = [
-    #         ('x',[Variable('x')]),
-    #     ]
-    # ))
-    # obj.methods.append(Function (
-    #     obj.name,
-    #     'constructor',
-    #     args = [
-    #         Variable('x','HistogramAxis',None),
-    #         Variable('y','HistogramAxis',None),
-    #     ],
-    #     mapping = [
-    #         ('x',[Variable('x')]),
-    #         ('y',[Variable('y')])
-    #     ]
-    # ))
     objs.append(obj)
 
     objs.append(CodeBlock(code={
@@ -277,6 +257,7 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     }))
 
     obj = Struct ('EvaluationPoint')
+    EvaluationPoint = obj
     obj.attributes.append(Variable('state','int',None))
     obj.attributes.append(Variable('time','float',None))
     obj.attributes.append(Variable('value','float',None))
@@ -307,7 +288,7 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     obj.attributes.append(Variable('skewness','float',list=True))
     obj.attributes.append(Variable('time_points','float',list=True))
     obj.attributes.append(Variable('time_steps','int',list=True))
-    obj.attributes.append(Variable('histograms','Histogram',list=True))
+    obj.attributes.append(Variable('histograms',Histogram,list=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -361,8 +342,8 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     obj.attributes.append(Variable('TimeStart','float'))
     obj.attributes.append(Variable('TimeSteps','int'))
     obj.attributes.append(Variable('NumPaths','int'))
-    obj.attributes.append(Variable('updaters','Updater',list=True))
-    obj.attributes.append(Variable('evaluations','EvaluationPoint',list=True))
+    obj.attributes.append(Variable('updaters',Updater,list=True))
+    obj.attributes.append(Variable('evaluations',EvaluationPoint,list=True))
     obj.attributes.append(Variable('RunTimeoutSeconds','float'))
     obj.attributes.append(Variable('MemoryLimitKB','int'))
     obj.methods.append(Function (
@@ -372,8 +353,8 @@ void from_json(const json &j, std::vector<Histogram> &u) {
             Variable('TimeStart_','float',nan),
             Variable('TimeSteps_','int',0),
             Variable('NumPaths_','int',0),
-            Variable('updaters_','Updater',[],list=True),
-            Variable('evaluations_','EvaluationPoint',[],list=True),
+            Variable('updaters_',Updater,[],list=True),
+            Variable('evaluations_',EvaluationPoint,[],list=True),
             Variable('RunTimeoutSeconds_','float',1),
             Variable('MemoryLimitKB_','int',1),
         ],
@@ -440,7 +421,7 @@ return this.updaters.filter(
     obj.methods.append(Function (
         'Add',
         'void',
-        args = [Variable('updater','Updater')],
+        args = [Variable('updater',Updater)],
         code = {
             'python':
 '''
@@ -463,7 +444,8 @@ self.updaters.append(updater)
 
 if __name__ == '__main__':
 
-    languages = ['python','cpp','typescript']
+    languages = ['python','cpp']
+    # languages = ['typescript']
     objs = create_dto('output/dto',languages)
     for lang1 in languages:
         for lang2 in languages:
