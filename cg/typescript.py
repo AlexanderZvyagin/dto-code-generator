@@ -36,42 +36,6 @@ def typescript_value_to_string (arg):
     else:
         return str(arg)
 
-# def typescript_type_to_string (var:Variable):
-
-#     type_str = {
-#         'void'    : 'void',
-#         'string'  : 'string',
-#         'boolean' : 'boolean',
-#         'int'     : 'number',
-#         'float'   : 'number',
-#     } .get(var.type,var.type)
-
-#     if var.list:
-#         type_str = f'{type_str}[]'
-#     if var.optional:
-#         type_str = f'{type_str}|undefined'
-#     return type_str
-
-# def typescript_value_to_string (arg):
-#     if isinstance(arg,Variable):
-#         if arg.type=='type':
-#             return f'new {arg.name}'
-#         else:
-#             return arg.name
-#     elif isinstance(arg,list):
-#         x = [ f'{item.name}'   for item in arg]
-#         y = ','.join(x)
-#         return f'[{y}]'
-#     elif isinstance(arg,str):
-#         return f'"{arg}"'
-#     elif isinstance(arg,float):
-#         if math.isnan(arg):
-#             return 'Number.NaN'
-#         else:
-#             return str(arg)
-#     else:
-#         return str(arg)
-
 def File_prefix_typescript (objs):
     code = [f'// {autogen_text}']
     code.extend('''
@@ -88,16 +52,6 @@ function list_equal<Type> (
             return false;
     return true;
 }
-
-//function optional_equal<Type> (
-//    a:Type|undefined,
-//    b:Type|undefined,
-//    eq:(a:Type,b:Type)=>boolean
-//) : boolean {
-//    if(a===undefined && b===undefined) return true;
-//    if(a!==undefined && b!==undefined) return eq(a,b);
-//    return false;
-//}
 
 function float_equal (a:number, b:number) : boolean {
     if(Number.isNaN(a) && Number.isNaN(b)) return true;
@@ -326,12 +280,6 @@ def Struct_from_json_typescript (self:Struct):
                 code.append(f'{indent*2}obj.{attr.name} = j["{attr.name}"] as {typescript_type_to_string(attr)};')
                 code.append(f'{indent*1}else')
                 code.append(f'{indent*2}obj.{attr.name} = undefined;')
-            # elif attr.optional and attr.list:
-            #     code.append(f'{indent*1}if("{attr.name}" in j) {{')
-            #     code.append(f'{indent*2}obj.{attr.name} = j["{attr.name}"] as {typescript_type_to_string(attr)};')
-            #     code.append(f'{indent*1}}} else {{')
-            #     code.append(f'{indent*2}obj.{attr.name} = undefined;')
-            #     code.append(f'{indent*1}}}')
             else:
                 code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
 
@@ -355,21 +303,8 @@ def old_Struct_to_json_string_typescript (self:Struct):
         else:
             code.append(f'{indent*2}obj["{attr.name}"] = this.{attr.name};')
     code.append(f'{indent*2}return obj;')
-    # code.append(f'{indent*2}return JSON.stringify(obj);')
     code.append(f'{indent*1}}}')
     return code
-
-        #     code.append(f'{indent*2}if(this.{attr.name}!==undefined)')
-        #     if attr.type=='int':
-        #         code.append(f'{indent*3}obj["{attr.name}"] = Math.round(this.{attr.name});')
-        #     else:
-        #         code.append(f'{indent*3}obj["{attr.name}"] = this.{attr.name};')
-        # else:
-        #     if attr.type=='int':
-        #         code.append(f'{indent*2}obj["{attr.name}"] = Math.round(this.{attr.name});')
-        #     else:
-        #         code.append(f'{indent*2}obj["{attr.name}"] = this.{attr.name};')
-
 
 def Struct_fromJSON_string_typescript (self:Struct):
     code = []
@@ -455,11 +390,8 @@ function random_list_{obj.name} (min:number = 0, max:number = 3) : {obj.name}[] 
         dto.{obj.name}_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: {obj.name} = new {obj.name}();
         dto.{obj.name}_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: {obj.name} = dto.{obj.name}_fromJSON_string(jstr);
         if(!dto.{obj.name}_equal(obj1,obj2))
             throw new Error(`${{struct_name}} objects are not equal.`);
 ''')
@@ -468,7 +400,6 @@ function random_list_{obj.name} (min:number = 0, max:number = 3) : {obj.name}[] 
     }} else if (struct_name === '{obj.name}') {{
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: {obj.name} = dto.{obj.name}_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 '''.split('\n'))
         code_compare.extend(f'''
@@ -576,43 +507,6 @@ function random_list_string (min:number = 0, max:number = 3) : string[] {
 function random_optional_list_string() : string[]|undefined {
     return yes_no() ? random_list_string() : undefined;
 }
-
-// https://stackoverflow.com/questions/1068834/object-comparison-in-javascript/6713782#6713782
-// function object_equals( x, y ) {
-//     if ( x === y ) return true;
-//       // if both x and y are null or undefined and exactly the same
-//   
-//     if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
-//       // if they are not strictly equal, they both need to be Objects
-//   
-//     if ( x.constructor !== y.constructor ) return false;
-//       // they must have the exact same prototype chain, the closest we can do is
-//       // test there constructor.
-//   
-//     for ( var p in x ) {
-//       if ( ! x.hasOwnProperty( p ) ) continue;
-//         // other properties were tested using x.constructor === y.constructor
-//   
-//       if ( ! y.hasOwnProperty( p ) ) return false;
-//         // allows to compare x[ p ] and y[ p ] when set to undefined
-//   
-//       if ( x[ p ] === y[ p ] ) continue;
-//         // if they have the same strict value or identity then they are equal
-//   
-//       if ( typeof( x[ p ] ) !== "object" ) return false;
-//         // Numbers, Strings, Functions, Booleans must be strictly equal
-//   
-//       if ( ! object_equals( x[ p ],  y[ p ] ) ) return false;
-//         // Objects and Arrays must be tested recursively
-//     }
-//   
-//     for ( p in y )
-//       if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) )
-//         return false;
-//           // allows x[ p ] to be set to undefined
-//   
-//     return true;
-// }
 
 //create-struct-random//
 

@@ -14,16 +14,6 @@ function list_equal<Type> (
     return true;
 }
 
-//function optional_equal<Type> (
-//    a:Type|undefined,
-//    b:Type|undefined,
-//    eq:(a:Type,b:Type)=>boolean
-//) : boolean {
-//    if(a===undefined && b===undefined) return true;
-//    if(a!==undefined && b!==undefined) return eq(a,b);
-//    return false;
-//}
-
 function float_equal (a:number, b:number) : boolean {
     if(Number.isNaN(a) && Number.isNaN(b)) return true;
     return a===b;

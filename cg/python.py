@@ -36,13 +36,6 @@ def File_prefix_python (objs)  -> list[str]:
 from copy import deepcopy
 from math import nan
 import json
-from json import JSONEncoder
-
-def _default(self, obj):
-    return getattr(obj.__class__, "to_json", _default.default)(obj)
-
-_default.default = JSONEncoder().default
-JSONEncoder.default = _default
 
 '''.split('\n')
 
@@ -81,7 +74,7 @@ def Constructor_python(ctor:Function,base:Struct) -> list[str]:
                 if a.name == name:
                     attr = a
             assert attr is not None
-            if isinstance(attr.type,Struct) and isinstance(arg,Variable):# and isinstance(arg.defval,Struct):
+            if isinstance(attr.type,Struct) and isinstance(arg,Variable):
                 code.append(f'{indent*1}self.{attr.name} : {python_type_to_string(attr)} = deepcopy({python_value_to_string(arg)})')
             else:
                 code.append(f'{indent*1}self.{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(arg)}')
@@ -196,9 +189,7 @@ def Struct_from_json_python (self) -> list[str]:
         if isinstance(attr.type,Struct):
             if attr.optional and not attr.list:
                 code.append(f'{indent*1}if j.get("{attr.name}",None) is not None:')
-                # code.append(f'{indent*2}jj = ')
                 code.append(f'{indent*2}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
-                # code.append(f'{indent*2}obj.{attr.name} = jj')
                 code.append(f'{indent*1}else:')
                 code.append(f'{indent*2}obj.{attr.name} = None')
             elif not attr.optional and attr.list:

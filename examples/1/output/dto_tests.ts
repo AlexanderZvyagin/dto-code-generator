@@ -89,43 +89,6 @@ function random_optional_list_string() : string[]|undefined {
     return yes_no() ? random_list_string() : undefined;
 }
 
-// https://stackoverflow.com/questions/1068834/object-comparison-in-javascript/6713782#6713782
-// function object_equals( x, y ) {
-//     if ( x === y ) return true;
-//       // if both x and y are null or undefined and exactly the same
-//   
-//     if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
-//       // if they are not strictly equal, they both need to be Objects
-//   
-//     if ( x.constructor !== y.constructor ) return false;
-//       // they must have the exact same prototype chain, the closest we can do is
-//       // test there constructor.
-//   
-//     for ( var p in x ) {
-//       if ( ! x.hasOwnProperty( p ) ) continue;
-//         // other properties were tested using x.constructor === y.constructor
-//   
-//       if ( ! y.hasOwnProperty( p ) ) return false;
-//         // allows to compare x[ p ] and y[ p ] when set to undefined
-//   
-//       if ( x[ p ] === y[ p ] ) continue;
-//         // if they have the same strict value or identity then they are equal
-//   
-//       if ( typeof( x[ p ] ) !== "object" ) return false;
-//         // Numbers, Strings, Functions, Booleans must be strictly equal
-//   
-//       if ( ! object_equals( x[ p ],  y[ p ] ) ) return false;
-//         // Objects and Arrays must be tested recursively
-//     }
-//   
-//     for ( p in y )
-//       if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) )
-//         return false;
-//           // allows x[ p ] to be set to undefined
-//   
-//     return true;
-// }
-
 
 function random_UpdaterDoc () : UpdaterDoc {
     return new UpdaterDoc (
@@ -381,11 +344,8 @@ function create (struct_name:string, file_name:string){
         dto.UpdaterDoc_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: UpdaterDoc = new UpdaterDoc();
         dto.UpdaterDoc_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: UpdaterDoc = dto.UpdaterDoc_fromJSON_string(jstr);
         if(!dto.UpdaterDoc_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -396,11 +356,8 @@ function create (struct_name:string, file_name:string){
         dto.UpdaterDto_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: UpdaterDto = new UpdaterDto();
         dto.UpdaterDto_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: UpdaterDto = dto.UpdaterDto_fromJSON_string(jstr);
         if(!dto.UpdaterDto_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -411,11 +368,8 @@ function create (struct_name:string, file_name:string){
         dto.Updater_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: Updater = new Updater();
         dto.Updater_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: Updater = dto.Updater_fromJSON_string(jstr);
         if(!dto.Updater_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -426,11 +380,8 @@ function create (struct_name:string, file_name:string){
         dto.IndependentGaussian_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: IndependentGaussian = new IndependentGaussian();
         dto.IndependentGaussian_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: IndependentGaussian = dto.IndependentGaussian_fromJSON_string(jstr);
         if(!dto.IndependentGaussian_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -441,11 +392,8 @@ function create (struct_name:string, file_name:string){
         dto.CorrelatedGaussian_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: CorrelatedGaussian = new CorrelatedGaussian();
         dto.CorrelatedGaussian_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: CorrelatedGaussian = dto.CorrelatedGaussian_fromJSON_string(jstr);
         if(!dto.CorrelatedGaussian_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -456,11 +404,8 @@ function create (struct_name:string, file_name:string){
         dto.Barrier_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: Barrier = new Barrier();
         dto.Barrier_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: Barrier = dto.Barrier_fromJSON_string(jstr);
         if(!dto.Barrier_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -471,11 +416,8 @@ function create (struct_name:string, file_name:string){
         dto.HistogramAxis_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: HistogramAxis = new HistogramAxis();
         dto.HistogramAxis_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: HistogramAxis = dto.HistogramAxis_fromJSON_string(jstr);
         if(!dto.HistogramAxis_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -486,11 +428,8 @@ function create (struct_name:string, file_name:string){
         dto.Histogram_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: Histogram = new Histogram();
         dto.Histogram_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: Histogram = dto.Histogram_fromJSON_string(jstr);
         if(!dto.Histogram_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -501,11 +440,8 @@ function create (struct_name:string, file_name:string){
         dto.EvaluationPoint_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: EvaluationPoint = new EvaluationPoint();
         dto.EvaluationPoint_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: EvaluationPoint = dto.EvaluationPoint_fromJSON_string(jstr);
         if(!dto.EvaluationPoint_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -516,11 +452,8 @@ function create (struct_name:string, file_name:string){
         dto.EvaluationResults_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: EvaluationResults = new EvaluationResults();
         dto.EvaluationResults_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: EvaluationResults = dto.EvaluationResults_fromJSON_string(jstr);
         if(!dto.EvaluationResults_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -531,11 +464,8 @@ function create (struct_name:string, file_name:string){
         dto.Parameter_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: Parameter = new Parameter();
         dto.Parameter_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: Parameter = dto.Parameter_fromJSON_string(jstr);
         if(!dto.Parameter_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -546,11 +476,8 @@ function create (struct_name:string, file_name:string){
         dto.Model_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        // const j = JSON.parse(fs.readFileSync(file_name,'utf-8'));
         const obj2: Model = new Model();
         dto.Model_from_json(j,obj2);
-        // const jstr: string = fs.readFileSync(file_name,'utf-8');
-        // const obj2: Model = dto.Model_fromJSON_string(jstr);
         if(!dto.Model_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
@@ -564,84 +491,72 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
     } else if (struct_name === 'UpdaterDoc') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: UpdaterDoc = dto.UpdaterDoc_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'UpdaterDto') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: UpdaterDto = dto.UpdaterDto_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'Updater') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Updater = dto.Updater_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'IndependentGaussian') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: IndependentGaussian = dto.IndependentGaussian_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'CorrelatedGaussian') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: CorrelatedGaussian = dto.CorrelatedGaussian_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'Barrier') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Barrier = dto.Barrier_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'HistogramAxis') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: HistogramAxis = dto.HistogramAxis_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'Histogram') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Histogram = dto.Histogram_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'EvaluationPoint') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: EvaluationPoint = dto.EvaluationPoint_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'EvaluationResults') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: EvaluationResults = dto.EvaluationResults_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'Parameter') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Parameter = dto.Parameter_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
     } else if (struct_name === 'Model') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Model = dto.Model_fromJSON_string(jstr);
-        // fs.writeFileSync(file2_name, obj.toJSON());
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
     } else
