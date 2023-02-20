@@ -54,6 +54,9 @@ class UpdaterDoc {
     
     }
 
+    json (): string {
+        return UpdaterDoc_to_json_string(this);
+    }
 }
 export function
 UpdaterDoc_equal (a: UpdaterDoc, b: UpdaterDoc) : boolean {
@@ -138,6 +141,9 @@ class UpdaterDto {
     
     }
 
+    json (): string {
+        return UpdaterDto_to_json_string(this);
+    }
 }
 export function
 UpdaterDto_equal (a: UpdaterDto, b: UpdaterDto) : boolean {
@@ -277,6 +283,9 @@ class Updater extends UpdaterDto {
         
     }
 
+    json (): string {
+        return Updater_to_json_string(this);
+    }
 }
 export function
 Updater_equal (a: Updater, b: Updater) : boolean {
@@ -336,6 +345,9 @@ class IndependentGaussian extends Updater {
     
     }
 
+    json (): string {
+        return IndependentGaussian_to_json_string(this);
+    }
 }
 export function
 IndependentGaussian_equal (a: IndependentGaussian, b: IndependentGaussian) : boolean {
@@ -397,6 +409,9 @@ class CorrelatedGaussian extends Updater {
     
     }
 
+    json (): string {
+        return CorrelatedGaussian_to_json_string(this);
+    }
 }
 export function
 CorrelatedGaussian_equal (a: CorrelatedGaussian, b: CorrelatedGaussian) : boolean {
@@ -458,6 +473,9 @@ class BrownianMotion extends Updater {
     
     }
 
+    json (): string {
+        return BrownianMotion_to_json_string(this);
+    }
 }
 export function
 BrownianMotion_equal (a: BrownianMotion, b: BrownianMotion) : boolean {
@@ -519,6 +537,9 @@ class BrownianMotionRef extends Updater {
     
     }
 
+    json (): string {
+        return BrownianMotionRef_to_json_string(this);
+    }
 }
 export function
 BrownianMotionRef_equal (a: BrownianMotionRef, b: BrownianMotionRef) : boolean {
@@ -580,6 +601,9 @@ class GeometricalBrownianMotion extends Updater {
     
     }
 
+    json (): string {
+        return GeometricalBrownianMotion_to_json_string(this);
+    }
 }
 export function
 GeometricalBrownianMotion_equal (a: GeometricalBrownianMotion, b: GeometricalBrownianMotion) : boolean {
@@ -641,6 +665,9 @@ class GeometricalBrownianMotionRef extends Updater {
     
     }
 
+    json (): string {
+        return GeometricalBrownianMotionRef_to_json_string(this);
+    }
 }
 export function
 GeometricalBrownianMotionRef_equal (a: GeometricalBrownianMotionRef, b: GeometricalBrownianMotionRef) : boolean {
@@ -701,6 +728,9 @@ class ZeroCouponBond extends Updater {
     
     }
 
+    json (): string {
+        return ZeroCouponBond_to_json_string(this);
+    }
 }
 export function
 ZeroCouponBond_equal (a: ZeroCouponBond, b: ZeroCouponBond) : boolean {
@@ -762,6 +792,9 @@ class Option extends Updater {
     
     }
 
+    json (): string {
+        return Option_to_json_string(this);
+    }
 }
 export function
 Option_equal (a: Option, b: Option) : boolean {
@@ -826,6 +859,9 @@ class Barrier extends Updater {
     
     }
 
+    json (): string {
+        return Barrier_to_json_string(this);
+    }
 }
 export function
 Barrier_equal (a: Barrier, b: Barrier) : boolean {
@@ -890,6 +926,9 @@ class HistogramAxis {
     
     }
 
+    json (): string {
+        return HistogramAxis_to_json_string(this);
+    }
 }
 export function
 HistogramAxis_equal (a: HistogramAxis, b: HistogramAxis) : boolean {
@@ -960,6 +999,9 @@ class Histogram {
     
     }
 
+    json (): string {
+        return Histogram_to_json_string(this);
+    }
 }
 export function
 Histogram_equal (a: Histogram, b: Histogram) : boolean {
@@ -1088,6 +1130,9 @@ class EvaluationPoint {
         
     }
 
+    json (): string {
+        return EvaluationPoint_to_json_string(this);
+    }
 }
 export function
 EvaluationPoint_equal (a: EvaluationPoint, b: EvaluationPoint) : boolean {
@@ -1195,6 +1240,9 @@ class Parameter {
     
     }
 
+    json (): string {
+        return Parameter_to_json_string(this);
+    }
 }
 export function
 Parameter_equal (a: Parameter, b: Parameter) : boolean {
@@ -1309,6 +1357,9 @@ class Model {
         
     }
 
+    json (): string {
+        return Model_to_json_string(this);
+    }
 }
 export function
 Model_equal (a: Model, b: Model) : boolean {
@@ -1443,6 +1494,9 @@ class Result {
         
     }
 
+    json (): string {
+        return Result_to_json_string(this);
+    }
 }
 export function
 Result_equal (a: Result, b: Result) : boolean {
@@ -1573,6 +1627,9 @@ class EvaluationResults {
         
     }
 
+    json (): string {
+        return EvaluationResults_to_json_string(this);
+    }
 }
 export function
 EvaluationResults_equal (a: EvaluationResults, b: EvaluationResults) : boolean {

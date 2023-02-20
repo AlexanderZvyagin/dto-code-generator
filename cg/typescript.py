@@ -154,6 +154,10 @@ def Struct_typescript (self:Struct):
             code.append(f'{indent}{line}')
         code.append('')
 
+    code.append(f'{indent*1}json (): string {{')
+    code.append(f'{indent*2}return {self.name}_to_json_string(this);')
+    code.append(f'{indent*1}}}')
+
     code.append(f'}}')
     code.extend(Struct_equal_typescript(self))
     code.extend(Struct_fromJSON_string_typescript(self))

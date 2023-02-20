@@ -98,6 +98,11 @@ def Function_cpp(self:Function, obj:Struct=None):
 
 def Struct_cpp (self:Struct):
     code = []
+
+    # Start with a forward declarations
+    code.append(f'class {self.name};')
+    code.append(f'std::string {self.name}_to_json_string(const {self.name} &obj);')
+
     if self.base:
         code.append(f'class {self.name}: public {self.base.name} {{')
     else:
@@ -117,6 +122,10 @@ def Struct_cpp (self:Struct):
         code.append('')
 
     code.extend(Struct_compare_cpp(self))
+
+    code.append(f'{indent*1}std::string json (void) const {{')
+    code.append(f'{indent*2}return {self.name}_to_json_string(*this);')
+    code.append(f'{indent*1}}}')
 
     code.append(f'}};')
 
@@ -173,7 +182,7 @@ def Struct_from_JSON_cpp (self:Struct):
 
 def Struct_to_JSON_string_cpp (self:Struct):
     code = []
-    code.append(f'std::string to_json(const {self.name} &obj) {{')
+    code.append(f'std::string {self.name}_to_json_string(const {self.name} &obj) {{')
     code.append(f'{indent}json j;')
     code.append(f'{indent}to_json(j,obj);')
     code.append(f'{indent}return j.dump();')
@@ -275,7 +284,7 @@ std::vector<{obj.name}> random_optional_list_{obj.name} (int min = 0, int max = 
         code_create.append(f'''
         }} else if (struct_name == "{obj.name}") {{
             auto obj1 = random_{obj.name}();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << {obj.name}_to_json_string(obj1);
             auto obj2 =
                 {obj.name}_from_json (
                     json::parse (
@@ -295,7 +304,7 @@ std::vector<{obj.name}> random_optional_list_{obj.name} (int min = 0, int max = 
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << {obj.name}_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 '''.split('\n'))

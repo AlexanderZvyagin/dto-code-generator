@@ -822,7 +822,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "UpdaterDoc") {
             auto obj1 = random_UpdaterDoc();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << UpdaterDoc_to_json_string(obj1);
             auto obj2 =
                 UpdaterDoc_from_json (
                     json::parse (
@@ -835,7 +835,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "UpdaterDto") {
             auto obj1 = random_UpdaterDto();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << UpdaterDto_to_json_string(obj1);
             auto obj2 =
                 UpdaterDto_from_json (
                     json::parse (
@@ -848,7 +848,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Updater") {
             auto obj1 = random_Updater();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << Updater_to_json_string(obj1);
             auto obj2 =
                 Updater_from_json (
                     json::parse (
@@ -861,7 +861,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "IndependentGaussian") {
             auto obj1 = random_IndependentGaussian();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << IndependentGaussian_to_json_string(obj1);
             auto obj2 =
                 IndependentGaussian_from_json (
                     json::parse (
@@ -874,7 +874,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "CorrelatedGaussian") {
             auto obj1 = random_CorrelatedGaussian();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << CorrelatedGaussian_to_json_string(obj1);
             auto obj2 =
                 CorrelatedGaussian_from_json (
                     json::parse (
@@ -887,7 +887,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "BrownianMotion") {
             auto obj1 = random_BrownianMotion();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << BrownianMotion_to_json_string(obj1);
             auto obj2 =
                 BrownianMotion_from_json (
                     json::parse (
@@ -900,7 +900,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "BrownianMotionRef") {
             auto obj1 = random_BrownianMotionRef();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << BrownianMotionRef_to_json_string(obj1);
             auto obj2 =
                 BrownianMotionRef_from_json (
                     json::parse (
@@ -913,7 +913,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "GeometricalBrownianMotion") {
             auto obj1 = random_GeometricalBrownianMotion();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << GeometricalBrownianMotion_to_json_string(obj1);
             auto obj2 =
                 GeometricalBrownianMotion_from_json (
                     json::parse (
@@ -926,7 +926,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "GeometricalBrownianMotionRef") {
             auto obj1 = random_GeometricalBrownianMotionRef();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << GeometricalBrownianMotionRef_to_json_string(obj1);
             auto obj2 =
                 GeometricalBrownianMotionRef_from_json (
                     json::parse (
@@ -939,7 +939,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "ZeroCouponBond") {
             auto obj1 = random_ZeroCouponBond();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << ZeroCouponBond_to_json_string(obj1);
             auto obj2 =
                 ZeroCouponBond_from_json (
                     json::parse (
@@ -952,7 +952,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Option") {
             auto obj1 = random_Option();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << Option_to_json_string(obj1);
             auto obj2 =
                 Option_from_json (
                     json::parse (
@@ -965,7 +965,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Barrier") {
             auto obj1 = random_Barrier();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << Barrier_to_json_string(obj1);
             auto obj2 =
                 Barrier_from_json (
                     json::parse (
@@ -978,7 +978,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "HistogramAxis") {
             auto obj1 = random_HistogramAxis();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << HistogramAxis_to_json_string(obj1);
             auto obj2 =
                 HistogramAxis_from_json (
                     json::parse (
@@ -991,7 +991,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Histogram") {
             auto obj1 = random_Histogram();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << Histogram_to_json_string(obj1);
             auto obj2 =
                 Histogram_from_json (
                     json::parse (
@@ -1004,7 +1004,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "EvaluationPoint") {
             auto obj1 = random_EvaluationPoint();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << EvaluationPoint_to_json_string(obj1);
             auto obj2 =
                 EvaluationPoint_from_json (
                     json::parse (
@@ -1017,7 +1017,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Parameter") {
             auto obj1 = random_Parameter();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << Parameter_to_json_string(obj1);
             auto obj2 =
                 Parameter_from_json (
                     json::parse (
@@ -1030,7 +1030,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Model") {
             auto obj1 = random_Model();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << Model_to_json_string(obj1);
             auto obj2 =
                 Model_from_json (
                     json::parse (
@@ -1043,7 +1043,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Result") {
             auto obj1 = random_Result();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << Result_to_json_string(obj1);
             auto obj2 =
                 Result_from_json (
                     json::parse (
@@ -1056,7 +1056,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "EvaluationResults") {
             auto obj1 = random_EvaluationResults();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << EvaluationResults_to_json_string(obj1);
             auto obj2 =
                 EvaluationResults_from_json (
                     json::parse (
@@ -1084,7 +1084,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << UpdaterDoc_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1097,7 +1097,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << UpdaterDto_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1110,7 +1110,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << Updater_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1123,7 +1123,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << IndependentGaussian_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1136,7 +1136,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << CorrelatedGaussian_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1149,7 +1149,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << BrownianMotion_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1162,7 +1162,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << BrownianMotionRef_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1175,7 +1175,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << GeometricalBrownianMotion_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1188,7 +1188,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << GeometricalBrownianMotionRef_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1201,7 +1201,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << ZeroCouponBond_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1214,7 +1214,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << Option_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1227,7 +1227,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << Barrier_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1240,7 +1240,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << HistogramAxis_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1253,7 +1253,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << Histogram_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1266,7 +1266,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << EvaluationPoint_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1279,7 +1279,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << Parameter_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1292,7 +1292,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << Model_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1305,7 +1305,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << Result_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1318,7 +1318,7 @@ int main (int argc, const char **argv) try {
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << EvaluationResults_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 

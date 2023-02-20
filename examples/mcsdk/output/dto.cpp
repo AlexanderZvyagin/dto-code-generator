@@ -9,6 +9,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+class UpdaterDoc;
+std::string UpdaterDoc_to_json_string(const UpdaterDoc &obj);
 class UpdaterDoc {
 public:
 
@@ -59,6 +61,9 @@ public:
         return true;
     }
     bool operator != (const UpdaterDoc &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return UpdaterDoc_to_json_string(*this);
+    }
 };
 void to_json(json &j, const UpdaterDoc &obj) {
     j["name"] = obj.name;
@@ -69,7 +74,7 @@ void to_json(json &j, const UpdaterDoc &obj) {
     j["nrefs_min"] = obj.nrefs_min;
 }
 
-std::string to_json(const UpdaterDoc &obj) {
+std::string UpdaterDoc_to_json_string(const UpdaterDoc &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -88,6 +93,8 @@ UpdaterDoc UpdaterDoc_from_json(const json &j) {
     return obj;
 }
 
+class UpdaterDto;
+std::string UpdaterDto_to_json_string(const UpdaterDto &obj);
 class UpdaterDto {
 public:
 
@@ -126,6 +133,9 @@ public:
         return true;
     }
     bool operator != (const UpdaterDto &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return UpdaterDto_to_json_string(*this);
+    }
 };
 void to_json(json &j, const UpdaterDto &obj) {
     j["name"] = obj.name;
@@ -137,7 +147,7 @@ void to_json(json &j, const UpdaterDto &obj) {
         j["start"] = obj.start.value();
 }
 
-std::string to_json(const UpdaterDto &obj) {
+std::string UpdaterDto_to_json_string(const UpdaterDto &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -157,6 +167,8 @@ UpdaterDto UpdaterDto_from_json(const json &j) {
     return obj;
 }
 
+class Updater;
+std::string Updater_to_json_string(const Updater &obj);
 class Updater: public UpdaterDto {
 public:
 
@@ -228,12 +240,15 @@ public:
         return true;
     }
     bool operator != (const Updater &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Updater_to_json_string(*this);
+    }
 };
 void to_json(json &j, const Updater &obj) {
     to_json(j,static_cast<const UpdaterDto &>(obj));
 }
 
-std::string to_json(const Updater &obj) {
+std::string Updater_to_json_string(const Updater &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -253,6 +268,8 @@ void from_json(const json &j, std::vector<Updater> &u) {
         u.push_back(v);
 }
 
+class IndependentGaussian;
+std::string IndependentGaussian_to_json_string(const IndependentGaussian &obj);
 class IndependentGaussian: public Updater {
 public:
 
@@ -275,12 +292,15 @@ public:
         return true;
     }
     bool operator != (const IndependentGaussian &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return IndependentGaussian_to_json_string(*this);
+    }
 };
 void to_json(json &j, const IndependentGaussian &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const IndependentGaussian &obj) {
+std::string IndependentGaussian_to_json_string(const IndependentGaussian &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -294,6 +314,8 @@ IndependentGaussian IndependentGaussian_from_json(const json &j) {
     return obj;
 }
 
+class CorrelatedGaussian;
+std::string CorrelatedGaussian_to_json_string(const CorrelatedGaussian &obj);
 class CorrelatedGaussian: public Updater {
 public:
 
@@ -318,12 +340,15 @@ public:
         return true;
     }
     bool operator != (const CorrelatedGaussian &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return CorrelatedGaussian_to_json_string(*this);
+    }
 };
 void to_json(json &j, const CorrelatedGaussian &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const CorrelatedGaussian &obj) {
+std::string CorrelatedGaussian_to_json_string(const CorrelatedGaussian &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -337,6 +362,8 @@ CorrelatedGaussian CorrelatedGaussian_from_json(const json &j) {
     return obj;
 }
 
+class BrownianMotion;
+std::string BrownianMotion_to_json_string(const BrownianMotion &obj);
 class BrownianMotion: public Updater {
 public:
 
@@ -361,12 +388,15 @@ public:
         return true;
     }
     bool operator != (const BrownianMotion &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return BrownianMotion_to_json_string(*this);
+    }
 };
 void to_json(json &j, const BrownianMotion &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const BrownianMotion &obj) {
+std::string BrownianMotion_to_json_string(const BrownianMotion &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -380,6 +410,8 @@ BrownianMotion BrownianMotion_from_json(const json &j) {
     return obj;
 }
 
+class BrownianMotionRef;
+std::string BrownianMotionRef_to_json_string(const BrownianMotionRef &obj);
 class BrownianMotionRef: public Updater {
 public:
 
@@ -404,12 +436,15 @@ public:
         return true;
     }
     bool operator != (const BrownianMotionRef &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return BrownianMotionRef_to_json_string(*this);
+    }
 };
 void to_json(json &j, const BrownianMotionRef &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const BrownianMotionRef &obj) {
+std::string BrownianMotionRef_to_json_string(const BrownianMotionRef &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -423,6 +458,8 @@ BrownianMotionRef BrownianMotionRef_from_json(const json &j) {
     return obj;
 }
 
+class GeometricalBrownianMotion;
+std::string GeometricalBrownianMotion_to_json_string(const GeometricalBrownianMotion &obj);
 class GeometricalBrownianMotion: public Updater {
 public:
 
@@ -447,12 +484,15 @@ public:
         return true;
     }
     bool operator != (const GeometricalBrownianMotion &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return GeometricalBrownianMotion_to_json_string(*this);
+    }
 };
 void to_json(json &j, const GeometricalBrownianMotion &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const GeometricalBrownianMotion &obj) {
+std::string GeometricalBrownianMotion_to_json_string(const GeometricalBrownianMotion &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -466,6 +506,8 @@ GeometricalBrownianMotion GeometricalBrownianMotion_from_json(const json &j) {
     return obj;
 }
 
+class GeometricalBrownianMotionRef;
+std::string GeometricalBrownianMotionRef_to_json_string(const GeometricalBrownianMotionRef &obj);
 class GeometricalBrownianMotionRef: public Updater {
 public:
 
@@ -490,12 +532,15 @@ public:
         return true;
     }
     bool operator != (const GeometricalBrownianMotionRef &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return GeometricalBrownianMotionRef_to_json_string(*this);
+    }
 };
 void to_json(json &j, const GeometricalBrownianMotionRef &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const GeometricalBrownianMotionRef &obj) {
+std::string GeometricalBrownianMotionRef_to_json_string(const GeometricalBrownianMotionRef &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -509,6 +554,8 @@ GeometricalBrownianMotionRef GeometricalBrownianMotionRef_from_json(const json &
     return obj;
 }
 
+class ZeroCouponBond;
+std::string ZeroCouponBond_to_json_string(const ZeroCouponBond &obj);
 class ZeroCouponBond: public Updater {
 public:
 
@@ -532,12 +579,15 @@ public:
         return true;
     }
     bool operator != (const ZeroCouponBond &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return ZeroCouponBond_to_json_string(*this);
+    }
 };
 void to_json(json &j, const ZeroCouponBond &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const ZeroCouponBond &obj) {
+std::string ZeroCouponBond_to_json_string(const ZeroCouponBond &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -551,6 +601,8 @@ ZeroCouponBond ZeroCouponBond_from_json(const json &j) {
     return obj;
 }
 
+class Option;
+std::string Option_to_json_string(const Option &obj);
 class Option: public Updater {
 public:
 
@@ -575,12 +627,15 @@ public:
         return true;
     }
     bool operator != (const Option &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Option_to_json_string(*this);
+    }
 };
 void to_json(json &j, const Option &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const Option &obj) {
+std::string Option_to_json_string(const Option &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -594,6 +649,8 @@ Option Option_from_json(const json &j) {
     return obj;
 }
 
+class Barrier;
+std::string Barrier_to_json_string(const Barrier &obj);
 class Barrier: public Updater {
 public:
 
@@ -621,12 +678,15 @@ public:
         return true;
     }
     bool operator != (const Barrier &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Barrier_to_json_string(*this);
+    }
 };
 void to_json(json &j, const Barrier &obj) {
     to_json(j,static_cast<const Updater &>(obj));
 }
 
-std::string to_json(const Barrier &obj) {
+std::string Barrier_to_json_string(const Barrier &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -640,6 +700,8 @@ Barrier Barrier_from_json(const json &j) {
     return obj;
 }
 
+class HistogramAxis;
+std::string HistogramAxis_to_json_string(const HistogramAxis &obj);
 class HistogramAxis {
 public:
 
@@ -678,6 +740,9 @@ public:
         return true;
     }
     bool operator != (const HistogramAxis &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return HistogramAxis_to_json_string(*this);
+    }
 };
 void to_json(json &j, const HistogramAxis &obj) {
     j["state"] = obj.state;
@@ -686,7 +751,7 @@ void to_json(json &j, const HistogramAxis &obj) {
     j["max"] = obj.max;
 }
 
-std::string to_json(const HistogramAxis &obj) {
+std::string HistogramAxis_to_json_string(const HistogramAxis &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -703,6 +768,8 @@ HistogramAxis HistogramAxis_from_json(const json &j) {
     return obj;
 }
 
+class Histogram;
+std::string Histogram_to_json_string(const Histogram &obj);
 class Histogram {
 public:
 
@@ -729,6 +796,9 @@ public:
         return true;
     }
     bool operator != (const Histogram &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Histogram_to_json_string(*this);
+    }
 };
 void to_json(json &j, const Histogram &obj) {
     j["x"] = obj.x;
@@ -736,7 +806,7 @@ void to_json(json &j, const Histogram &obj) {
         j["y"] = obj.y.value();
 }
 
-std::string to_json(const Histogram &obj) {
+std::string Histogram_to_json_string(const Histogram &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -758,6 +828,8 @@ void from_json(const json &j, std::vector<Histogram> &u) {
         u.push_back(v);
 }
 
+class EvaluationPoint;
+std::string EvaluationPoint_to_json_string(const EvaluationPoint &obj);
 class EvaluationPoint {
 public:
 
@@ -848,6 +920,9 @@ public:
         return true;
     }
     bool operator != (const EvaluationPoint &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return EvaluationPoint_to_json_string(*this);
+    }
 };
 void to_json(json &j, const EvaluationPoint &obj) {
     j["state"] = obj.state;
@@ -859,7 +934,7 @@ void to_json(json &j, const EvaluationPoint &obj) {
     j["histograms"] = obj.histograms;
 }
 
-std::string to_json(const EvaluationPoint &obj) {
+std::string EvaluationPoint_to_json_string(const EvaluationPoint &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -879,6 +954,8 @@ EvaluationPoint EvaluationPoint_from_json(const json &j) {
     return obj;
 }
 
+class Parameter;
+std::string Parameter_to_json_string(const Parameter &obj);
 class Parameter {
 public:
 
@@ -917,6 +994,9 @@ public:
         return true;
     }
     bool operator != (const Parameter &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Parameter_to_json_string(*this);
+    }
 };
 void to_json(json &j, const Parameter &obj) {
     j["value"] = obj.value;
@@ -925,7 +1005,7 @@ void to_json(json &j, const Parameter &obj) {
     j["max"] = obj.max;
 }
 
-std::string to_json(const Parameter &obj) {
+std::string Parameter_to_json_string(const Parameter &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -942,6 +1022,8 @@ Parameter Parameter_from_json(const json &j) {
     return obj;
 }
 
+class Model;
+std::string Model_to_json_string(const Model &obj);
 class Model {
 public:
 
@@ -1031,6 +1113,9 @@ public:
         return true;
     }
     bool operator != (const Model &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Model_to_json_string(*this);
+    }
 };
 void to_json(json &j, const Model &obj) {
     j["TimeStart"] = obj.TimeStart;
@@ -1042,7 +1127,7 @@ void to_json(json &j, const Model &obj) {
     j["MemoryLimitKB"] = obj.MemoryLimitKB;
 }
 
-std::string to_json(const Model &obj) {
+std::string Model_to_json_string(const Model &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -1062,6 +1147,8 @@ Model Model_from_json(const json &j) {
     return obj;
 }
 
+class Result;
+std::string Result_to_json_string(const Result &obj);
 class Result {
 public:
 
@@ -1132,6 +1219,9 @@ public:
         return true;
     }
     bool operator != (const Result &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Result_to_json_string(*this);
+    }
 };
 void to_json(json &j, const Result &obj) {
     j["n"] = obj.n;
@@ -1140,7 +1230,7 @@ void to_json(json &j, const Result &obj) {
     j["skewness"] = obj.skewness;
 }
 
-std::string to_json(const Result &obj) {
+std::string Result_to_json_string(const Result &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
@@ -1157,6 +1247,8 @@ Result Result_from_json(const json &j) {
     return obj;
 }
 
+class EvaluationResults;
+std::string EvaluationResults_to_json_string(const EvaluationResults &obj);
 class EvaluationResults {
 public:
 
@@ -1264,6 +1356,9 @@ public:
         return true;
     }
     bool operator != (const EvaluationResults &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return EvaluationResults_to_json_string(*this);
+    }
 };
 void to_json(json &j, const EvaluationResults &obj) {
     j["names"] = obj.names;
@@ -1278,7 +1373,7 @@ void to_json(json &j, const EvaluationResults &obj) {
         j["model"] = obj.model.value();
 }
 
-std::string to_json(const EvaluationResults &obj) {
+std::string EvaluationResults_to_json_string(const EvaluationResults &obj) {
     json j;
     to_json(j,obj);
     return j.dump();

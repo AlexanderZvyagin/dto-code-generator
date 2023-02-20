@@ -122,7 +122,7 @@ def Struct_python (self:Struct) -> list[str]:
             code.append(f'{indent}{line}')
         code.append('')
 
-    code.append(f'{indent}def __eq__ (self, other):')
+    code.append(f'{indent*1}def __eq__ (self, other):')
     if self.base:
         code.append(f'{indent*2}if not super().__eq__(other): return False')
     for attr in self.attributes:
@@ -130,8 +130,11 @@ def Struct_python (self:Struct) -> list[str]:
         code.append(f'{indent*2}if self.{attr.name} != other.{attr.name}: return False')
     code.append(f'{indent*2}return True')
 
-    code.append(f'{indent}def __neq__ (self, other):')
+    code.append(f'{indent*1}def __neq__ (self, other):')
     code.append(f'{indent*2}return not self==other')
+
+    code.append(f'{indent*1}def json (self) -> str:')
+    code.append(f'{indent*2}return {self.name}_to_json_string(self)')
 
     code.extend(Struct_from_json_string_python(self))
     code.extend(Struct_to_json_string_python(self))

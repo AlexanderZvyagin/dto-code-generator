@@ -40,6 +40,8 @@ class UpdaterDoc:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return UpdaterDoc_to_json_string(self)
 def UpdaterDoc_from_json_string (jstr):
     j = json.loads(jstr)
     obj = UpdaterDoc()
@@ -91,6 +93,8 @@ class UpdaterDto:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return UpdaterDto_to_json_string(self)
 def UpdaterDto_from_json_string (jstr):
     j = json.loads(jstr)
     obj = UpdaterDto()
@@ -180,6 +184,8 @@ class Updater (UpdaterDto):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return Updater_to_json_string(self)
 def Updater_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Updater()
@@ -217,6 +223,8 @@ class IndependentGaussian (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return IndependentGaussian_to_json_string(self)
 def IndependentGaussian_from_json_string (jstr):
     j = json.loads(jstr)
     obj = IndependentGaussian()
@@ -256,6 +264,8 @@ class CorrelatedGaussian (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return CorrelatedGaussian_to_json_string(self)
 def CorrelatedGaussian_from_json_string (jstr):
     j = json.loads(jstr)
     obj = CorrelatedGaussian()
@@ -295,6 +305,8 @@ class BrownianMotion (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return BrownianMotion_to_json_string(self)
 def BrownianMotion_from_json_string (jstr):
     j = json.loads(jstr)
     obj = BrownianMotion()
@@ -334,6 +346,8 @@ class BrownianMotionRef (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return BrownianMotionRef_to_json_string(self)
 def BrownianMotionRef_from_json_string (jstr):
     j = json.loads(jstr)
     obj = BrownianMotionRef()
@@ -373,6 +387,8 @@ class GeometricalBrownianMotion (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return GeometricalBrownianMotion_to_json_string(self)
 def GeometricalBrownianMotion_from_json_string (jstr):
     j = json.loads(jstr)
     obj = GeometricalBrownianMotion()
@@ -412,6 +428,8 @@ class GeometricalBrownianMotionRef (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return GeometricalBrownianMotionRef_to_json_string(self)
 def GeometricalBrownianMotionRef_from_json_string (jstr):
     j = json.loads(jstr)
     obj = GeometricalBrownianMotionRef()
@@ -450,6 +468,8 @@ class ZeroCouponBond (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return ZeroCouponBond_to_json_string(self)
 def ZeroCouponBond_from_json_string (jstr):
     j = json.loads(jstr)
     obj = ZeroCouponBond()
@@ -489,6 +509,8 @@ class Option (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return Option_to_json_string(self)
 def Option_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Option()
@@ -531,6 +553,8 @@ class Barrier (Updater):
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return Barrier_to_json_string(self)
 def Barrier_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Barrier()
@@ -572,6 +596,8 @@ class HistogramAxis:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return HistogramAxis_to_json_string(self)
 def HistogramAxis_from_json_string (jstr):
     j = json.loads(jstr)
     obj = HistogramAxis()
@@ -613,6 +639,8 @@ class Histogram:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return Histogram_to_json_string(self)
 def Histogram_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Histogram()
@@ -714,6 +742,8 @@ class EvaluationPoint:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return EvaluationPoint_to_json_string(self)
 def EvaluationPoint_from_json_string (jstr):
     j = json.loads(jstr)
     obj = EvaluationPoint()
@@ -772,6 +802,8 @@ class Parameter:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return Parameter_to_json_string(self)
 def Parameter_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Parameter()
@@ -856,6 +888,8 @@ class Model:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return Model_to_json_string(self)
 def Model_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Model()
@@ -955,6 +989,8 @@ class Result:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return Result_to_json_string(self)
 def Result_from_json_string (jstr):
     j = json.loads(jstr)
     obj = Result()
@@ -1083,6 +1119,8 @@ class EvaluationResults:
         return True
     def __neq__ (self, other):
         return not self==other
+    def json (self) -> str:
+        return EvaluationResults_to_json_string(self)
 def EvaluationResults_from_json_string (jstr):
     j = json.loads(jstr)
     obj = EvaluationResults()
