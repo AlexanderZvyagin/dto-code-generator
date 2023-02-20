@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include <cmath> // NAN
+#include <cmath>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -1062,6 +1062,101 @@ Model Model_from_json(const json &j) {
     return obj;
 }
 
+class Result {
+public:
+
+    int n;
+    float mean;
+    float stddev;
+    float skewness;
+
+    
+    Result (
+        int n_ = 0,
+        float mean_ = NAN,
+        float stddev_ = NAN,
+        float skewness_ = NAN
+    )
+    : n (
+        n_
+    )
+    , mean (
+        mean_
+    )
+    , stddev (
+        stddev_
+    )
+    , skewness (
+        skewness_
+    )
+    {
+    }
+
+    float GetMean (
+    ) const
+    {
+        
+        return mean;
+        
+    }
+
+    float GetMeanError (
+    ) const
+    {
+        
+        return n<=0 ? NAN : stddev/std::sqrt(n);
+        
+    }
+
+    float GetStdDev (
+    ) const
+    {
+        
+        return stddev;
+        
+    }
+
+    float GetSkewness (
+    ) const
+    {
+        
+        return skewness;
+        
+    }
+
+    bool operator == (const Result &other) const {
+        if (n != other.n) return false;
+        if (mean != other.mean) return false;
+        if (stddev != other.stddev) return false;
+        if (skewness != other.skewness) return false;
+        return true;
+    }
+    bool operator != (const Result &other) const {return not(*this==other);}
+};
+void to_json(json &j, const Result &obj) {
+    j["n"] = obj.n;
+    j["mean"] = obj.mean;
+    j["stddev"] = obj.stddev;
+    j["skewness"] = obj.skewness;
+}
+
+std::string to_json(const Result &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, Result &obj) {
+    j.at("n").get_to(obj.n);
+    j.at("mean").get_to(obj.mean);
+    j.at("stddev").get_to(obj.stddev);
+    j.at("skewness").get_to(obj.skewness);
+}
+Result Result_from_json(const json &j) {
+    Result obj;
+    from_json(j,obj);
+    return obj;
+}
+
 class EvaluationResults {
 public:
 
@@ -1115,6 +1210,45 @@ public:
         model_
     )
     {
+    }
+
+    int NumStates (
+    ) const
+    {
+        
+        return names.size();
+        
+    }
+
+    int NumEvaluations (
+    ) const
+    {
+        
+        return time_points.size();
+        
+    }
+
+    int Index (
+        int state,
+        int point
+    ) const
+    {
+        
+        if( not (state>=0 and state<NumStates() and point>=0 and point<NumEvaluations()) )
+            throw std::invalid_argument("Index");
+        return point*NumStates() + state;
+        
+    }
+
+    Result GetStateEvaluationResult (
+        int state,
+        int point
+    ) const
+    {
+        
+        auto n = Index(state,point);
+        return Result(npaths[n],mean[n],stddev[n],skewness[n]);
+        
     }
 
     bool operator == (const EvaluationResults &other) const {

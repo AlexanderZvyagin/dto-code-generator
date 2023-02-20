@@ -730,6 +730,40 @@ std::vector<Model> random_optional_list_Model (int min = 0, int max = 3) {
 }
 
 
+Result random_Result (void) {
+    return Result (
+        random_int(),
+        random_float(),
+        random_float(),
+        random_float()
+
+    );
+}
+
+
+std::optional<Result> random_optional_Result (void) {
+    if(yes_no())
+        return {};
+    return random_Result ();
+}
+
+
+std::vector<Result> random_list_Result (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<Result> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_Result());
+    return list;
+}
+
+
+std::vector<Result> random_optional_list_Result (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_Result (min,max);
+}
+
+
 EvaluationResults random_EvaluationResults (void) {
     return EvaluationResults (
         random_list_string(),
@@ -1007,6 +1041,19 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
+        } else if (struct_name == "Result") {
+            auto obj1 = random_Result();
+            std::ofstream(file1_path) << to_json(obj1);
+            auto obj2 =
+                Result_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
         } else if (struct_name == "EvaluationResults") {
             auto obj1 = random_EvaluationResults();
             std::ofstream(file1_path) << to_json(obj1);
@@ -1240,6 +1287,19 @@ int main (int argc, const char **argv) try {
         } else if (struct_name == "Model") {
             auto obj =
                 Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << to_json(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "Result") {
+            auto obj =
+                Result_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1551,6 +1611,23 @@ int main (int argc, const char **argv) try {
             )));
             auto obj2 =
                 Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "Result") {
+            auto obj1 =
+                Result_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                Result_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path

@@ -24,6 +24,7 @@ import {
     EvaluationPoint,
     Parameter,
     Model,
+    Result,
     EvaluationResults,
 } from './dto'
 
@@ -669,6 +670,40 @@ function random_optional_list_Model () : Model[]|undefined {
 }
 
 
+function random_Result () : Result {
+    return new Result (
+        random_int(),
+        random_float(),
+        random_float(),
+        random_float()
+
+    );
+}
+
+
+function random_optional_Result () : Result|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Result ();
+}
+
+
+function random_list_Result (min:number = 0, max:number = 3) : Result[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:Result[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_Result());
+    return list;
+}
+
+
+function random_optional_list_Result () : Result[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Result ();
+}
+
+
 function random_EvaluationResults () : EvaluationResults {
     return new EvaluationResults (
         random_list_string(),
@@ -915,6 +950,18 @@ function create (struct_name:string, file_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
+    } else if (struct_name === 'Result') {
+        const obj1: Result = random_Result();
+        const j: object = {};
+        dto.Result_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: Result = new Result();
+        dto.Result_from_json(j,obj2);
+        if(!dto.Result_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
     } else if (struct_name === 'EvaluationResults') {
         const obj1: EvaluationResults = random_EvaluationResults();
         const j: object = {};
@@ -1032,6 +1079,12 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
     } else if (struct_name === 'Model') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Model = dto.Model_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
+    } else if (struct_name === 'Result') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: Result = dto.Result_fromJSON_string(jstr);
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
@@ -1197,6 +1250,15 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
         const obj1: Model = dto.Model_fromJSON_string(jstr1);
         const obj2: Model = dto.Model_fromJSON_string(jstr2);
         if(!dto.Model_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'Result') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: Result = dto.Result_fromJSON_string(jstr1);
+        const obj2: Result = dto.Result_fromJSON_string(jstr2);
+        if(!dto.Result_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
 

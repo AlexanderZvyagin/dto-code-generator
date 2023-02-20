@@ -1395,6 +1395,110 @@ Model_from_json_string (jstr:string): Model {
 }
 
 
+class Result {
+
+    n : number;
+    mean : number;
+    stddev : number;
+    skewness : number;
+
+    constructor(
+        n_ : number  = 0,
+        mean_ : number  = Number.NaN,
+        stddev_ : number  = Number.NaN,
+        skewness_ : number  = Number.NaN,
+    ){
+        this.n = n_;
+        this.mean = mean_;
+        this.stddev = stddev_;
+        this.skewness = skewness_;
+    
+    }
+
+    GetMean (
+    ) : number  {
+        
+        return this.mean;
+        
+    }
+
+    GetMeanError (
+    ) : number  {
+        
+        return this.n<=0 ? Number.NaN : this.stddev/Math.sqrt(this.n);
+        
+    }
+
+    GetStdDev (
+    ) : number  {
+        
+        return this.stddev;
+        
+    }
+
+    GetSkewness (
+    ) : number  {
+        
+        return this.skewness;
+        
+    }
+
+}
+export function
+Result_equal (a: Result, b: Result) : boolean {
+    if(!int_equal(a.n,b.n)) return false;
+    if(!float_equal(a.mean,b.mean)) return false;
+    if(!float_equal(a.stddev,b.stddev)) return false;
+    if(!float_equal(a.skewness,b.skewness)) return false;
+    return true;
+}
+
+export function
+Result_fromJSON (j:any, obj: Result): void {
+    obj.n = j["n"];
+    obj.mean = j["mean"];
+    obj.stddev = j["stddev"];
+    obj.skewness = j["skewness"];
+}
+export function
+Result_fromJSON_string (jstr:string): Result {
+    const j = JSON.parse(jstr);
+    const obj = new Result();
+    Result_fromJSON(j,obj);
+    return obj;
+}
+export function
+Result_to_json(j:object, obj:Result) {
+    j["n"] = obj.n;
+    j["mean"] = obj.mean;
+    j["stddev"] = obj.stddev;
+    j["skewness"] = obj.skewness;
+}
+
+export function
+Result_from_json(j:object, obj:Result) {
+    obj.n = j["n"]
+    obj.mean = j["mean"]
+    obj.stddev = j["stddev"]
+    obj.skewness = j["skewness"]
+}
+
+export function
+Result_to_json_string (self:Result) {
+    const j = {};
+    Result_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Result_from_json_string (jstr:string): Result {
+    const j: object = JSON.parse(jstr);
+    const obj: Result = new Result();
+    Result_from_json(j,obj);
+    return obj;
+}
+
+
 class EvaluationResults {
 
     names : string[];
@@ -1428,6 +1532,45 @@ class EvaluationResults {
         this.histograms = histograms_;
         this.model = model_;
     
+    }
+
+    NumStates (
+    ) : number  {
+        
+        return this.names.length;
+        
+    }
+
+    NumEvaluations (
+    ) : number  {
+        
+        return this.time_points.length;
+        
+    }
+
+    Index (
+        
+        state : number,
+        
+        point : number,
+    ) : number  {
+        
+        if( !(state>=0 && state<this.NumStates() && point>=0 && point<this.NumEvaluations()))
+            throw new Error(`Index`);
+        return point*this.NumStates() + state;
+        
+    }
+
+    GetStateEvaluationResult (
+        
+        state : number,
+        
+        point : number,
+    ) : Result  {
+        
+        const n = this.Index(state,point);
+        return new Result(this.npaths[n],this.mean[n],this.stddev[n],this.skewness[n]);
+        
     }
 
 }
@@ -1544,5 +1687,6 @@ export {
     EvaluationPoint,
     Parameter,
     Model,
+    Result,
     EvaluationResults,
 }

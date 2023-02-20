@@ -1,8 +1,13 @@
 
 # This is an automatically generated file.
 from copy import deepcopy
+import math
 from math import nan
 import json
+try:
+    import pandas as pd
+except:
+    print('Warning: "pandas" package was not found.')
 
 
 class UpdaterDoc:
@@ -10,12 +15,12 @@ class UpdaterDoc:
     
     def __init__ (
         self,
-        name_ = "",
-        title_ = "",
-        doc_md_ = "",
-        start_ = "",
-        nargs_min_ = -88,
-        nrefs_min_ = -88
+        name_:str = "",
+        title_:str = "",
+        doc_md_:str = "",
+        start_:str = "",
+        nargs_min_:int = -88,
+        nrefs_min_:int = -88
     ):
         self.name : str = name_
         self.title : str = title_
@@ -67,10 +72,10 @@ class UpdaterDto:
     
     def __init__ (
         self,
-        name_ = "",
-        refs_ = None,
-        args_ = None,
-        start_ = None
+        name_:str = "",
+        refs_:list[int]|None = None,
+        args_:list[float]|None = None,
+        start_:float|None = None
     ):
         self.name : str = name_
         self.refs : list[int]|None = refs_
@@ -117,10 +122,10 @@ class Updater (UpdaterDto):
     
     def __init__ (
         self,
-        name = "",
-        refs = [],
-        args = [],
-        start = None
+        name:str = "",
+        refs:list[int] = [],
+        args:list[float] = [],
+        start:float|None = None
     ):
         super().__init__(
             name,
@@ -197,7 +202,7 @@ class IndependentGaussian (Updater):
     
     def __init__ (
         self,
-        refs_ = []
+        refs_:list[int] = []
     ):
         super().__init__(
             "IndependentGaussian",
@@ -234,9 +239,9 @@ class CorrelatedGaussian (Updater):
     
     def __init__ (
         self,
-        correlation = nan,
-        state1 = -88,
-        state2 = -88
+        correlation:float = nan,
+        state1:int = -88,
+        state2:int = -88
     ):
         super().__init__(
             "CorrelatedGaussian",
@@ -273,9 +278,9 @@ class BrownianMotion (Updater):
     
     def __init__ (
         self,
-        start_ = nan,
-        drift_ = nan,
-        diffusion_ = nan
+        start_:float = nan,
+        drift_:float = nan,
+        diffusion_:float = nan
     ):
         super().__init__(
             "BrownianMotion",
@@ -312,9 +317,9 @@ class BrownianMotionRef (Updater):
     
     def __init__ (
         self,
-        start_ = nan,
-        drift_ = -88,
-        diffusion_ = -88
+        start_:float = nan,
+        drift_:int = -88,
+        diffusion_:int = -88
     ):
         super().__init__(
             "BrownianMotion",
@@ -351,9 +356,9 @@ class GeometricalBrownianMotion (Updater):
     
     def __init__ (
         self,
-        start_ = nan,
-        drift_ = nan,
-        diffusion_ = nan
+        start_:float = nan,
+        drift_:float = nan,
+        diffusion_:float = nan
     ):
         super().__init__(
             "GeometricalBrownianMotion",
@@ -390,9 +395,9 @@ class GeometricalBrownianMotionRef (Updater):
     
     def __init__ (
         self,
-        start_ = nan,
-        drift_ = -88,
-        diffusion_ = -88
+        start_:float = nan,
+        drift_:int = -88,
+        diffusion_:int = -88
     ):
         super().__init__(
             "GeometricalBrownianMotion",
@@ -429,8 +434,8 @@ class ZeroCouponBond (Updater):
     
     def __init__ (
         self,
-        underlying_ = -88,
-        start_ = nan
+        underlying_:int = -88,
+        start_:float = nan
     ):
         super().__init__(
             "ZeroCouponBond",
@@ -467,9 +472,9 @@ class Option (Updater):
     
     def __init__ (
         self,
-        underlying_ = -88,
-        strike_ = nan,
-        call_put_ = -88
+        underlying_:int = -88,
+        strike_:float = nan,
+        call_put_:int = -88
     ):
         super().__init__(
             "Option",
@@ -506,12 +511,12 @@ class Barrier (Updater):
     
     def __init__ (
         self,
-        underlying = -88,
-        start = nan,
-        level = nan,
-        direction = -88,
-        action = -88,
-        value = nan
+        underlying:int = -88,
+        start:float = nan,
+        level:float = nan,
+        direction:int = -88,
+        action:int = -88,
+        value:float = nan
     ):
         super().__init__(
             "Barrier",
@@ -548,10 +553,10 @@ class HistogramAxis:
     
     def __init__ (
         self,
-        _state = -88,
-        _nbins = -88,
-        _min = -88,
-        _max = -88
+        _state:int = -88,
+        _nbins:int = -88,
+        _min:float = -88,
+        _max:float = -88
     ):
         self.state : int = _state
         self.nbins : int = _nbins
@@ -595,8 +600,8 @@ class Histogram:
     
     def __init__ (
         self,
-        x = HistogramAxis(),
-        y = None
+        x:HistogramAxis = HistogramAxis(),
+        y:HistogramAxis|None = None
     ):
         self.x : HistogramAxis = deepcopy(x)
         self.y : HistogramAxis|None = deepcopy(y)
@@ -641,11 +646,11 @@ class EvaluationPoint:
     
     def __init__ (
         self,
-        state_ = -88,
-        time_ = nan,
-        value_ = None,
-        error_ = None,
-        histograms_ = []
+        state_:int = -88,
+        time_:float = nan,
+        value_:float|None = None,
+        error_:float|None = None,
+        histograms_:list[Histogram] = []
     ):
         self.state : int = state_
         self.time : float = time_
@@ -692,7 +697,7 @@ class EvaluationPoint:
 
     def Add (
         self,
-        histogram
+        histogram,
     ):
         
         self.histograms.append(histogram)
@@ -748,10 +753,10 @@ class Parameter:
     
     def __init__ (
         self,
-        value_ = nan,
-        step_ = nan,
-        min_ = nan,
-        max_ = nan
+        value_:float = nan,
+        step_:float = nan,
+        min_:float = nan,
+        max_:float = nan
     ):
         self.value : float = value_
         self.step : float = step_
@@ -795,13 +800,13 @@ class Model:
     
     def __init__ (
         self,
-        TimeStart_ = nan,
-        TimeSteps_ = 0,
-        NumPaths_ = 0,
-        updaters_ = [],
-        evaluations_ = [],
-        RunTimeoutSeconds_ = 1,
-        MemoryLimitKB_ = 1
+        TimeStart_:float = nan,
+        TimeSteps_:int = 0,
+        NumPaths_:int = 0,
+        updaters_:list[Updater] = [],
+        evaluations_:list[EvaluationPoint] = [],
+        RunTimeoutSeconds_:float = 1,
+        MemoryLimitKB_:int = 1
     ):
         self.TimeStart : float = TimeStart_
         self.TimeSteps : int = TimeSteps_
@@ -830,7 +835,7 @@ class Model:
 
     def Add (
         self,
-        updater
+        updater,
     ):
         
         self.updaters.append(updater)
@@ -894,20 +899,99 @@ def Model_to_json(j:dict, obj:Model):
     j["MemoryLimitKB"] = obj.MemoryLimitKB
 
 
+class Result:
+
+    
+    def __init__ (
+        self,
+        n_:int = 0,
+        mean_:float = nan,
+        stddev_:float = nan,
+        skewness_:float = nan
+    ):
+        self.n : int = n_
+        self.mean : float = mean_
+        self.stddev : float = stddev_
+        self.skewness : float = skewness_
+        pass
+
+    def GetMean (
+        self,
+    ):
+        
+        return self.mean
+        
+        pass
+
+    def GetMeanError (
+        self,
+    ):
+        
+        return nan if self.n<=0 else self.stddev/math.sqrt(self.n)
+        
+        pass
+
+    def GetStdDev (
+        self,
+    ):
+        
+        return self.stddev
+        
+        pass
+
+    def GetSkewness (
+        self,
+    ):
+        
+        return self.skewness
+        
+        pass
+
+    def __eq__ (self, other):
+        if self.n != other.n: return False
+        if self.mean != other.mean: return False
+        if self.stddev != other.stddev: return False
+        if self.skewness != other.skewness: return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+def Result_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Result()
+    Result_from_json(j,obj)
+    return obj
+
+def Result_to_json_string (self:Result):
+    j = {}
+    Result_to_json(j,self)
+    return json.dumps(j)
+def Result_from_json (j:dict, obj:Result):
+    assert isinstance(obj,Result)
+    obj.n = j["n"]
+    obj.mean = j["mean"]
+    obj.stddev = j["stddev"]
+    obj.skewness = j["skewness"]
+def Result_to_json(j:dict, obj:Result):
+    j["n"] = obj.n
+    j["mean"] = obj.mean
+    j["stddev"] = obj.stddev
+    j["skewness"] = obj.skewness
+
+
 class EvaluationResults:
 
     
     def __init__ (
         self,
-        names_ = [],
-        npaths_ = [],
-        mean_ = [],
-        stddev_ = [],
-        skewness_ = [],
-        time_points_ = [],
-        time_steps_ = [],
-        histograms_ = [],
-        model_ = None
+        names_:list[str] = [],
+        npaths_:list[int] = [],
+        mean_:list[float] = [],
+        stddev_:list[float] = [],
+        skewness_:list[float] = [],
+        time_points_:list[float] = [],
+        time_steps_:list[int] = [],
+        histograms_:list[Histogram] = [],
+        model_:Model|None = None
     ):
         self.names : list[str] = names_
         self.npaths : list[int] = npaths_
@@ -918,6 +1002,72 @@ class EvaluationResults:
         self.time_steps : list[int] = time_steps_
         self.histograms : list[Histogram] = deepcopy(histograms_)
         self.model : Model|None = deepcopy(model_)
+        pass
+
+    def NumStates (
+        self,
+    ):
+        
+        return len(self.names)
+        
+        pass
+
+    def NumEvaluations (
+        self,
+    ):
+        
+        return len(self.time_points)
+        
+        pass
+
+    def Index (
+        self,
+        state,
+        point,
+    ):
+        
+        if not (state>=0 and state<self.NumStates() and point>=0 and point<self.NumEvaluations()):
+            raise ValueError()
+        return point*self.NumStates() + state
+        
+        pass
+
+    def GetStateEvaluationResult (
+        self,
+        state,
+        point,
+    ):
+        
+        n = self.Index(state,point)
+        return Result(self.npaths[n],self.mean[n],self.stddev[n],self.skewness[n])
+        
+        pass
+
+    def df (
+        self,
+    ):
+        
+        data = []
+        for j in range(self.NumEvaluations()):
+            for i in range(self.NumStates()):
+                n = self.Index(i,j)
+                item = {
+                    'name': self.names[i],
+                    'title': '',
+                    'state': i,
+                    'time': self.time_points[j],
+                    'step': self.time_steps[j],
+                    'npaths': self.npaths[n],
+                    'mean':self.mean[n],
+                    'mean_error': None if self.stddev[n] is None else self.stddev[n]/math.sqrt(self.npaths[n]),
+                    'stddev': self.stddev[n],
+                    'skewness': self.skewness[n]
+                }
+                if self.model:
+                    item['title'] = self.model._titles.get(i,'')
+                data.append(item)
+        return pd.DataFrame(data)
+        
         pass
 
     def __eq__ (self, other):

@@ -149,6 +149,7 @@ def Struct_typescript (self:Struct):
     code.append('')
 
     for func in self.methods:
+        if func.code and not 'typescript' in func.code: continue
         for line in Function_typescript(func,self):
             code.append(f'{indent}{line}')
         code.append('')

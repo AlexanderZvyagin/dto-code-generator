@@ -497,6 +497,33 @@ def random_optional_list_Model (min:int = 0, max:int = 3) -> list[Model]|None:
     return random_list_Model(min,max)
 
 
+def random_Result ():
+    return Result (
+        random_int(),
+        random_float(),
+        random_float(),
+        random_float()
+
+    )
+
+
+def random_optional_Result () -> Result|None:
+    if yes_no():
+        return None
+    return random_Result()
+
+
+def random_list_Result (min:int = 0, max:int = 3) -> list[Result]:
+    size = random.randint(min,max)
+    return [random_Result() for i in range(size)]
+
+
+def random_optional_list_Result (min:int = 0, max:int = 3) -> list[Result]|None:
+    if yes_no():
+        return None
+    return random_list_Result(min,max)
+
+
 def random_EvaluationResults ():
     return EvaluationResults (
         random_list_string(),
@@ -690,6 +717,15 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
+        elif struct_name=='Result':
+            obj1 = random_Result()
+            open(file1_name,'w').write(Result_to_json_string(obj1))
+            obj2 = Result_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,Result)
+            assert isinstance(obj2,Result)
+            assert obj1==obj2
+
+
         elif struct_name=='EvaluationResults':
             obj1 = random_EvaluationResults()
             open(file1_name,'w').write(EvaluationResults_to_json_string(obj1))
@@ -787,6 +823,11 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='Model':
             obj = Model_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(Model_to_json_string(obj))
+
+
+        elif struct_name=='Result':
+            obj = Result_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(Result_to_json_string(obj))
 
 
         elif struct_name=='EvaluationResults':
@@ -898,6 +939,12 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='Model':
             obj1 = Model_from_json_string(open(file1_name).read())
             obj2 = Model_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='Result':
+            obj1 = Result_from_json_string(open(file1_name).read())
+            obj2 = Result_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
 

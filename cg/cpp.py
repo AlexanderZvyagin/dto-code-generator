@@ -111,6 +111,7 @@ def Struct_cpp (self:Struct):
     code.append('')
 
     for func in self.methods:
+        if func.code and not 'cpp' in func.code: continue
         for line in Function_cpp(func,self):
             code.append(f'{indent}{line}')
         code.append('')
@@ -196,7 +197,7 @@ def File_prefix_cpp (objs):
         '#include <string>',
         '#include <vector>',
         '#include <stdexcept>',
-        '#include <cmath> // NAN',
+        '#include <cmath>',
         '',
         '#include <nlohmann/json.hpp>',
         'using json = nlohmann::json;',

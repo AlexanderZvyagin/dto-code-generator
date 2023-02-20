@@ -691,8 +691,115 @@ return updater;
 
     objs.append(obj)
 
+    obj = Struct('Result')
+    Result = obj
+    obj.attributes.append(Variable('n','int'))
+    obj.attributes.append(Variable('mean','float'))
+    obj.attributes.append(Variable('stddev','float'))
+    obj.attributes.append(Variable('skewness','float'))
+
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('n_','int',0),
+            Variable('mean_','float',nan),
+            Variable('stddev_','float',nan),
+            Variable('skewness_','float',nan),
+        ],
+        mapping = [
+            ('n',[Variable('n_')]),
+            ('mean',[Variable('mean_')]),
+            ('stddev',[Variable('stddev_')]),
+            ('skewness',[Variable('skewness_')]),
+        ]
+    ))
+
+    obj.methods.append(Function (
+        'GetMean',
+        'float',
+        const = True,
+        code = {
+            'python':
+'''
+return self.mean
+''',
+            'cpp':
+'''
+return mean;
+''',
+            'typescript':
+'''
+return this.mean;
+''',
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetMeanError',
+        'float',
+        const = True,
+        code = {
+            'python':
+'''
+return nan if self.n<=0 else self.stddev/math.sqrt(self.n)
+''',
+            'cpp':
+'''
+return n<=0 ? NAN : stddev/std::sqrt(n);
+''',
+            'typescript':
+'''
+return this.n<=0 ? Number.NaN : this.stddev/Math.sqrt(this.n);
+''',
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetStdDev',
+        'float',
+        const = True,
+        code = {
+            'python':
+'''
+return self.stddev
+''',
+            'cpp':
+'''
+return stddev;
+''',
+            'typescript':
+'''
+return this.stddev;
+''',
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetSkewness',
+        'float',
+        const = True,
+        code = {
+            'python':
+'''
+return self.skewness
+''',
+            'cpp':
+'''
+return skewness;
+''',
+            'typescript':
+'''
+return this.skewness;
+''',
+        }
+    ))
+
+    objs.append(obj)
+
 
     obj = Struct('EvaluationResults')
+    EvaluationResults = obj
     obj.attributes.append(Variable('names','string',list=True))
     obj.attributes.append(Variable('npaths','int',list=True))
     obj.attributes.append(Variable('mean','float',list=True))
@@ -728,6 +835,135 @@ return updater;
             ('model',[Variable('model_')]),
         ]
     ))
+
+    obj.methods.append(Function (
+        'NumStates',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return len(self.names)
+''',
+            'cpp':
+'''
+return names.size();
+''',
+            'typescript':
+'''
+return this.names.length;
+''',
+        }
+    ))
+
+    obj.methods.append(Function (
+        'NumEvaluations',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return len(self.time_points)
+''',
+            'cpp':
+'''
+return time_points.size();
+''',
+            'typescript':
+'''
+return this.time_points.length;
+''',
+        }
+    ))
+
+    obj.methods.append(Function (
+        'Index',
+        'int',
+        args = [
+            Variable('state','int'),
+            Variable('point','int')
+        ],
+        const = True,
+        code = {
+            'python':
+'''
+if not (state>=0 and state<self.NumStates() and point>=0 and point<self.NumEvaluations()):
+    raise ValueError()
+return point*self.NumStates() + state
+''',
+            'cpp':
+'''
+if( not (state>=0 and state<NumStates() and point>=0 and point<NumEvaluations()) )
+    throw std::invalid_argument("Index");
+return point*NumStates() + state;
+''',
+            'typescript':
+'''
+if( !(state>=0 && state<this.NumStates() && point>=0 && point<this.NumEvaluations()))
+    throw new Error(`Index`);
+return point*this.NumStates() + state;
+''',
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetStateEvaluationResult',
+        Result,
+        args = [
+            Variable('state','int'),
+            Variable('point','int')
+        ],
+        const = True,
+        code = {
+            'python':
+'''
+n = self.Index(state,point)
+return Result(self.npaths[n],self.mean[n],self.stddev[n],self.skewness[n])
+''',
+            'cpp':
+'''
+auto n = Index(state,point);
+return Result(npaths[n],mean[n],stddev[n],skewness[n]);
+''',
+            'typescript':
+'''
+const n = this.Index(state,point);
+return new Result(this.npaths[n],this.mean[n],this.stddev[n],this.skewness[n]);
+''',
+        }
+    ))
+
+    obj.methods.append(Function (
+        'df',
+        'any',
+        const = True,
+        code = {
+            'python':
+'''
+data = []
+for j in range(self.NumEvaluations()):
+    for i in range(self.NumStates()):
+        n = self.Index(i,j)
+        item = {
+            'name': self.names[i],
+            'title': '',
+            'state': i,
+            'time': self.time_points[j],
+            'step': self.time_steps[j],
+            'npaths': self.npaths[n],
+            'mean':self.mean[n],
+            'mean_error': None if self.stddev[n] is None else self.stddev[n]/math.sqrt(self.npaths[n]),
+            'stddev': self.stddev[n],
+            'skewness': self.skewness[n]
+        }
+        if self.model:
+            item['title'] = self.model._titles.get(i,'')
+        data.append(item)
+return pd.DataFrame(data)
+''',
+        }
+    ))
+
     objs.append(obj)
 
     for language in languages:

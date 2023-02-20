@@ -34,8 +34,13 @@ def File_prefix_python (objs)  -> list[str]:
     return f'''
 # {autogen_text}
 from copy import deepcopy
+import math
 from math import nan
 import json
+try:
+    import pandas as pd
+except:
+    print('Warning: "pandas" package was not found.')
 
 '''.split('\n')
 
@@ -56,7 +61,7 @@ def Constructor_python(ctor:Function,base:Struct) -> list[str]:
             defval = ' = None'
         else:
             defval = ''
-        code.append(f'{indent}{arg.name}{defval}{"," if i+1<len(ctor.args) else ""}')
+        code.append(f'{indent}{arg.name}:{python_type_to_string(arg)}{defval}{"," if i+1<len(ctor.args) else ""}')
     code.append(f'):')
 
     for i,(name,mapping) in enumerate(ctor.mapping):
@@ -92,9 +97,9 @@ def Function_python(self:Function, obj:Struct=None) -> list[str]:
         if obj:
             code.append(f'{indent}self,')
 
-        for a in self.args:
+        for i,a in enumerate(self.args):
             default = '' if a.defval is None else f' = {python_value_to_string(a.defval)}'
-            code.append(f'{indent}{a.name}{default}')
+            code.append(f'{indent}{a.name}{default},')
         code.append('):')
 
     for line in get_code(self.code.get('python')):
@@ -112,6 +117,7 @@ def Struct_python (self:Struct) -> list[str]:
     code.append('')
     
     for func in self.methods:
+        if func.code and not 'python' in func.code: continue
         for line in Function_python(func,self):
             code.append(f'{indent}{line}')
         code.append('')

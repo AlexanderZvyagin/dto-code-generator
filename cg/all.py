@@ -73,12 +73,12 @@ class Function:
         
         mapping: it is an array of (key,value) pairs
         '''
-        self.name : str = name
-        self.type : str = type
-        self.args : list[Variable] = args
-        self.code = code
-        self.mapping = mapping
-        self.const = const
+        self.name    : str = name
+        self.type    : str = type
+        self.args    : list[Variable] = args
+        self.code    : dict[str, list[str]] = code
+        self.mapping : tuple [str,list[Variable]] = mapping
+        self.const   : bool = const
 
     def __repr__ (self):
         return f"Function('{self.name}','{self.type}',{self.args})"
