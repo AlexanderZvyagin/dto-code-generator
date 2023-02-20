@@ -174,13 +174,15 @@ public:
 
     int _equation;
     int _state;
+    std::string title;
 
     
     Updater (
         std::string name = "",
         std::vector<int> refs = {},
         std::vector<float> args = {},
-        std::optional<float> start = {}
+        std::optional<float> start = {},
+        std::string title = ""
     )
     : UpdaterDto (
         name,
@@ -193,6 +195,9 @@ public:
     )
     , _state (
         -88
+    )
+    , title (
+        title
     )
     {
     }
@@ -276,13 +281,15 @@ public:
 
     
     IndependentGaussian (
-        std::vector<int> refs = {}
+        std::vector<int> refs = {},
+        std::string title = ""
     )
     : Updater (
         "IndependentGaussian",
         refs,
         {},
-        -88
+        {},
+        title
     )
     {
     }
@@ -324,13 +331,15 @@ public:
     CorrelatedGaussian (
         float correlation = NAN,
         int state1 = -88,
-        int state2 = -88
+        int state2 = -88,
+        std::string title = ""
     )
     : Updater (
         "CorrelatedGaussian",
         {state1,state2},
         {correlation},
-        -88
+        {},
+        title
     )
     {
     }
@@ -372,13 +381,15 @@ public:
     BrownianMotion (
         float start = NAN,
         float drift = NAN,
-        float diffusion = NAN
+        float diffusion = NAN,
+        std::string title = ""
     )
     : Updater (
         "BrownianMotion",
         {},
         {drift,diffusion},
-        start
+        start,
+        title
     )
     {
     }
@@ -420,13 +431,15 @@ public:
     BrownianMotionRef (
         float start = NAN,
         int drift = -88,
-        int diffusion = -88
+        int diffusion = -88,
+        std::string title = ""
     )
     : Updater (
         "BrownianMotion",
         {drift,diffusion},
         {},
-        start
+        start,
+        title
     )
     {
     }
@@ -468,13 +481,15 @@ public:
     GeometricalBrownianMotion (
         float start = NAN,
         float drift = NAN,
-        float diffusion = NAN
+        float diffusion = NAN,
+        std::string title = ""
     )
     : Updater (
         "GeometricalBrownianMotion",
         {},
         {drift,diffusion},
-        start
+        start,
+        title
     )
     {
     }
@@ -516,13 +531,15 @@ public:
     GeometricalBrownianMotionRef (
         float start = NAN,
         int drift = -88,
-        int diffusion = -88
+        int diffusion = -88,
+        std::string title = ""
     )
     : Updater (
         "GeometricalBrownianMotion",
         {drift,diffusion},
         {},
-        start
+        start,
+        title
     )
     {
     }
@@ -563,13 +580,15 @@ public:
     
     ZeroCouponBond (
         int underlying = -88,
-        float start = NAN
+        float start = NAN,
+        std::string title = ""
     )
     : Updater (
         "ZeroCouponBond",
         {underlying},
         {},
-        start
+        start,
+        title
     )
     {
     }
@@ -606,18 +625,22 @@ std::string Option_to_json_string(const Option &obj);
 class Option: public Updater {
 public:
 
+    const int Call = 0;
+    const int Put = 1;
 
     
     Option (
         int underlying = -88,
         float strike = NAN,
-        int call_put = -88
+        int call_put = -88,
+        std::string title = ""
     )
     : Updater (
         "Option",
         {underlying},
         {strike,call_put},
-        {}
+        0,
+        title
     )
     {
     }
@@ -654,6 +677,10 @@ std::string Barrier_to_json_string(const Barrier &obj);
 class Barrier: public Updater {
 public:
 
+    const int DirectionUp = 1;
+    const int DirectionDown = -1;
+    const int DirectionAny = 0;
+    const int ActionSet = 0;
 
     
     Barrier (
@@ -662,13 +689,15 @@ public:
         float level = NAN,
         int direction = -88,
         int action = -88,
-        float value = NAN
+        float value = NAN,
+        std::string title = ""
     )
     : Updater (
         "Barrier",
         {underlying},
         {level,value,direction,action},
-        start
+        start,
+        title
     )
     {
     }
@@ -696,6 +725,55 @@ void from_json(const json &j, Barrier &obj) {
 }
 Barrier Barrier_from_json(const json &j) {
     Barrier obj;
+    from_json(j,obj);
+    return obj;
+}
+
+class Multiplication;
+std::string Multiplication_to_json_string(const Multiplication &obj);
+class Multiplication: public Updater {
+public:
+
+
+    
+    Multiplication (
+        std::vector<int> refs = {},
+        float factor = 1,
+        std::string title = ""
+    )
+    : Updater (
+        "Multiplication",
+        refs,
+        {factor},
+        0,
+        title
+    )
+    {
+    }
+
+    bool operator == (const Multiplication &other) const {
+        if (Updater::operator != (other)) return false;
+        return true;
+    }
+    bool operator != (const Multiplication &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Multiplication_to_json_string(*this);
+    }
+};
+void to_json(json &j, const Multiplication &obj) {
+    to_json(j,static_cast<const Updater &>(obj));
+}
+
+std::string Multiplication_to_json_string(const Multiplication &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, Multiplication &obj) {
+    from_json(j,static_cast<Updater &>(obj));
+}
+Multiplication Multiplication_from_json(const json &j) {
+    Multiplication obj;
     from_json(j,obj);
     return obj;
 }
@@ -1304,7 +1382,7 @@ public:
     {
     }
 
-    int NumStates (
+    int GetNumberOfStates (
     ) const
     {
         
@@ -1312,7 +1390,7 @@ public:
         
     }
 
-    int NumEvaluations (
+    int GetNumberOfEvaluations (
     ) const
     {
         
@@ -1326,9 +1404,9 @@ public:
     ) const
     {
         
-        if( not (state>=0 and state<NumStates() and point>=0 and point<NumEvaluations()) )
+        if( not (state>=0 and state<GetNumberOfStates() and point>=0 and point<GetNumberOfEvaluations()) )
             throw std::invalid_argument("Index");
-        return point*NumStates() + state;
+        return point*GetNumberOfStates() + state;
         
     }
 

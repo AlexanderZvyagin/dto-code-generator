@@ -109,8 +109,14 @@ def Struct_cpp (self:Struct):
         code.append(f'class {self.name} {{')
     code.append(f'public:')
     code.append(f'')
-    
+
+    for attr in self.attributes:
+        if attr.static:
+            assert attr.defval is not None
+            code.append(f'{indent}const {cpp_type_to_string(attr)} {attr.name} = {cpp_value_to_string(attr.defval)};')
+
     for a in self.attributes:
+        if a.static: continue
         code.append(f'{indent}{cpp_type_to_string(a)} {a.name};')
 
     code.append('')

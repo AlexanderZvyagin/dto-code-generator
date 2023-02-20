@@ -9,6 +9,18 @@ try:
 except:
     print('Warning: "pandas" package was not found.')
 
+def float_equal(a:float|None, b:float|None) -> bool:
+    if a is None and b is None: return True
+    if a is None and b is not None: return False
+    if b is None and a is not None: return False
+    if math.isnan(a) and math.isnan(b): return True
+    eps = 1e-9
+    ab_diff = abs(a-b)
+    if ab_diff<eps: return True
+    ab_ratio = ab_diff/(abs(a/2 + b/2) + eps)
+    if ab_ratio<eps: return True
+    return False
+
 
 class UpdaterDoc:
 
@@ -129,7 +141,8 @@ class Updater (UpdaterDto):
         name:str = "",
         refs:list[int] = [],
         args:list[float] = [],
-        start:float|None = None
+        start:float|None = None,
+        title:str = ""
     ):
         super().__init__(
             name,
@@ -139,6 +152,7 @@ class Updater (UpdaterDto):
         )
         self._equation : int = -88
         self._state : int = -88
+        self.title : str = title
         pass
 
     def GetStateNumber (
@@ -208,13 +222,15 @@ class IndependentGaussian (Updater):
     
     def __init__ (
         self,
-        refs:list[int] = []
+        refs:list[int] = [],
+        title:str = ""
     ):
         super().__init__(
             "IndependentGaussian",
             refs,
             [],
-            -88,
+            None,
+            title,
         )
         pass
 
@@ -249,13 +265,15 @@ class CorrelatedGaussian (Updater):
         self,
         correlation:float = nan,
         state1:int = -88,
-        state2:int = -88
+        state2:int = -88,
+        title:str = ""
     ):
         super().__init__(
             "CorrelatedGaussian",
             [state1,state2],
             [correlation],
-            -88,
+            None,
+            title,
         )
         pass
 
@@ -290,13 +308,15 @@ class BrownianMotion (Updater):
         self,
         start:float = nan,
         drift:float = nan,
-        diffusion:float = nan
+        diffusion:float = nan,
+        title:str = ""
     ):
         super().__init__(
             "BrownianMotion",
             [],
             [drift,diffusion],
             start,
+            title,
         )
         pass
 
@@ -331,13 +351,15 @@ class BrownianMotionRef (Updater):
         self,
         start:float = nan,
         drift:int = -88,
-        diffusion:int = -88
+        diffusion:int = -88,
+        title:str = ""
     ):
         super().__init__(
             "BrownianMotion",
             [drift,diffusion],
             [],
             start,
+            title,
         )
         pass
 
@@ -372,13 +394,15 @@ class GeometricalBrownianMotion (Updater):
         self,
         start:float = nan,
         drift:float = nan,
-        diffusion:float = nan
+        diffusion:float = nan,
+        title:str = ""
     ):
         super().__init__(
             "GeometricalBrownianMotion",
             [],
             [drift,diffusion],
             start,
+            title,
         )
         pass
 
@@ -413,13 +437,15 @@ class GeometricalBrownianMotionRef (Updater):
         self,
         start:float = nan,
         drift:int = -88,
-        diffusion:int = -88
+        diffusion:int = -88,
+        title:str = ""
     ):
         super().__init__(
             "GeometricalBrownianMotion",
             [drift,diffusion],
             [],
             start,
+            title,
         )
         pass
 
@@ -453,13 +479,15 @@ class ZeroCouponBond (Updater):
     def __init__ (
         self,
         underlying:int = -88,
-        start:float = nan
+        start:float = nan,
+        title:str = ""
     ):
         super().__init__(
             "ZeroCouponBond",
             [underlying],
             [],
             start,
+            title,
         )
         pass
 
@@ -489,18 +517,22 @@ def ZeroCouponBond_to_json(j:dict, obj:ZeroCouponBond):
 
 class Option (Updater):
 
+    Call : int = 0
+    Put : int = 1
     
     def __init__ (
         self,
         underlying:int = -88,
         strike:float = nan,
-        call_put:int = -88
+        call_put:int = -88,
+        title:str = ""
     ):
         super().__init__(
             "Option",
             [underlying],
             [strike,call_put],
-            None,
+            0,
+            title,
         )
         pass
 
@@ -530,6 +562,10 @@ def Option_to_json(j:dict, obj:Option):
 
 class Barrier (Updater):
 
+    DirectionUp : int = 1
+    DirectionDown : int = -1
+    DirectionAny : int = 0
+    ActionSet : int = 0
     
     def __init__ (
         self,
@@ -538,13 +574,15 @@ class Barrier (Updater):
         level:float = nan,
         direction:int = -88,
         action:int = -88,
-        value:float = nan
+        value:float = nan,
+        title:str = ""
     ):
         super().__init__(
             "Barrier",
             [underlying],
             [level,value,direction,action],
             start,
+            title,
         )
         pass
 
@@ -569,6 +607,48 @@ def Barrier_from_json (j:dict, obj:Barrier):
     assert isinstance(obj,Barrier)
     Updater_from_json(j,obj)
 def Barrier_to_json(j:dict, obj:Barrier):
+    Updater_to_json(j,obj)
+
+
+class Multiplication (Updater):
+
+    
+    def __init__ (
+        self,
+        refs:list[int] = [],
+        factor:float = 1,
+        title:str = ""
+    ):
+        super().__init__(
+            "Multiplication",
+            refs,
+            [factor],
+            0,
+            title,
+        )
+        pass
+
+    def __eq__ (self, other):
+        if not super().__eq__(other): return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+    def json (self) -> str:
+        return Multiplication_to_json_string(self)
+def Multiplication_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Multiplication()
+    Multiplication_from_json(j,obj)
+    return obj
+
+def Multiplication_to_json_string (self:Multiplication):
+    j = {}
+    Multiplication_to_json(j,self)
+    return json.dumps(j)
+def Multiplication_from_json (j:dict, obj:Multiplication):
+    assert isinstance(obj,Multiplication)
+    Updater_from_json(j,obj)
+def Multiplication_to_json(j:dict, obj:Multiplication):
     Updater_to_json(j,obj)
 
 
@@ -1040,7 +1120,7 @@ class EvaluationResults:
         self.model : Model|None = deepcopy(model)
         pass
 
-    def NumStates (
+    def GetNumberOfStates (
         self,
     ):
         
@@ -1048,7 +1128,7 @@ class EvaluationResults:
         
         pass
 
-    def NumEvaluations (
+    def GetNumberOfEvaluations (
         self,
     ):
         
@@ -1062,9 +1142,9 @@ class EvaluationResults:
         point,
     ):
         
-        if not (state>=0 and state<self.NumStates() and point>=0 and point<self.NumEvaluations()):
+        if not (state>=0 and state<self.GetNumberOfStates() and point>=0 and point<self.GetNumberOfEvaluations()):
             raise ValueError()
-        return point*self.NumStates() + state
+        return point*self.GetNumberOfStates() + state
         
         pass
 
@@ -1084,8 +1164,8 @@ class EvaluationResults:
     ):
         
         data = []
-        for j in range(self.NumEvaluations()):
-            for i in range(self.NumStates()):
+        for j in range(self.GetNumberOfEvaluations()):
+            for i in range(self.GetNumberOfStates()):
                 n = self.Index(i,j)
                 item = {
                     'name': self.names[i],

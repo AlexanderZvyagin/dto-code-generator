@@ -19,6 +19,7 @@ import {
     ZeroCouponBond,
     Option,
     Barrier,
+    Multiplication,
     HistogramAxis,
     Histogram,
     EvaluationPoint,
@@ -172,7 +173,8 @@ function random_Updater () : Updater {
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_optional_float()
+        random_optional_float(),
+        random_string()
 
     );
 }
@@ -203,7 +205,8 @@ function random_optional_list_Updater () : Updater[]|undefined {
 
 function random_IndependentGaussian () : IndependentGaussian {
     return new IndependentGaussian (
-        random_list_int()
+        random_list_int(),
+        random_string()
 
     );
 }
@@ -236,7 +239,8 @@ function random_CorrelatedGaussian () : CorrelatedGaussian {
     return new CorrelatedGaussian (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     );
 }
@@ -269,7 +273,8 @@ function random_BrownianMotion () : BrownianMotion {
     return new BrownianMotion (
         random_float(),
         random_float(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -302,7 +307,8 @@ function random_BrownianMotionRef () : BrownianMotionRef {
     return new BrownianMotionRef (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     );
 }
@@ -335,7 +341,8 @@ function random_GeometricalBrownianMotion () : GeometricalBrownianMotion {
     return new GeometricalBrownianMotion (
         random_float(),
         random_float(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -368,7 +375,8 @@ function random_GeometricalBrownianMotionRef () : GeometricalBrownianMotionRef {
     return new GeometricalBrownianMotionRef (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     );
 }
@@ -400,7 +408,8 @@ function random_optional_list_GeometricalBrownianMotionRef () : GeometricalBrown
 function random_ZeroCouponBond () : ZeroCouponBond {
     return new ZeroCouponBond (
         random_int(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -433,7 +442,8 @@ function random_Option () : Option {
     return new Option (
         random_int(),
         random_float(),
-        random_int()
+        random_int(),
+        random_string()
 
     );
 }
@@ -469,7 +479,8 @@ function random_Barrier () : Barrier {
         random_float(),
         random_int(),
         random_int(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -495,6 +506,39 @@ function random_optional_list_Barrier () : Barrier[]|undefined {
     if(yes_no())
         return undefined;
     return random_list_Barrier ();
+}
+
+
+function random_Multiplication () : Multiplication {
+    return new Multiplication (
+        random_list_int(),
+        random_float(),
+        random_string()
+
+    );
+}
+
+
+function random_optional_Multiplication () : Multiplication|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Multiplication ();
+}
+
+
+function random_list_Multiplication (min:number = 0, max:number = 3) : Multiplication[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:Multiplication[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_Multiplication());
+    return list;
+}
+
+
+function random_optional_list_Multiplication () : Multiplication[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Multiplication ();
 }
 
 
@@ -890,6 +934,18 @@ function create (struct_name:string, file_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
+    } else if (struct_name === 'Multiplication') {
+        const obj1: Multiplication = random_Multiplication();
+        const j: object = {};
+        dto.Multiplication_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: Multiplication = new Multiplication();
+        dto.Multiplication_from_json(j,obj2);
+        if(!dto.Multiplication_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
     } else if (struct_name === 'HistogramAxis') {
         const obj1: HistogramAxis = random_HistogramAxis();
         const j: object = {};
@@ -1052,6 +1108,12 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
+    } else if (struct_name === 'Multiplication') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: Multiplication = dto.Multiplication_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
     } else if (struct_name === 'HistogramAxis') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: HistogramAxis = dto.HistogramAxis_fromJSON_string(jstr);
@@ -1205,6 +1267,15 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
         const obj1: Barrier = dto.Barrier_fromJSON_string(jstr1);
         const obj2: Barrier = dto.Barrier_fromJSON_string(jstr2);
         if(!dto.Barrier_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'Multiplication') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: Multiplication = dto.Multiplication_fromJSON_string(jstr1);
+        const obj2: Multiplication = dto.Multiplication_fromJSON_string(jstr2);
+        if(!dto.Multiplication_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
 

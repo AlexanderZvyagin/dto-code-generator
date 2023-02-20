@@ -231,12 +231,14 @@ class Updater extends UpdaterDto {
 
     _equation : number;
     _state : number;
+    title : string;
 
     constructor(
         name : string  = "",
         refs : number[]  = [],
         args : number[]  = [],
         start : number|undefined  = undefined,
+        title : string  = "",
     ){
         super(
             name,
@@ -246,6 +248,7 @@ class Updater extends UpdaterDto {
         );
         this._equation = -88;
         this._state = -88;
+        this.title = title;
     
     }
 
@@ -335,12 +338,14 @@ class IndependentGaussian extends Updater {
 
     constructor(
         refs : number[]  = [],
+        title : string  = "",
     ){
         super(
             "IndependentGaussian",
             refs,
             [],
-            -88,
+            undefined,
+            title,
         );
     
     }
@@ -399,12 +404,14 @@ class CorrelatedGaussian extends Updater {
         correlation : number  = Number.NaN,
         state1 : number  = -88,
         state2 : number  = -88,
+        title : string  = "",
     ){
         super(
             "CorrelatedGaussian",
             [state1,state2],
             [correlation],
-            -88,
+            undefined,
+            title,
         );
     
     }
@@ -463,12 +470,14 @@ class BrownianMotion extends Updater {
         start : number  = Number.NaN,
         drift : number  = Number.NaN,
         diffusion : number  = Number.NaN,
+        title : string  = "",
     ){
         super(
             "BrownianMotion",
             [],
             [drift,diffusion],
             start,
+            title,
         );
     
     }
@@ -527,12 +536,14 @@ class BrownianMotionRef extends Updater {
         start : number  = Number.NaN,
         drift : number  = -88,
         diffusion : number  = -88,
+        title : string  = "",
     ){
         super(
             "BrownianMotion",
             [drift,diffusion],
             [],
             start,
+            title,
         );
     
     }
@@ -591,12 +602,14 @@ class GeometricalBrownianMotion extends Updater {
         start : number  = Number.NaN,
         drift : number  = Number.NaN,
         diffusion : number  = Number.NaN,
+        title : string  = "",
     ){
         super(
             "GeometricalBrownianMotion",
             [],
             [drift,diffusion],
             start,
+            title,
         );
     
     }
@@ -655,12 +668,14 @@ class GeometricalBrownianMotionRef extends Updater {
         start : number  = Number.NaN,
         drift : number  = -88,
         diffusion : number  = -88,
+        title : string  = "",
     ){
         super(
             "GeometricalBrownianMotion",
             [drift,diffusion],
             [],
             start,
+            title,
         );
     
     }
@@ -718,12 +733,14 @@ class ZeroCouponBond extends Updater {
     constructor(
         underlying : number  = -88,
         start : number  = Number.NaN,
+        title : string  = "",
     ){
         super(
             "ZeroCouponBond",
             [underlying],
             [],
             start,
+            title,
         );
     
     }
@@ -777,17 +794,21 @@ ZeroCouponBond_from_json_string (jstr:string): ZeroCouponBond {
 
 class Option extends Updater {
 
+    static Call : number = 0;
+    static Put : number = 1;
 
     constructor(
         underlying : number  = -88,
         strike : number  = Number.NaN,
         call_put : number  = -88,
+        title : string  = "",
     ){
         super(
             "Option",
             [underlying],
             [strike,call_put],
-            undefined,
+            0,
+            title,
         );
     
     }
@@ -841,6 +862,10 @@ Option_from_json_string (jstr:string): Option {
 
 class Barrier extends Updater {
 
+    static DirectionUp : number = 1;
+    static DirectionDown : number = -1;
+    static DirectionAny : number = 0;
+    static ActionSet : number = 0;
 
     constructor(
         underlying : number  = -88,
@@ -849,12 +874,14 @@ class Barrier extends Updater {
         direction : number  = -88,
         action : number  = -88,
         value : number  = Number.NaN,
+        title : string  = "",
     ){
         super(
             "Barrier",
             [underlying],
             [level,value,direction,action],
             start,
+            title,
         );
     
     }
@@ -902,6 +929,71 @@ Barrier_from_json_string (jstr:string): Barrier {
     const j: object = JSON.parse(jstr);
     const obj: Barrier = new Barrier();
     Barrier_from_json(j,obj);
+    return obj;
+}
+
+
+class Multiplication extends Updater {
+
+
+    constructor(
+        refs : number[]  = [],
+        factor : number  = 1,
+        title : string  = "",
+    ){
+        super(
+            "Multiplication",
+            refs,
+            [factor],
+            0,
+            title,
+        );
+    
+    }
+
+    json (): string {
+        return Multiplication_to_json_string(this);
+    }
+}
+export function
+Multiplication_equal (a: Multiplication, b: Multiplication) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+Multiplication_fromJSON (j:any, obj: Multiplication): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+Multiplication_fromJSON_string (jstr:string): Multiplication {
+    const j = JSON.parse(jstr);
+    const obj = new Multiplication();
+    Multiplication_fromJSON(j,obj);
+    return obj;
+}
+export function
+Multiplication_to_json(j:object, obj:Multiplication) {
+    Updater_to_json(j,obj);
+}
+
+export function
+Multiplication_from_json(j:object, obj:Multiplication) {
+    Updater_from_json(j,obj);
+}
+
+export function
+Multiplication_to_json_string (self:Multiplication) {
+    const j = {};
+    Multiplication_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Multiplication_from_json_string (jstr:string): Multiplication {
+    const j: object = JSON.parse(jstr);
+    const obj: Multiplication = new Multiplication();
+    Multiplication_from_json(j,obj);
     return obj;
 }
 
@@ -1588,14 +1680,14 @@ class EvaluationResults {
     
     }
 
-    NumStates (
+    GetNumberOfStates (
     ) : number  {
         
         return this.names.length;
         
     }
 
-    NumEvaluations (
+    GetNumberOfEvaluations (
     ) : number  {
         
         return this.time_points.length;
@@ -1609,9 +1701,9 @@ class EvaluationResults {
         point : number,
     ) : number  {
         
-        if( !(state>=0 && state<this.NumStates() && point>=0 && point<this.NumEvaluations()))
+        if( !(state>=0 && state<this.GetNumberOfStates() && point>=0 && point<this.GetNumberOfEvaluations()))
             throw new Error(`Index`);
-        return point*this.NumStates() + state;
+        return point*this.GetNumberOfStates() + state;
         
     }
 
@@ -1739,6 +1831,7 @@ export {
     ZeroCouponBond,
     Option,
     Barrier,
+    Multiplication,
     HistogramAxis,
     Histogram,
     EvaluationPoint,

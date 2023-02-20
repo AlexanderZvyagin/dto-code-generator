@@ -42,6 +42,18 @@ try:
 except:
     print('Warning: "pandas" package was not found.')
 
+def float_equal(a:float|None, b:float|None) -> bool:
+    if a is None and b is None: return True
+    if a is None and b is not None: return False
+    if b is None and a is not None: return False
+    if math.isnan(a) and math.isnan(b): return True
+    eps = 1e-9
+    ab_diff = abs(a-b)
+    if ab_diff<eps: return True
+    ab_ratio = ab_diff/(abs(a/2 + b/2) + eps)
+    if ab_ratio<eps: return True
+    return False
+
 '''.split('\n')
 
 def Constructor_python(ctor:Function,base:Struct) -> list[str]:
@@ -76,6 +88,7 @@ def Constructor_python(ctor:Function,base:Struct) -> list[str]:
 
             attr = None
             for a in base.attributes:
+                if a.static: continue
                 if a.name == name:
                     attr = a
             assert attr is not None
@@ -115,7 +128,12 @@ def Struct_python (self:Struct) -> list[str]:
     else:
         code.append(f'class {self.name}:')
     code.append('')
-    
+
+    for attr in self.attributes:
+        if attr.static:
+            assert attr.defval is not None
+            code.append(f'{indent}{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(attr.defval)}')
+
     for func in self.methods:
         if func.code and not 'python' in func.code: continue
         for line in Function_python(func,self):
@@ -127,6 +145,11 @@ def Struct_python (self:Struct) -> list[str]:
         code.append(f'{indent*2}if not super().__eq__(other): return False')
     for attr in self.attributes:
         if attr.skip_dto: continue
+        # # FIXME: handle float comparisons
+        # if attr.TypeName()=='float' and not attr.list:
+        #     code.append(f'{indent*2}if not float_equal(self.{attr.name},other.{attr.name}): return False')
+        # else:
+        #     code.append(f'{indent*2}if self.{attr.name} != other.{attr.name}: return False')
         code.append(f'{indent*2}if self.{attr.name} != other.{attr.name}: return False')
     code.append(f'{indent*2}return True')
 

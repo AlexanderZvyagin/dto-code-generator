@@ -16,7 +16,8 @@ class Variable:
         defval   = None,
         list     = False,
         optional = False,
-        skip_dto = False
+        skip_dto = False,
+        static   = False
     ):
         self.name     = name
         self.type     = type
@@ -24,6 +25,7 @@ class Variable:
         self.list     = list
         self.optional = optional
         self.skip_dto = skip_dto
+        self.static   = static
 
     def TypeName (self) -> str:
         if isinstance(self.type,Struct):

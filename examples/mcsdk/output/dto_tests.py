@@ -104,7 +104,8 @@ def random_Updater ():
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_optional_float()
+        random_optional_float(),
+        random_string()
 
     )
 
@@ -128,7 +129,8 @@ def random_optional_list_Updater (min:int = 0, max:int = 3) -> list[Updater]|Non
 
 def random_IndependentGaussian ():
     return IndependentGaussian (
-        random_list_int()
+        random_list_int(),
+        random_string()
 
     )
 
@@ -154,7 +156,8 @@ def random_CorrelatedGaussian ():
     return CorrelatedGaussian (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     )
 
@@ -180,7 +183,8 @@ def random_BrownianMotion ():
     return BrownianMotion (
         random_float(),
         random_float(),
-        random_float()
+        random_float(),
+        random_string()
 
     )
 
@@ -206,7 +210,8 @@ def random_BrownianMotionRef ():
     return BrownianMotionRef (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     )
 
@@ -232,7 +237,8 @@ def random_GeometricalBrownianMotion ():
     return GeometricalBrownianMotion (
         random_float(),
         random_float(),
-        random_float()
+        random_float(),
+        random_string()
 
     )
 
@@ -258,7 +264,8 @@ def random_GeometricalBrownianMotionRef ():
     return GeometricalBrownianMotionRef (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     )
 
@@ -283,7 +290,8 @@ def random_optional_list_GeometricalBrownianMotionRef (min:int = 0, max:int = 3)
 def random_ZeroCouponBond ():
     return ZeroCouponBond (
         random_int(),
-        random_float()
+        random_float(),
+        random_string()
 
     )
 
@@ -309,7 +317,8 @@ def random_Option ():
     return Option (
         random_int(),
         random_float(),
-        random_int()
+        random_int(),
+        random_string()
 
     )
 
@@ -338,7 +347,8 @@ def random_Barrier ():
         random_float(),
         random_int(),
         random_int(),
-        random_float()
+        random_float(),
+        random_string()
 
     )
 
@@ -358,6 +368,32 @@ def random_optional_list_Barrier (min:int = 0, max:int = 3) -> list[Barrier]|Non
     if yes_no():
         return None
     return random_list_Barrier(min,max)
+
+
+def random_Multiplication ():
+    return Multiplication (
+        random_list_int(),
+        random_float(),
+        random_string()
+
+    )
+
+
+def random_optional_Multiplication () -> Multiplication|None:
+    if yes_no():
+        return None
+    return random_Multiplication()
+
+
+def random_list_Multiplication (min:int = 0, max:int = 3) -> list[Multiplication]:
+    size = random.randint(min,max)
+    return [random_Multiplication() for i in range(size)]
+
+
+def random_optional_list_Multiplication (min:int = 0, max:int = 3) -> list[Multiplication]|None:
+    if yes_no():
+        return None
+    return random_list_Multiplication(min,max)
 
 
 def random_HistogramAxis ():
@@ -672,6 +708,15 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
+        elif struct_name=='Multiplication':
+            obj1 = random_Multiplication()
+            open(file1_name,'w').write(Multiplication_to_json_string(obj1))
+            obj2 = Multiplication_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,Multiplication)
+            assert isinstance(obj2,Multiplication)
+            assert obj1==obj2
+
+
         elif struct_name=='HistogramAxis':
             obj1 = random_HistogramAxis()
             open(file1_name,'w').write(HistogramAxis_to_json_string(obj1))
@@ -800,6 +845,11 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             open(file2_name,'w').write(Barrier_to_json_string(obj))
 
 
+        elif struct_name=='Multiplication':
+            obj = Multiplication_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(Multiplication_to_json_string(obj))
+
+
         elif struct_name=='HistogramAxis':
             obj = HistogramAxis_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(HistogramAxis_to_json_string(obj))
@@ -909,6 +959,12 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='Barrier':
             obj1 = Barrier_from_json_string(open(file1_name).read())
             obj2 = Barrier_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='Multiplication':
+            obj1 = Multiplication_from_json_string(open(file1_name).read())
+            obj2 = Multiplication_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
 

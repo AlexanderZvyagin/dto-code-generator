@@ -63,6 +63,7 @@ def create_dto(fname, languages):
     obj = Struct('Updater',UpdaterDto)
     obj.attributes.append(Variable('_equation','int',skip_dto=True))
     obj.attributes.append(Variable('_state','int',skip_dto=True))
+    obj.attributes.append(Variable('title','string',skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -71,6 +72,7 @@ def create_dto(fname, languages):
             Variable('refs','int',[],list=True),
             Variable('args','float',[],list=True),
             Variable('start','float',None,optional=True),
+            Variable('title','string',''),
         ],
         mapping = [
             (obj.base.name,[
@@ -81,6 +83,7 @@ def create_dto(fname, languages):
             ]),
             ('_equation',[-88]),
             ('_state',[-88]),
+            ('title',[Variable('title')]),
         ]
     ))
     obj.methods.append(Function (
@@ -198,12 +201,14 @@ void from_json(const json &j, std::vector<Updater> &u) {
         'constructor',
         args = [
             Variable('refs','int'  ,defval=[], list=True),
+            Variable('title','string',''),
         ],
         mapping = [(obj.base.name,[
             'IndependentGaussian',
             Variable('refs'),
             [],
-            -88 # FIXME: cannot use math.nan for the moment
+            None,
+            Variable('title'),
         ])]
     ))
     objs.append(obj)
@@ -216,12 +221,14 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('correlation','float'  ,nan),
             Variable('state1','int'  ,-88),
             Variable('state2','int'  ,-88),
+            Variable('title','string',''),
         ],
         mapping = [(obj.base.name,[
             'CorrelatedGaussian',
             [Variable('state1'),Variable('state2')],
             [Variable('correlation')],
-            -88 # FIXME: cannot use math.nan for the moment
+            None,
+            Variable('title'),
         ])]
     ))
     objs.append(obj)
@@ -236,12 +243,14 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('start'     ,'float', nan),
             Variable('drift'     ,'float', nan),
             Variable('diffusion' ,'float', nan),
+            Variable('title'     ,'string',''),
         ],
         mapping = [(obj.base.name,[
             'BrownianMotion',
             [], # refs
             [Variable('drift'),Variable('diffusion')], # args
-            Variable('start')
+            Variable('start'),
+            Variable('title'),
         ])]
     ))
     objs.append(obj)
@@ -254,12 +263,14 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('start'     ,'float', nan),
             Variable('drift'     ,'int'  , -88),
             Variable('diffusion' ,'int'  , -88),
+            Variable('title'     ,'string',''),
         ],
         mapping = [(obj.base.name,[
             'BrownianMotion',
             [Variable('drift'),Variable('diffusion')], # refs
             [], # args
-            Variable('start')
+            Variable('start'),
+            Variable('title'),
         ])]
     ))
     objs.append(obj)
@@ -272,12 +283,14 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('start'     ,'float', nan),
             Variable('drift'     ,'float', nan),
             Variable('diffusion' ,'float', nan),
+            Variable('title'     ,'string',''),
         ],
         mapping = [(obj.base.name,[
             'GeometricalBrownianMotion',
             [], # refs
             [Variable('drift'),Variable('diffusion')], # args
-            Variable('start')
+            Variable('start'),
+            Variable('title'),
         ])]
     ))
     objs.append(obj)
@@ -290,12 +303,14 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('start'     ,'float', nan),
             Variable('drift'     ,'int'  , -88),
             Variable('diffusion' ,'int'  , -88),
+            Variable('title'     ,'string',''),
         ],
         mapping = [(obj.base.name,[
             'GeometricalBrownianMotion',
             [Variable('drift'),Variable('diffusion')], # refs
             [], # args
-            Variable('start')
+            Variable('start'),
+            Variable('title'),
         ])]
     ))
     objs.append(obj)
@@ -307,17 +322,21 @@ void from_json(const json &j, std::vector<Updater> &u) {
         args = [
             Variable('underlying','int'  , -88),
             Variable('start'     ,'float', nan),
+            Variable('title'     ,'string',''),
         ],
         mapping = [(obj.base.name,[
             'ZeroCouponBond',
             [Variable('underlying')], # refs
             [], # args
-            Variable('start')
+            Variable('start'),
+            Variable('title'),
         ])]
     ))
     objs.append(obj)
 
     obj = Struct('Option',Updater)
+    obj.attributes.append(Variable('Call','int',defval=0, static=True, skip_dto=True))
+    obj.attributes.append(Variable('Put' ,'int',defval=1, static=True, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -325,17 +344,23 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('underlying','int'  , -88),
             Variable('strike'    ,'float', nan),
             Variable('call_put'  ,'int',   -88),
+            Variable('title'     ,'string',''),
         ],
         mapping = [(obj.base.name,[
             'Option',
             [Variable('underlying')], # refs
             [Variable('strike'),Variable('call_put')], # args
-            None # start
+            0, # start
+            Variable('title'),
         ])]
     ))
     objs.append(obj)
 
     obj = Struct('Barrier',Updater)
+    obj.attributes.append(Variable('DirectionUp','int',defval=1, static=True, skip_dto=True))
+    obj.attributes.append(Variable('DirectionDown','int',defval=-1, static=True, skip_dto=True))
+    obj.attributes.append(Variable('DirectionAny','int',defval=0, static=True, skip_dto=True))
+    obj.attributes.append(Variable('ActionSet','int',defval=0, static=True, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -346,6 +371,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('direction' ,'int'  ,-88),
             Variable('action'    ,'int'  ,-88),
             Variable('value'     ,'float',nan),
+            Variable('title'     ,'string',''),
         ],
         mapping = [(obj.base.name,[
             'Barrier',
@@ -358,11 +384,33 @@ void from_json(const json &j, std::vector<Updater> &u) {
                 Variable('direction'),
                 Variable('action')
             ],
-            Variable('start')
+            Variable('start'),
+            Variable('title'),
         ])]
     ))
     
     objs.append(obj)
+
+
+    obj = Struct('Multiplication',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('refs'     ,'int',defval=[],list=True),
+            Variable('factor'   ,'float',defval=1),
+            Variable('title'     ,'string',defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'Multiplication',
+            Variable('refs'),
+            [Variable('factor')],
+            0, # start
+            Variable('title'),
+        ])]
+    ))
+    objs.append(obj)
+
 
     obj = Struct('HistogramAxis')
     HistogramAxis = obj
@@ -837,7 +885,7 @@ return this.skewness;
     ))
 
     obj.methods.append(Function (
-        'NumStates',
+        'GetNumberOfStates',
         'int',
         const = True,
         code = {
@@ -857,7 +905,7 @@ return this.names.length;
     ))
 
     obj.methods.append(Function (
-        'NumEvaluations',
+        'GetNumberOfEvaluations',
         'int',
         const = True,
         code = {
@@ -887,21 +935,21 @@ return this.time_points.length;
         code = {
             'python':
 '''
-if not (state>=0 and state<self.NumStates() and point>=0 and point<self.NumEvaluations()):
+if not (state>=0 and state<self.GetNumberOfStates() and point>=0 and point<self.GetNumberOfEvaluations()):
     raise ValueError()
-return point*self.NumStates() + state
+return point*self.GetNumberOfStates() + state
 ''',
             'cpp':
 '''
-if( not (state>=0 and state<NumStates() and point>=0 and point<NumEvaluations()) )
+if( not (state>=0 and state<GetNumberOfStates() and point>=0 and point<GetNumberOfEvaluations()) )
     throw std::invalid_argument("Index");
-return point*NumStates() + state;
+return point*GetNumberOfStates() + state;
 ''',
             'typescript':
 '''
-if( !(state>=0 && state<this.NumStates() && point>=0 && point<this.NumEvaluations()))
+if( !(state>=0 && state<this.GetNumberOfStates() && point>=0 && point<this.GetNumberOfEvaluations()))
     throw new Error(`Index`);
-return point*this.NumStates() + state;
+return point*this.GetNumberOfStates() + state;
 ''',
         }
     ))
@@ -941,8 +989,8 @@ return new Result(this.npaths[n],this.mean[n],this.stddev[n],this.skewness[n]);
             'python':
 '''
 data = []
-for j in range(self.NumEvaluations()):
-    for i in range(self.NumStates()):
+for j in range(self.GetNumberOfEvaluations()):
+    for i in range(self.GetNumberOfStates()):
         n = self.Index(i,j)
         item = {
             'name': self.names[i],

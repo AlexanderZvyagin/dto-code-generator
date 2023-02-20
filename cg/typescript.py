@@ -142,8 +142,14 @@ def Struct_typescript (self:Struct):
     else:
         code.append(f'class {self.name} {{')
     code.append(f'')
-    
+
+    for attr in self.attributes:
+        if attr.static:
+            assert attr.defval is not None
+            code.append(f'{indent}static {attr.name} : {typescript_type_to_string(attr)} = {typescript_value_to_string(attr.defval)};')
+
     for a in self.attributes:
+        if a.static: continue
         code.append(f'{indent}{a.name} : {typescript_type_to_string(a)};')
 
     code.append('')

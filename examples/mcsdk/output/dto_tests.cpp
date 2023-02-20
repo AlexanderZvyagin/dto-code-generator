@@ -232,7 +232,8 @@ Updater random_Updater (void) {
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_optional_float()
+        random_optional_float(),
+        random_string()
 
     );
 }
@@ -263,7 +264,8 @@ std::vector<Updater> random_optional_list_Updater (int min = 0, int max = 3) {
 
 IndependentGaussian random_IndependentGaussian (void) {
     return IndependentGaussian (
-        random_list_int()
+        random_list_int(),
+        random_string()
 
     );
 }
@@ -296,7 +298,8 @@ CorrelatedGaussian random_CorrelatedGaussian (void) {
     return CorrelatedGaussian (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     );
 }
@@ -329,7 +332,8 @@ BrownianMotion random_BrownianMotion (void) {
     return BrownianMotion (
         random_float(),
         random_float(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -362,7 +366,8 @@ BrownianMotionRef random_BrownianMotionRef (void) {
     return BrownianMotionRef (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     );
 }
@@ -395,7 +400,8 @@ GeometricalBrownianMotion random_GeometricalBrownianMotion (void) {
     return GeometricalBrownianMotion (
         random_float(),
         random_float(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -428,7 +434,8 @@ GeometricalBrownianMotionRef random_GeometricalBrownianMotionRef (void) {
     return GeometricalBrownianMotionRef (
         random_float(),
         random_int(),
-        random_int()
+        random_int(),
+        random_string()
 
     );
 }
@@ -460,7 +467,8 @@ std::vector<GeometricalBrownianMotionRef> random_optional_list_GeometricalBrowni
 ZeroCouponBond random_ZeroCouponBond (void) {
     return ZeroCouponBond (
         random_int(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -493,7 +501,8 @@ Option random_Option (void) {
     return Option (
         random_int(),
         random_float(),
-        random_int()
+        random_int(),
+        random_string()
 
     );
 }
@@ -529,7 +538,8 @@ Barrier random_Barrier (void) {
         random_float(),
         random_int(),
         random_int(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -555,6 +565,39 @@ std::vector<Barrier> random_optional_list_Barrier (int min = 0, int max = 3) {
     if(yes_no())
         return {};
     return random_list_Barrier (min,max);
+}
+
+
+Multiplication random_Multiplication (void) {
+    return Multiplication (
+        random_list_int(),
+        random_float(),
+        random_string()
+
+    );
+}
+
+
+std::optional<Multiplication> random_optional_Multiplication (void) {
+    if(yes_no())
+        return {};
+    return random_Multiplication ();
+}
+
+
+std::vector<Multiplication> random_list_Multiplication (int min = 0, int max = 3) {
+    const auto size = random_int(min,max);
+    std::vector<Multiplication> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_Multiplication());
+    return list;
+}
+
+
+std::vector<Multiplication> random_optional_list_Multiplication (int min = 0, int max = 3) {
+    if(yes_no())
+        return {};
+    return random_list_Multiplication (min,max);
 }
 
 
@@ -976,6 +1019,19 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
+        } else if (struct_name == "Multiplication") {
+            auto obj1 = random_Multiplication();
+            std::ofstream(file1_path) << Multiplication_to_json_string(obj1);
+            auto obj2 =
+                Multiplication_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
         } else if (struct_name == "HistogramAxis") {
             auto obj1 = random_HistogramAxis();
             std::ofstream(file1_path) << HistogramAxis_to_json_string(obj1);
@@ -1228,6 +1284,19 @@ int main (int argc, const char **argv) try {
             )));
             std::ofstream out (file2_path);
             out << Barrier_to_json_string(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "Multiplication") {
+            auto obj =
+                Multiplication_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << Multiplication_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1526,6 +1595,23 @@ int main (int argc, const char **argv) try {
             )));
             auto obj2 =
                 Barrier_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "Multiplication") {
+            auto obj1 =
+                Multiplication_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                Multiplication_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
