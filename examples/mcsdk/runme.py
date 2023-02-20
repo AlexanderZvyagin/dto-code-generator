@@ -18,20 +18,20 @@ def create_dto(fname, languages):
         obj.name,
         'constructor',
         args = [
-            Variable('name_','string',''),
-            Variable('title_','string',''),
-            Variable('doc_md_','string',''),
-            Variable('start_','string',''),
-            Variable('nargs_min_','int',-88),
-            Variable('nrefs_min_','int',-88)
+            Variable('name','string',''),
+            Variable('title','string',''),
+            Variable('doc_md','string',''),
+            Variable('start','string',''),
+            Variable('nargs_min','int',-88),
+            Variable('nrefs_min','int',-88)
         ],
         mapping = [
-            ('name',[Variable('name_')]),
-            ('title',[Variable('title_')]),
-            ('doc_md',[Variable('doc_md_')]),
-            ('start',[Variable('start_')]),
-            ('nargs_min',[Variable('nargs_min_')]),
-            ('nrefs_min',[Variable('nrefs_min_')]),
+            ('name',[Variable('name')]),
+            ('title',[Variable('title')]),
+            ('doc_md',[Variable('doc_md')]),
+            ('start',[Variable('start')]),
+            ('nargs_min',[Variable('nargs_min')]),
+            ('nrefs_min',[Variable('nrefs_min')]),
         ]
     ))
     objs.append(obj)
@@ -45,16 +45,16 @@ def create_dto(fname, languages):
         obj.name,
         'constructor',
         args = [
-            Variable('name_', 'string', ''),
-            Variable(name='refs_', type='int', defval=None, list=True, optional=True),
-            Variable('args_', 'float', defval=None, list=True, optional=True),
-            Variable('start_', 'float', defval=None, optional=True)
+            Variable('name', 'string', ''),
+            Variable(name='refs', type='int', defval=None, list=True, optional=True),
+            Variable('args', 'float', defval=None, list=True, optional=True),
+            Variable('start', 'float', defval=None, optional=True)
         ],
         mapping = [
-            ('name',[Variable('name_')]),
-            ('refs',[Variable('refs_')]),
-            ('args',[Variable('args_')]),
-            ('start',[Variable('start_')]),
+            ('name',[Variable('name')]),
+            ('refs',[Variable('refs')]),
+            ('args',[Variable('args')]),
+            ('start',[Variable('start')]),
         ]
     ))
     objs.append(obj)
@@ -197,11 +197,11 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('refs_','int'  ,defval=[], list=True),
+            Variable('refs','int'  ,defval=[], list=True),
         ],
         mapping = [(obj.base.name,[
             'IndependentGaussian',
-            Variable('refs_'),
+            Variable('refs'),
             [],
             -88 # FIXME: cannot use math.nan for the moment
         ])]
@@ -233,15 +233,15 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('start_'     ,'float', nan),
-            Variable('drift_'     ,'float', nan),
-            Variable('diffusion_' ,'float', nan),
+            Variable('start'     ,'float', nan),
+            Variable('drift'     ,'float', nan),
+            Variable('diffusion' ,'float', nan),
         ],
         mapping = [(obj.base.name,[
             'BrownianMotion',
             [], # refs
-            [Variable('drift_'),Variable('diffusion_')], # args
-            Variable('start_')
+            [Variable('drift'),Variable('diffusion')], # args
+            Variable('start')
         ])]
     ))
     objs.append(obj)
@@ -251,15 +251,15 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('start_'     ,'float', nan),
-            Variable('drift_'     ,'int'  , -88),
-            Variable('diffusion_' ,'int'  , -88),
+            Variable('start'     ,'float', nan),
+            Variable('drift'     ,'int'  , -88),
+            Variable('diffusion' ,'int'  , -88),
         ],
         mapping = [(obj.base.name,[
             'BrownianMotion',
-            [Variable('drift_'),Variable('diffusion_')], # refs
+            [Variable('drift'),Variable('diffusion')], # refs
             [], # args
-            Variable('start_')
+            Variable('start')
         ])]
     ))
     objs.append(obj)
@@ -269,15 +269,15 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('start_'     ,'float', nan),
-            Variable('drift_'     ,'float', nan),
-            Variable('diffusion_' ,'float', nan),
+            Variable('start'     ,'float', nan),
+            Variable('drift'     ,'float', nan),
+            Variable('diffusion' ,'float', nan),
         ],
         mapping = [(obj.base.name,[
             'GeometricalBrownianMotion',
             [], # refs
-            [Variable('drift_'),Variable('diffusion_')], # args
-            Variable('start_')
+            [Variable('drift'),Variable('diffusion')], # args
+            Variable('start')
         ])]
     ))
     objs.append(obj)
@@ -287,15 +287,15 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('start_'     ,'float', nan),
-            Variable('drift_'     ,'int'  , -88),
-            Variable('diffusion_' ,'int'  , -88),
+            Variable('start'     ,'float', nan),
+            Variable('drift'     ,'int'  , -88),
+            Variable('diffusion' ,'int'  , -88),
         ],
         mapping = [(obj.base.name,[
             'GeometricalBrownianMotion',
-            [Variable('drift_'),Variable('diffusion_')], # refs
+            [Variable('drift'),Variable('diffusion')], # refs
             [], # args
-            Variable('start_')
+            Variable('start')
         ])]
     ))
     objs.append(obj)
@@ -305,14 +305,14 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('underlying_','int'  , -88),
-            Variable('start_'     ,'float', nan),
+            Variable('underlying','int'  , -88),
+            Variable('start'     ,'float', nan),
         ],
         mapping = [(obj.base.name,[
             'ZeroCouponBond',
-            [Variable('underlying_')], # refs
+            [Variable('underlying')], # refs
             [], # args
-            Variable('start_')
+            Variable('start')
         ])]
     ))
     objs.append(obj)
@@ -322,14 +322,14 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('underlying_','int'  , -88),
-            Variable('strike_'    ,'float', nan),
-            Variable('call_put_'  ,'int',   -88),
+            Variable('underlying','int'  , -88),
+            Variable('strike'    ,'float', nan),
+            Variable('call_put'  ,'int',   -88),
         ],
         mapping = [(obj.base.name,[
             'Option',
-            [Variable('underlying_')], # refs
-            [Variable('strike_'),Variable('call_put_')], # args
+            [Variable('underlying')], # refs
+            [Variable('strike'),Variable('call_put')], # args
             None # start
         ])]
     ))
@@ -427,18 +427,18 @@ void from_json(const json &j, std::vector<Histogram> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('state_','int',-88),
-            Variable('time_','float',nan),
-            Variable('value_','float',None,optional=True),
-            Variable('error_','float',None,optional=True),
-            Variable('histograms_',Histogram,[],list=True),
+            Variable('state','int',-88),
+            Variable('time','float',nan),
+            Variable('value','float',None,optional=True),
+            Variable('error','float',None,optional=True),
+            Variable('histograms',Histogram,[],list=True),
         ],
         mapping = [
-            ('state',[Variable('state_')]),
-            ('time',[Variable('time_')]),
-            ('value',[Variable('value_')]),
-            ('error',[Variable('error_')]),
-            ('histograms',[Variable('histograms_')]),
+            ('state',[Variable('state')]),
+            ('time',[Variable('time')]),
+            ('value',[Variable('value')]),
+            ('error',[Variable('error')]),
+            ('histograms',[Variable('histograms')]),
         ]
     ))
     obj.methods.append(Function (
@@ -562,16 +562,16 @@ return this;
         obj.name,
         'constructor',
         args = [
-            Variable('value_','float',nan),
-            Variable('step_','float',nan),
-            Variable('min_','float',nan),
-            Variable('max_','float',nan),
+            Variable('value','float',nan),
+            Variable('step','float',nan),
+            Variable('min','float',nan),
+            Variable('max','float',nan),
         ],
         mapping = [
-            ('value',[Variable('value_')]),
-            ('step',[Variable('step_')]),
-            ('min',[Variable('min_')]),
-            ('max',[Variable('max_')]),
+            ('value',[Variable('value')]),
+            ('step',[Variable('step')]),
+            ('min',[Variable('min')]),
+            ('max',[Variable('max')]),
         ]
     ))
     objs.append(obj)
@@ -589,22 +589,22 @@ return this;
         obj.name,
         'constructor',
         args = [
-            Variable('TimeStart_','float',nan),
-            Variable('TimeSteps_','int',0),
-            Variable('NumPaths_','int',0),
-            Variable('updaters_',Updater,[],list=True),
-            Variable('evaluations_',EvaluationPoint,[],list=True),
-            Variable('RunTimeoutSeconds_','float',1),
-            Variable('MemoryLimitKB_','int',1),
+            Variable('TimeStart','float',nan),
+            Variable('TimeSteps','int',0),
+            Variable('NumPaths','int',0),
+            Variable('updaters',Updater,[],list=True),
+            Variable('evaluations',EvaluationPoint,[],list=True),
+            Variable('RunTimeoutSeconds','float',1),
+            Variable('MemoryLimitKB','int',1),
         ],
         mapping = [
-            ('TimeStart',[Variable('TimeStart_')]),
-            ('TimeSteps',[Variable('TimeSteps_')]),
-            ('NumPaths',[Variable('NumPaths_')]),
-            ('updaters',[Variable('updaters_')]),
-            ('evaluations',[Variable('evaluations_')]),
-            ('RunTimeoutSeconds',[Variable('RunTimeoutSeconds_')]),
-            ('MemoryLimitKB',[Variable('MemoryLimitKB_')]),
+            ('TimeStart',[Variable('TimeStart')]),
+            ('TimeSteps',[Variable('TimeSteps')]),
+            ('NumPaths',[Variable('NumPaths')]),
+            ('updaters',[Variable('updaters')]),
+            ('evaluations',[Variable('evaluations')]),
+            ('RunTimeoutSeconds',[Variable('RunTimeoutSeconds')]),
+            ('MemoryLimitKB',[Variable('MemoryLimitKB')]),
         ]
     ))
 
@@ -702,16 +702,16 @@ return updater;
         obj.name,
         'constructor',
         args = [
-            Variable('n_','int',0),
-            Variable('mean_','float',nan),
-            Variable('stddev_','float',nan),
-            Variable('skewness_','float',nan),
+            Variable('n','int',0),
+            Variable('mean','float',nan),
+            Variable('stddev','float',nan),
+            Variable('skewness','float',nan),
         ],
         mapping = [
-            ('n',[Variable('n_')]),
-            ('mean',[Variable('mean_')]),
-            ('stddev',[Variable('stddev_')]),
-            ('skewness',[Variable('skewness_')]),
+            ('n',[Variable('n')]),
+            ('mean',[Variable('mean')]),
+            ('stddev',[Variable('stddev')]),
+            ('skewness',[Variable('skewness')]),
         ]
     ))
 
@@ -813,26 +813,26 @@ return this.skewness;
         obj.name,
         'constructor',
         args = [
-            Variable('names_','string',[],list=True),
-            Variable('npaths_','int',[],list=True),
-            Variable('mean_','float',[],list=True),
-            Variable('stddev_','float',[],list=True),
-            Variable('skewness_','float',[],list=True),
-            Variable('time_points_','float',[],list=True),
-            Variable('time_steps_','int',[],list=True),
-            Variable('histograms_',Histogram,[],list=True),
-            Variable('model_',Model,None,optional=True),
+            Variable('names','string',[],list=True),
+            Variable('npaths','int',[],list=True),
+            Variable('mean','float',[],list=True),
+            Variable('stddev','float',[],list=True),
+            Variable('skewness','float',[],list=True),
+            Variable('time_points','float',[],list=True),
+            Variable('time_steps','int',[],list=True),
+            Variable('histograms',Histogram,[],list=True),
+            Variable('model',Model,None,optional=True),
         ],
         mapping = [
-            ('names',[Variable('names_')]),
-            ('npaths',[Variable('npaths_')]),
-            ('mean',[Variable('mean_')]),
-            ('stddev',[Variable('stddev_')]),
-            ('skewness',[Variable('skewness_')]),
-            ('time_points',[Variable('time_points_')]),
-            ('time_steps',[Variable('time_steps_')]),
-            ('histograms',[Variable('histograms_')]),
-            ('model',[Variable('model_')]),
+            ('names',[Variable('names')]),
+            ('npaths',[Variable('npaths')]),
+            ('mean',[Variable('mean')]),
+            ('stddev',[Variable('stddev')]),
+            ('skewness',[Variable('skewness')]),
+            ('time_points',[Variable('time_points')]),
+            ('time_steps',[Variable('time_steps')]),
+            ('histograms',[Variable('histograms')]),
+            ('model',[Variable('model')]),
         ]
     ))
 
@@ -956,8 +956,8 @@ for j in range(self.NumEvaluations()):
             'stddev': self.stddev[n],
             'skewness': self.skewness[n]
         }
-        if self.model:
-            item['title'] = self.model._titles.get(i,'')
+        # if self.model:
+        #     item['title'] = self.model._titles.get(i,'')
         data.append(item)
 return pd.DataFrame(data)
 ''',
@@ -965,6 +965,17 @@ return pd.DataFrame(data)
     ))
 
     objs.append(obj)
+
+    objs.append(CodeBlock(code={
+        'python': {'''
+def EvaluationResults_from_response(r,model=None):
+    er = EvaluationResults_from_json_string(r.text)
+    er.model = model
+    return er
+'''
+        }
+    }))
+
 
     for language in languages:
         write_objs(fname,f'{fname}_tests',language,objs)

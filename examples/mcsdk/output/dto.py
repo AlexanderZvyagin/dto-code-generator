@@ -15,19 +15,19 @@ class UpdaterDoc:
     
     def __init__ (
         self,
-        name_:str = "",
-        title_:str = "",
-        doc_md_:str = "",
-        start_:str = "",
-        nargs_min_:int = -88,
-        nrefs_min_:int = -88
+        name:str = "",
+        title:str = "",
+        doc_md:str = "",
+        start:str = "",
+        nargs_min:int = -88,
+        nrefs_min:int = -88
     ):
-        self.name : str = name_
-        self.title : str = title_
-        self.doc_md : str = doc_md_
-        self.start : str = start_
-        self.nargs_min : int = nargs_min_
-        self.nrefs_min : int = nrefs_min_
+        self.name : str = name
+        self.title : str = title
+        self.doc_md : str = doc_md
+        self.start : str = start
+        self.nargs_min : int = nargs_min
+        self.nrefs_min : int = nrefs_min
         pass
 
     def __eq__ (self, other):
@@ -74,15 +74,15 @@ class UpdaterDto:
     
     def __init__ (
         self,
-        name_:str = "",
-        refs_:list[int]|None = None,
-        args_:list[float]|None = None,
-        start_:float|None = None
+        name:str = "",
+        refs:list[int]|None = None,
+        args:list[float]|None = None,
+        start:float|None = None
     ):
-        self.name : str = name_
-        self.refs : list[int]|None = refs_
-        self.args : list[float]|None = args_
-        self.start : float|None = start_
+        self.name : str = name
+        self.refs : list[int]|None = refs
+        self.args : list[float]|None = args
+        self.start : float|None = start
         pass
 
     def __eq__ (self, other):
@@ -208,11 +208,11 @@ class IndependentGaussian (Updater):
     
     def __init__ (
         self,
-        refs_:list[int] = []
+        refs:list[int] = []
     ):
         super().__init__(
             "IndependentGaussian",
-            refs_,
+            refs,
             [],
             -88,
         )
@@ -288,15 +288,15 @@ class BrownianMotion (Updater):
     
     def __init__ (
         self,
-        start_:float = nan,
-        drift_:float = nan,
-        diffusion_:float = nan
+        start:float = nan,
+        drift:float = nan,
+        diffusion:float = nan
     ):
         super().__init__(
             "BrownianMotion",
             [],
-            [drift_,diffusion_],
-            start_,
+            [drift,diffusion],
+            start,
         )
         pass
 
@@ -329,15 +329,15 @@ class BrownianMotionRef (Updater):
     
     def __init__ (
         self,
-        start_:float = nan,
-        drift_:int = -88,
-        diffusion_:int = -88
+        start:float = nan,
+        drift:int = -88,
+        diffusion:int = -88
     ):
         super().__init__(
             "BrownianMotion",
-            [drift_,diffusion_],
+            [drift,diffusion],
             [],
-            start_,
+            start,
         )
         pass
 
@@ -370,15 +370,15 @@ class GeometricalBrownianMotion (Updater):
     
     def __init__ (
         self,
-        start_:float = nan,
-        drift_:float = nan,
-        diffusion_:float = nan
+        start:float = nan,
+        drift:float = nan,
+        diffusion:float = nan
     ):
         super().__init__(
             "GeometricalBrownianMotion",
             [],
-            [drift_,diffusion_],
-            start_,
+            [drift,diffusion],
+            start,
         )
         pass
 
@@ -411,15 +411,15 @@ class GeometricalBrownianMotionRef (Updater):
     
     def __init__ (
         self,
-        start_:float = nan,
-        drift_:int = -88,
-        diffusion_:int = -88
+        start:float = nan,
+        drift:int = -88,
+        diffusion:int = -88
     ):
         super().__init__(
             "GeometricalBrownianMotion",
-            [drift_,diffusion_],
+            [drift,diffusion],
             [],
-            start_,
+            start,
         )
         pass
 
@@ -452,14 +452,14 @@ class ZeroCouponBond (Updater):
     
     def __init__ (
         self,
-        underlying_:int = -88,
-        start_:float = nan
+        underlying:int = -88,
+        start:float = nan
     ):
         super().__init__(
             "ZeroCouponBond",
-            [underlying_],
+            [underlying],
             [],
-            start_,
+            start,
         )
         pass
 
@@ -492,14 +492,14 @@ class Option (Updater):
     
     def __init__ (
         self,
-        underlying_:int = -88,
-        strike_:float = nan,
-        call_put_:int = -88
+        underlying:int = -88,
+        strike:float = nan,
+        call_put:int = -88
     ):
         super().__init__(
             "Option",
-            [underlying_],
-            [strike_,call_put_],
+            [underlying],
+            [strike,call_put],
             None,
         )
         pass
@@ -674,17 +674,17 @@ class EvaluationPoint:
     
     def __init__ (
         self,
-        state_:int = -88,
-        time_:float = nan,
-        value_:float|None = None,
-        error_:float|None = None,
-        histograms_:list[Histogram] = []
+        state:int = -88,
+        time:float = nan,
+        value:float|None = None,
+        error:float|None = None,
+        histograms:list[Histogram] = []
     ):
-        self.state : int = state_
-        self.time : float = time_
-        self.value : float|None = value_
-        self.error : float|None = error_
-        self.histograms : list[Histogram] = deepcopy(histograms_)
+        self.state : int = state
+        self.time : float = time
+        self.value : float|None = value
+        self.error : float|None = error
+        self.histograms : list[Histogram] = deepcopy(histograms)
         pass
 
     def GetState (
@@ -783,15 +783,15 @@ class Parameter:
     
     def __init__ (
         self,
-        value_:float = nan,
-        step_:float = nan,
-        min_:float = nan,
-        max_:float = nan
+        value:float = nan,
+        step:float = nan,
+        min:float = nan,
+        max:float = nan
     ):
-        self.value : float = value_
-        self.step : float = step_
-        self.min : float = min_
-        self.max : float = max_
+        self.value : float = value
+        self.step : float = step
+        self.min : float = min
+        self.max : float = max
         pass
 
     def __eq__ (self, other):
@@ -832,21 +832,21 @@ class Model:
     
     def __init__ (
         self,
-        TimeStart_:float = nan,
-        TimeSteps_:int = 0,
-        NumPaths_:int = 0,
-        updaters_:list[Updater] = [],
-        evaluations_:list[EvaluationPoint] = [],
-        RunTimeoutSeconds_:float = 1,
-        MemoryLimitKB_:int = 1
+        TimeStart:float = nan,
+        TimeSteps:int = 0,
+        NumPaths:int = 0,
+        updaters:list[Updater] = [],
+        evaluations:list[EvaluationPoint] = [],
+        RunTimeoutSeconds:float = 1,
+        MemoryLimitKB:int = 1
     ):
-        self.TimeStart : float = TimeStart_
-        self.TimeSteps : int = TimeSteps_
-        self.NumPaths : int = NumPaths_
-        self.updaters : list[Updater] = deepcopy(updaters_)
-        self.evaluations : list[EvaluationPoint] = deepcopy(evaluations_)
-        self.RunTimeoutSeconds : float = RunTimeoutSeconds_
-        self.MemoryLimitKB : int = MemoryLimitKB_
+        self.TimeStart : float = TimeStart
+        self.TimeSteps : int = TimeSteps
+        self.NumPaths : int = NumPaths
+        self.updaters : list[Updater] = deepcopy(updaters)
+        self.evaluations : list[EvaluationPoint] = deepcopy(evaluations)
+        self.RunTimeoutSeconds : float = RunTimeoutSeconds
+        self.MemoryLimitKB : int = MemoryLimitKB
         pass
 
     def GetNumberOfUpdaters (
@@ -938,15 +938,15 @@ class Result:
     
     def __init__ (
         self,
-        n_:int = 0,
-        mean_:float = nan,
-        stddev_:float = nan,
-        skewness_:float = nan
+        n:int = 0,
+        mean:float = nan,
+        stddev:float = nan,
+        skewness:float = nan
     ):
-        self.n : int = n_
-        self.mean : float = mean_
-        self.stddev : float = stddev_
-        self.skewness : float = skewness_
+        self.n : int = n
+        self.mean : float = mean
+        self.stddev : float = stddev
+        self.skewness : float = skewness
         pass
 
     def GetMean (
@@ -1019,25 +1019,25 @@ class EvaluationResults:
     
     def __init__ (
         self,
-        names_:list[str] = [],
-        npaths_:list[int] = [],
-        mean_:list[float] = [],
-        stddev_:list[float] = [],
-        skewness_:list[float] = [],
-        time_points_:list[float] = [],
-        time_steps_:list[int] = [],
-        histograms_:list[Histogram] = [],
-        model_:Model|None = None
+        names:list[str] = [],
+        npaths:list[int] = [],
+        mean:list[float] = [],
+        stddev:list[float] = [],
+        skewness:list[float] = [],
+        time_points:list[float] = [],
+        time_steps:list[int] = [],
+        histograms:list[Histogram] = [],
+        model:Model|None = None
     ):
-        self.names : list[str] = names_
-        self.npaths : list[int] = npaths_
-        self.mean : list[float] = mean_
-        self.stddev : list[float] = stddev_
-        self.skewness : list[float] = skewness_
-        self.time_points : list[float] = time_points_
-        self.time_steps : list[int] = time_steps_
-        self.histograms : list[Histogram] = deepcopy(histograms_)
-        self.model : Model|None = deepcopy(model_)
+        self.names : list[str] = names
+        self.npaths : list[int] = npaths
+        self.mean : list[float] = mean
+        self.stddev : list[float] = stddev
+        self.skewness : list[float] = skewness
+        self.time_points : list[float] = time_points
+        self.time_steps : list[int] = time_steps
+        self.histograms : list[Histogram] = deepcopy(histograms)
+        self.model : Model|None = deepcopy(model)
         pass
 
     def NumStates (
@@ -1099,8 +1099,8 @@ class EvaluationResults:
                     'stddev': self.stddev[n],
                     'skewness': self.skewness[n]
                 }
-                if self.model:
-                    item['title'] = self.model._titles.get(i,'')
+                # if self.model:
+                #     item['title'] = self.model._titles.get(i,'')
                 data.append(item)
         return pd.DataFrame(data)
         
@@ -1167,4 +1167,10 @@ def EvaluationResults_to_json(j:dict, obj:EvaluationResults):
         Model_to_json(jj,obj.model)
         j["model"] = jj
 
+
+
+def EvaluationResults_from_response(r,model=None):
+    er = EvaluationResults_from_json_string(r.text)
+    er.model = model
+    return er
 

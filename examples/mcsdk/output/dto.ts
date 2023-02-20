@@ -38,19 +38,19 @@ class UpdaterDoc {
     nrefs_min : number;
 
     constructor(
-        name_ : string  = "",
-        title_ : string  = "",
-        doc_md_ : string  = "",
-        start_ : string  = "",
-        nargs_min_ : number  = -88,
-        nrefs_min_ : number  = -88,
+        name : string  = "",
+        title : string  = "",
+        doc_md : string  = "",
+        start : string  = "",
+        nargs_min : number  = -88,
+        nrefs_min : number  = -88,
     ){
-        this.name = name_;
-        this.title = title_;
-        this.doc_md = doc_md_;
-        this.start = start_;
-        this.nargs_min = nargs_min_;
-        this.nrefs_min = nrefs_min_;
+        this.name = name;
+        this.title = title;
+        this.doc_md = doc_md;
+        this.start = start;
+        this.nargs_min = nargs_min;
+        this.nrefs_min = nrefs_min;
     
     }
 
@@ -129,15 +129,15 @@ class UpdaterDto {
     start : number|undefined;
 
     constructor(
-        name_ : string  = "",
-        refs_ : number[]|undefined  = undefined,
-        args_ : number[]|undefined  = undefined,
-        start_ : number|undefined  = undefined,
+        name : string  = "",
+        refs : number[]|undefined  = undefined,
+        args : number[]|undefined  = undefined,
+        start : number|undefined  = undefined,
     ){
-        this.name = name_;
-        this.refs = refs_;
-        this.args = args_;
-        this.start = start_;
+        this.name = name;
+        this.refs = refs;
+        this.args = args;
+        this.start = start;
     
     }
 
@@ -334,11 +334,11 @@ class IndependentGaussian extends Updater {
 
 
     constructor(
-        refs_ : number[]  = [],
+        refs : number[]  = [],
     ){
         super(
             "IndependentGaussian",
-            refs_,
+            refs,
             [],
             -88,
         );
@@ -460,15 +460,15 @@ class BrownianMotion extends Updater {
 
 
     constructor(
-        start_ : number  = Number.NaN,
-        drift_ : number  = Number.NaN,
-        diffusion_ : number  = Number.NaN,
+        start : number  = Number.NaN,
+        drift : number  = Number.NaN,
+        diffusion : number  = Number.NaN,
     ){
         super(
             "BrownianMotion",
             [],
-            [drift_,diffusion_],
-            start_,
+            [drift,diffusion],
+            start,
         );
     
     }
@@ -524,15 +524,15 @@ class BrownianMotionRef extends Updater {
 
 
     constructor(
-        start_ : number  = Number.NaN,
-        drift_ : number  = -88,
-        diffusion_ : number  = -88,
+        start : number  = Number.NaN,
+        drift : number  = -88,
+        diffusion : number  = -88,
     ){
         super(
             "BrownianMotion",
-            [drift_,diffusion_],
+            [drift,diffusion],
             [],
-            start_,
+            start,
         );
     
     }
@@ -588,15 +588,15 @@ class GeometricalBrownianMotion extends Updater {
 
 
     constructor(
-        start_ : number  = Number.NaN,
-        drift_ : number  = Number.NaN,
-        diffusion_ : number  = Number.NaN,
+        start : number  = Number.NaN,
+        drift : number  = Number.NaN,
+        diffusion : number  = Number.NaN,
     ){
         super(
             "GeometricalBrownianMotion",
             [],
-            [drift_,diffusion_],
-            start_,
+            [drift,diffusion],
+            start,
         );
     
     }
@@ -652,15 +652,15 @@ class GeometricalBrownianMotionRef extends Updater {
 
 
     constructor(
-        start_ : number  = Number.NaN,
-        drift_ : number  = -88,
-        diffusion_ : number  = -88,
+        start : number  = Number.NaN,
+        drift : number  = -88,
+        diffusion : number  = -88,
     ){
         super(
             "GeometricalBrownianMotion",
-            [drift_,diffusion_],
+            [drift,diffusion],
             [],
-            start_,
+            start,
         );
     
     }
@@ -716,14 +716,14 @@ class ZeroCouponBond extends Updater {
 
 
     constructor(
-        underlying_ : number  = -88,
-        start_ : number  = Number.NaN,
+        underlying : number  = -88,
+        start : number  = Number.NaN,
     ){
         super(
             "ZeroCouponBond",
-            [underlying_],
+            [underlying],
             [],
-            start_,
+            start,
         );
     
     }
@@ -779,14 +779,14 @@ class Option extends Updater {
 
 
     constructor(
-        underlying_ : number  = -88,
-        strike_ : number  = Number.NaN,
-        call_put_ : number  = -88,
+        underlying : number  = -88,
+        strike : number  = Number.NaN,
+        call_put : number  = -88,
     ){
         super(
             "Option",
-            [underlying_],
-            [strike_,call_put_],
+            [underlying],
+            [strike,call_put],
             undefined,
         );
     
@@ -1074,17 +1074,17 @@ class EvaluationPoint {
     histograms : Histogram[];
 
     constructor(
-        state_ : number  = -88,
-        time_ : number  = Number.NaN,
-        value_ : number|undefined  = undefined,
-        error_ : number|undefined  = undefined,
-        histograms_ : Histogram[]  = [],
+        state : number  = -88,
+        time : number  = Number.NaN,
+        value : number|undefined  = undefined,
+        error : number|undefined  = undefined,
+        histograms : Histogram[]  = [],
     ){
-        this.state = state_;
-        this.time = time_;
-        this.value = value_;
-        this.error = error_;
-        this.histograms = histograms_;
+        this.state = state;
+        this.time = time;
+        this.value = value;
+        this.error = error;
+        this.histograms = histograms;
     
     }
 
@@ -1228,15 +1228,15 @@ class Parameter {
     max : number;
 
     constructor(
-        value_ : number  = Number.NaN,
-        step_ : number  = Number.NaN,
-        min_ : number  = Number.NaN,
-        max_ : number  = Number.NaN,
+        value : number  = Number.NaN,
+        step : number  = Number.NaN,
+        min : number  = Number.NaN,
+        max : number  = Number.NaN,
     ){
-        this.value = value_;
-        this.step = step_;
-        this.min = min_;
-        this.max = max_;
+        this.value = value;
+        this.step = step;
+        this.min = min;
+        this.max = max;
     
     }
 
@@ -1310,21 +1310,21 @@ class Model {
     MemoryLimitKB : number;
 
     constructor(
-        TimeStart_ : number  = Number.NaN,
-        TimeSteps_ : number  = 0,
-        NumPaths_ : number  = 0,
-        updaters_ : Updater[]  = [],
-        evaluations_ : EvaluationPoint[]  = [],
-        RunTimeoutSeconds_ : number  = 1,
-        MemoryLimitKB_ : number  = 1,
+        TimeStart : number  = Number.NaN,
+        TimeSteps : number  = 0,
+        NumPaths : number  = 0,
+        updaters : Updater[]  = [],
+        evaluations : EvaluationPoint[]  = [],
+        RunTimeoutSeconds : number  = 1,
+        MemoryLimitKB : number  = 1,
     ){
-        this.TimeStart = TimeStart_;
-        this.TimeSteps = TimeSteps_;
-        this.NumPaths = NumPaths_;
-        this.updaters = updaters_;
-        this.evaluations = evaluations_;
-        this.RunTimeoutSeconds = RunTimeoutSeconds_;
-        this.MemoryLimitKB = MemoryLimitKB_;
+        this.TimeStart = TimeStart;
+        this.TimeSteps = TimeSteps;
+        this.NumPaths = NumPaths;
+        this.updaters = updaters;
+        this.evaluations = evaluations;
+        this.RunTimeoutSeconds = RunTimeoutSeconds;
+        this.MemoryLimitKB = MemoryLimitKB;
     
     }
 
@@ -1454,15 +1454,15 @@ class Result {
     skewness : number;
 
     constructor(
-        n_ : number  = 0,
-        mean_ : number  = Number.NaN,
-        stddev_ : number  = Number.NaN,
-        skewness_ : number  = Number.NaN,
+        n : number  = 0,
+        mean : number  = Number.NaN,
+        stddev : number  = Number.NaN,
+        skewness : number  = Number.NaN,
     ){
-        this.n = n_;
-        this.mean = mean_;
-        this.stddev = stddev_;
-        this.skewness = skewness_;
+        this.n = n;
+        this.mean = mean;
+        this.stddev = stddev;
+        this.skewness = skewness;
     
     }
 
@@ -1566,25 +1566,25 @@ class EvaluationResults {
     model : Model|undefined;
 
     constructor(
-        names_ : string[]  = [],
-        npaths_ : number[]  = [],
-        mean_ : number[]  = [],
-        stddev_ : number[]  = [],
-        skewness_ : number[]  = [],
-        time_points_ : number[]  = [],
-        time_steps_ : number[]  = [],
-        histograms_ : Histogram[]  = [],
-        model_ : Model|undefined  = undefined,
+        names : string[]  = [],
+        npaths : number[]  = [],
+        mean : number[]  = [],
+        stddev : number[]  = [],
+        skewness : number[]  = [],
+        time_points : number[]  = [],
+        time_steps : number[]  = [],
+        histograms : Histogram[]  = [],
+        model : Model|undefined  = undefined,
     ){
-        this.names = names_;
-        this.npaths = npaths_;
-        this.mean = mean_;
-        this.stddev = stddev_;
-        this.skewness = skewness_;
-        this.time_points = time_points_;
-        this.time_steps = time_steps_;
-        this.histograms = histograms_;
-        this.model = model_;
+        this.names = names;
+        this.npaths = npaths;
+        this.mean = mean;
+        this.stddev = stddev;
+        this.skewness = skewness;
+        this.time_points = time_points;
+        this.time_steps = time_steps;
+        this.histograms = histograms;
+        this.model = model;
     
     }
 

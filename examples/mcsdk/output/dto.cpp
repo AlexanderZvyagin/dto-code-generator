@@ -23,30 +23,30 @@ public:
 
     
     UpdaterDoc (
-        std::string name_ = "",
-        std::string title_ = "",
-        std::string doc_md_ = "",
-        std::string start_ = "",
-        int nargs_min_ = -88,
-        int nrefs_min_ = -88
+        std::string name = "",
+        std::string title = "",
+        std::string doc_md = "",
+        std::string start = "",
+        int nargs_min = -88,
+        int nrefs_min = -88
     )
     : name (
-        name_
+        name
     )
     , title (
-        title_
+        title
     )
     , doc_md (
-        doc_md_
+        doc_md
     )
     , start (
-        start_
+        start
     )
     , nargs_min (
-        nargs_min_
+        nargs_min
     )
     , nrefs_min (
-        nrefs_min_
+        nrefs_min
     )
     {
     }
@@ -105,22 +105,22 @@ public:
 
     
     UpdaterDto (
-        std::string name_ = "",
-        std::optional<std::vector<int>> refs_ = {},
-        std::optional<std::vector<float>> args_ = {},
-        std::optional<float> start_ = {}
+        std::string name = "",
+        std::optional<std::vector<int>> refs = {},
+        std::optional<std::vector<float>> args = {},
+        std::optional<float> start = {}
     )
     : name (
-        name_
+        name
     )
     , refs (
-        refs_
+        refs
     )
     , args (
-        args_
+        args
     )
     , start (
-        start_
+        start
     )
     {
     }
@@ -276,11 +276,11 @@ public:
 
     
     IndependentGaussian (
-        std::vector<int> refs_ = {}
+        std::vector<int> refs = {}
     )
     : Updater (
         "IndependentGaussian",
-        refs_,
+        refs,
         {},
         -88
     )
@@ -370,15 +370,15 @@ public:
 
     
     BrownianMotion (
-        float start_ = NAN,
-        float drift_ = NAN,
-        float diffusion_ = NAN
+        float start = NAN,
+        float drift = NAN,
+        float diffusion = NAN
     )
     : Updater (
         "BrownianMotion",
         {},
-        {drift_,diffusion_},
-        start_
+        {drift,diffusion},
+        start
     )
     {
     }
@@ -418,15 +418,15 @@ public:
 
     
     BrownianMotionRef (
-        float start_ = NAN,
-        int drift_ = -88,
-        int diffusion_ = -88
+        float start = NAN,
+        int drift = -88,
+        int diffusion = -88
     )
     : Updater (
         "BrownianMotion",
-        {drift_,diffusion_},
+        {drift,diffusion},
         {},
-        start_
+        start
     )
     {
     }
@@ -466,15 +466,15 @@ public:
 
     
     GeometricalBrownianMotion (
-        float start_ = NAN,
-        float drift_ = NAN,
-        float diffusion_ = NAN
+        float start = NAN,
+        float drift = NAN,
+        float diffusion = NAN
     )
     : Updater (
         "GeometricalBrownianMotion",
         {},
-        {drift_,diffusion_},
-        start_
+        {drift,diffusion},
+        start
     )
     {
     }
@@ -514,15 +514,15 @@ public:
 
     
     GeometricalBrownianMotionRef (
-        float start_ = NAN,
-        int drift_ = -88,
-        int diffusion_ = -88
+        float start = NAN,
+        int drift = -88,
+        int diffusion = -88
     )
     : Updater (
         "GeometricalBrownianMotion",
-        {drift_,diffusion_},
+        {drift,diffusion},
         {},
-        start_
+        start
     )
     {
     }
@@ -562,14 +562,14 @@ public:
 
     
     ZeroCouponBond (
-        int underlying_ = -88,
-        float start_ = NAN
+        int underlying = -88,
+        float start = NAN
     )
     : Updater (
         "ZeroCouponBond",
-        {underlying_},
+        {underlying},
         {},
-        start_
+        start
     )
     {
     }
@@ -609,14 +609,14 @@ public:
 
     
     Option (
-        int underlying_ = -88,
-        float strike_ = NAN,
-        int call_put_ = -88
+        int underlying = -88,
+        float strike = NAN,
+        int call_put = -88
     )
     : Updater (
         "Option",
-        {underlying_},
-        {strike_,call_put_},
+        {underlying},
+        {strike,call_put},
         {}
     )
     {
@@ -841,26 +841,26 @@ public:
 
     
     EvaluationPoint (
-        int state_ = -88,
-        float time_ = NAN,
-        std::optional<float> value_ = {},
-        std::optional<float> error_ = {},
-        std::vector<Histogram> histograms_ = {}
+        int state = -88,
+        float time = NAN,
+        std::optional<float> value = {},
+        std::optional<float> error = {},
+        std::vector<Histogram> histograms = {}
     )
     : state (
-        state_
+        state
     )
     , time (
-        time_
+        time
     )
     , value (
-        value_
+        value
     )
     , error (
-        error_
+        error
     )
     , histograms (
-        histograms_
+        histograms
     )
     {
     }
@@ -966,22 +966,22 @@ public:
 
     
     Parameter (
-        float value_ = NAN,
-        float step_ = NAN,
-        float min_ = NAN,
-        float max_ = NAN
+        float value = NAN,
+        float step = NAN,
+        float min = NAN,
+        float max = NAN
     )
     : value (
-        value_
+        value
     )
     , step (
-        step_
+        step
     )
     , min (
-        min_
+        min
     )
     , max (
-        max_
+        max
     )
     {
     }
@@ -1037,34 +1037,34 @@ public:
 
     
     Model (
-        float TimeStart_ = NAN,
-        int TimeSteps_ = 0,
-        int NumPaths_ = 0,
-        std::vector<Updater> updaters_ = {},
-        std::vector<EvaluationPoint> evaluations_ = {},
-        float RunTimeoutSeconds_ = 1,
-        int MemoryLimitKB_ = 1
+        float TimeStart = NAN,
+        int TimeSteps = 0,
+        int NumPaths = 0,
+        std::vector<Updater> updaters = {},
+        std::vector<EvaluationPoint> evaluations = {},
+        float RunTimeoutSeconds = 1,
+        int MemoryLimitKB = 1
     )
     : TimeStart (
-        TimeStart_
+        TimeStart
     )
     , TimeSteps (
-        TimeSteps_
+        TimeSteps
     )
     , NumPaths (
-        NumPaths_
+        NumPaths
     )
     , updaters (
-        updaters_
+        updaters
     )
     , evaluations (
-        evaluations_
+        evaluations
     )
     , RunTimeoutSeconds (
-        RunTimeoutSeconds_
+        RunTimeoutSeconds
     )
     , MemoryLimitKB (
-        MemoryLimitKB_
+        MemoryLimitKB
     )
     {
     }
@@ -1159,22 +1159,22 @@ public:
 
     
     Result (
-        int n_ = 0,
-        float mean_ = NAN,
-        float stddev_ = NAN,
-        float skewness_ = NAN
+        int n = 0,
+        float mean = NAN,
+        float stddev = NAN,
+        float skewness = NAN
     )
     : n (
-        n_
+        n
     )
     , mean (
-        mean_
+        mean
     )
     , stddev (
-        stddev_
+        stddev
     )
     , skewness (
-        skewness_
+        skewness
     )
     {
     }
@@ -1264,42 +1264,42 @@ public:
 
     
     EvaluationResults (
-        std::vector<std::string> names_ = {},
-        std::vector<int> npaths_ = {},
-        std::vector<float> mean_ = {},
-        std::vector<float> stddev_ = {},
-        std::vector<float> skewness_ = {},
-        std::vector<float> time_points_ = {},
-        std::vector<int> time_steps_ = {},
-        std::vector<Histogram> histograms_ = {},
-        std::optional<Model> model_ = {}
+        std::vector<std::string> names = {},
+        std::vector<int> npaths = {},
+        std::vector<float> mean = {},
+        std::vector<float> stddev = {},
+        std::vector<float> skewness = {},
+        std::vector<float> time_points = {},
+        std::vector<int> time_steps = {},
+        std::vector<Histogram> histograms = {},
+        std::optional<Model> model = {}
     )
     : names (
-        names_
+        names
     )
     , npaths (
-        npaths_
+        npaths
     )
     , mean (
-        mean_
+        mean
     )
     , stddev (
-        stddev_
+        stddev
     )
     , skewness (
-        skewness_
+        skewness
     )
     , time_points (
-        time_points_
+        time_points
     )
     , time_steps (
-        time_steps_
+        time_steps
     )
     , histograms (
-        histograms_
+        histograms
     )
     , model (
-        model_
+        model
     )
     {
     }
