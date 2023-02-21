@@ -20,7 +20,9 @@ def cpp_type_to_string (var:Variable):
     return type_str
 
 def cpp_value_to_string (arg):
-    if isinstance(arg,Variable):
+    if arg is None:
+        return '{}'
+    elif isinstance(arg,Variable):
         return arg.name
     elif isinstance(arg,list):
         x = [ f'{item.name}'   for item in arg]
@@ -69,6 +71,8 @@ def Function_cpp(self:Function, obj:Struct=None):
         code = Constructor_cpp(self,obj)
     else:
         ftype = cpp_type_to_string(Variable('',self.type))+' '
+        if self.type==obj and not self.const:
+            ftype += '& '
 
         code = []
         code.append(f'{ftype}{self.name} (')
@@ -94,24 +98,40 @@ def Function_cpp(self:Function, obj:Struct=None):
 
 def Struct_cpp (self:Struct):
     code = []
+
+    # Start with a forward declarations
+    code.append(f'class {self.name};')
+    code.append(f'std::string {self.name}_to_json_string(const {self.name} &obj);')
+
     if self.base:
         code.append(f'class {self.name}: public {self.base.name} {{')
     else:
         code.append(f'class {self.name} {{')
     code.append(f'public:')
     code.append(f'')
-    
+
+    for attr in self.attributes:
+        if attr.static:
+            assert attr.defval is not None
+            code.append(f'{indent}const {cpp_type_to_string(attr)} {attr.name} = {cpp_value_to_string(attr.defval)};')
+
     for a in self.attributes:
+        if a.static: continue
         code.append(f'{indent}{cpp_type_to_string(a)} {a.name};')
 
     code.append('')
 
     for func in self.methods:
+        if func.code and not 'cpp' in func.code: continue
         for line in Function_cpp(func,self):
             code.append(f'{indent}{line}')
         code.append('')
 
     code.extend(Struct_compare_cpp(self))
+
+    code.append(f'{indent*1}std::string json (void) const {{')
+    code.append(f'{indent*2}return {self.name}_to_json_string(*this);')
+    code.append(f'{indent*1}}}')
 
     code.append(f'}};')
 
@@ -128,6 +148,7 @@ def Struct_compare_cpp(self:Struct):
     if self.base:
         code.append(f'{indent*2}if ({self.base.name}::operator != (other)) return false;')
     for a in self.attributes:
+        if a.skip_dto: continue
         code.append(f'{indent*2}if ({a.name} != other.{a.name}) return false;')
     code.append(f'{indent*2}return true;')
     code.append(f'{indent}}}')
@@ -167,7 +188,7 @@ def Struct_from_JSON_cpp (self:Struct):
 
 def Struct_to_JSON_string_cpp (self:Struct):
     code = []
-    code.append(f'std::string to_json(const {self.name} &obj) {{')
+    code.append(f'std::string {self.name}_to_json_string(const {self.name} &obj) {{')
     code.append(f'{indent}json j;')
     code.append(f'{indent}to_json(j,obj);')
     code.append(f'{indent}return j.dump();')
@@ -191,7 +212,7 @@ def File_prefix_cpp (objs):
         '#include <string>',
         '#include <vector>',
         '#include <stdexcept>',
-        '#include <cmath> // NAN',
+        '#include <cmath>',
         '',
         '#include <nlohmann/json.hpp>',
         'using json = nlohmann::json;',
@@ -208,6 +229,8 @@ def Tests_cpp (objs):
 
     for obj in objs:
         if not isinstance(obj,Struct):
+            continue
+        if not obj.gen_test:
             continue
 
         struct_names.append(obj.name)
@@ -241,6 +264,14 @@ def Tests_cpp (objs):
 '''.split('\n'))
 
         code_construct_random.extend(f'''
+std::optional<{obj.name}> random_optional_{obj.name} (void) {{
+    if(yes_no())
+        return {{}};
+    return random_{obj.name} ();
+}}
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
 std::vector<{obj.name}> random_list_{obj.name} (int min = 0, int max = 3) {{
     const auto size = random_int(min,max);
     std::vector<{obj.name}> list;
@@ -254,18 +285,14 @@ std::vector<{obj.name}> random_list_{obj.name} (int min = 0, int max = 3) {{
 std::vector<{obj.name}> random_optional_list_{obj.name} (int min = 0, int max = 3) {{
     if(yes_no())
         return {{}};
-    const auto size = random_int(min,max);
-    std::vector<{obj.name}> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_{obj.name}());
-    return list;
+    return random_list_{obj.name} (min,max);
 }}
 '''.split('\n'))
 
         code_create.append(f'''
         }} else if (struct_name == "{obj.name}") {{
             auto obj1 = random_{obj.name}();
-            std::ofstream(file1_path) << to_json(obj1);
+            std::ofstream(file1_path) << {obj.name}_to_json_string(obj1);
             auto obj2 =
                 {obj.name}_from_json (
                     json::parse (
@@ -285,7 +312,7 @@ std::vector<{obj.name}> random_optional_list_{obj.name} (int min = 0, int max = 
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << to_json(obj);
+            out << {obj.name}_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 '''.split('\n'))

@@ -20,7 +20,9 @@ def typescript_type_to_string (var:Variable):
     return type_str
 
 def typescript_value_to_string (arg):
-    if isinstance(arg,Variable):
+    if arg is None:
+        return 'undefined'
+    elif isinstance(arg,Variable):
         return arg.name
     elif isinstance(arg,list):
         x = [ f'{item.name}'   for item in arg]
@@ -85,7 +87,6 @@ def Constructor_typescript(ctor:Function,base:Struct):
 
     for arg in ctor.args:
         if arg.defval is not None:
-            code.append(f'{indent}// defval: {arg.defval}')
             if isinstance(arg.defval,Variable) and isinstance(arg.defval.type,Struct):
                 defval = f' = new {typescript_value_to_string(arg.defval)}'
             else:
@@ -141,16 +142,27 @@ def Struct_typescript (self:Struct):
     else:
         code.append(f'class {self.name} {{')
     code.append(f'')
-    
+
+    for attr in self.attributes:
+        if attr.static:
+            assert attr.defval is not None
+            code.append(f'{indent}static {attr.name} : {typescript_type_to_string(attr)} = {typescript_value_to_string(attr.defval)};')
+
     for a in self.attributes:
+        if a.static: continue
         code.append(f'{indent}{a.name} : {typescript_type_to_string(a)};')
 
     code.append('')
 
     for func in self.methods:
+        if func.code and not 'typescript' in func.code: continue
         for line in Function_typescript(func,self):
             code.append(f'{indent}{line}')
         code.append('')
+
+    code.append(f'{indent*1}json (): string {{')
+    code.append(f'{indent*2}return {self.name}_to_json_string(this);')
+    code.append(f'{indent*1}}}')
 
     code.append(f'}}')
     code.extend(Struct_equal_typescript(self))
@@ -171,6 +183,7 @@ def Struct_equal_typescript(self:Struct):
     if self.base:
         code.append(f'{indent}if(!{self.base.name}_equal(a,b)) return false;')
     for attr in self.attributes:
+        if attr.skip_dto: continue
         lvl=1
         if attr.optional:
             code.append(f'{indent*1}if(a.{attr.name}===undefined && b.{attr.name}!==undefined) return false;')
@@ -183,7 +196,6 @@ def Struct_equal_typescript(self:Struct):
         elif attr.list:
             code.append(f'{indent*1}if(!list_equal(a.{attr.name},b.{attr.name},{attr.TypeName()}_equal)) return false;')
         else:
-            code.append(f'{indent*lvl}// ')
             code.append(f'{indent*lvl}if(!{attr.TypeName()}_equal(a.{attr.name},b.{attr.name})) return false;')
     code.append(f'{indent*1}return true;')
     code.append(f'}}')
@@ -342,6 +354,8 @@ def Tests_typescript (objs):
     for obj in objs:
         if not isinstance(obj,Struct):
             continue
+        if not obj.gen_test:
+            continue
 
         struct_names.append(obj.name)
 
@@ -374,12 +388,28 @@ function random_{obj.name} () : {obj.name} {{
 '''.split('\n'))
 
         code_construct_random.extend(f'''
+function random_optional_{obj.name} () : {obj.name}|undefined {{
+    if(yes_no())
+        return undefined;
+    return random_{obj.name} ();
+}}
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
 function random_list_{obj.name} (min:number = 0, max:number = 3) : {obj.name}[] {{
     const size:number = Math.floor(min + Math.random()*(max-min));
     const list:{obj.name}[] = [];
     for(let i=0; i<size; i++)
         list.push(random_{obj.name}());
     return list;
+}}
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
+function random_optional_list_{obj.name} () : {obj.name}[]|undefined {{
+    if(yes_no())
+        return undefined;
+    return random_list_{obj.name} ();
 }}
 '''.split('\n'))
 

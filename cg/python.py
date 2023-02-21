@@ -34,8 +34,25 @@ def File_prefix_python (objs)  -> list[str]:
     return f'''
 # {autogen_text}
 from copy import deepcopy
+import math
 from math import nan
 import json
+try:
+    import pandas as pd
+except:
+    print('Warning: "pandas" package was not found.')
+
+def float_equal(a:float|None, b:float|None) -> bool:
+    if a is None and b is None: return True
+    if a is None and b is not None: return False
+    if b is None and a is not None: return False
+    if math.isnan(a) and math.isnan(b): return True
+    eps = 1e-9
+    ab_diff = abs(a-b)
+    if ab_diff<eps: return True
+    ab_ratio = ab_diff/(abs(a/2 + b/2) + eps)
+    if ab_ratio<eps: return True
+    return False
 
 '''.split('\n')
 
@@ -56,7 +73,7 @@ def Constructor_python(ctor:Function,base:Struct) -> list[str]:
             defval = ' = None'
         else:
             defval = ''
-        code.append(f'{indent}{arg.name}{defval}{"," if i+1<len(ctor.args) else ""}')
+        code.append(f'{indent}{arg.name}:{python_type_to_string(arg)}{defval}{"," if i+1<len(ctor.args) else ""}')
     code.append(f'):')
 
     for i,(name,mapping) in enumerate(ctor.mapping):
@@ -71,6 +88,7 @@ def Constructor_python(ctor:Function,base:Struct) -> list[str]:
 
             attr = None
             for a in base.attributes:
+                if a.static: continue
                 if a.name == name:
                     attr = a
             assert attr is not None
@@ -92,9 +110,9 @@ def Function_python(self:Function, obj:Struct=None) -> list[str]:
         if obj:
             code.append(f'{indent}self,')
 
-        for a in self.args:
+        for i,a in enumerate(self.args):
             default = '' if a.defval is None else f' = {python_value_to_string(a.defval)}'
-            code.append(f'{indent}{a.name}{default}')
+            code.append(f'{indent}{a.name}{default},')
         code.append('):')
 
     for line in get_code(self.code.get('python')):
@@ -110,21 +128,36 @@ def Struct_python (self:Struct) -> list[str]:
     else:
         code.append(f'class {self.name}:')
     code.append('')
-    
+
+    for attr in self.attributes:
+        if attr.static:
+            assert attr.defval is not None
+            code.append(f'{indent}{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(attr.defval)}')
+
     for func in self.methods:
+        if func.code and not 'python' in func.code: continue
         for line in Function_python(func,self):
             code.append(f'{indent}{line}')
         code.append('')
 
-    code.append(f'{indent}def __eq__ (self, other):')
+    code.append(f'{indent*1}def __eq__ (self, other):')
     if self.base:
         code.append(f'{indent*2}if not super().__eq__(other): return False')
     for attr in self.attributes:
+        if attr.skip_dto: continue
+        # # FIXME: handle float comparisons
+        # if attr.TypeName()=='float' and not attr.list:
+        #     code.append(f'{indent*2}if not float_equal(self.{attr.name},other.{attr.name}): return False')
+        # else:
+        #     code.append(f'{indent*2}if self.{attr.name} != other.{attr.name}: return False')
         code.append(f'{indent*2}if self.{attr.name} != other.{attr.name}: return False')
     code.append(f'{indent*2}return True')
 
-    code.append(f'{indent}def __neq__ (self, other):')
+    code.append(f'{indent*1}def __neq__ (self, other):')
     code.append(f'{indent*2}return not self==other')
+
+    code.append(f'{indent*1}def json (self) -> str:')
+    code.append(f'{indent*2}return {self.name}_to_json_string(self)')
 
     code.extend(Struct_from_json_string_python(self))
     code.extend(Struct_to_json_string_python(self))
@@ -189,6 +222,7 @@ def Struct_from_json_python (self) -> list[str]:
         if isinstance(attr.type,Struct):
             if attr.optional and not attr.list:
                 code.append(f'{indent*1}if j.get("{attr.name}",None) is not None:')
+                code.append(f'{indent*2}obj.{attr.name} = {attr.TypeName()}()')
                 code.append(f'{indent*2}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
                 code.append(f'{indent*1}else:')
                 code.append(f'{indent*2}obj.{attr.name} = None')
@@ -228,6 +262,8 @@ def Tests_python (objs) -> list[str]:
     for obj in objs:
         if not isinstance(obj,Struct):
             continue
+        if not obj.gen_test:
+            continue
 
         struct_names.append(obj.name)
 
@@ -259,9 +295,23 @@ def random_{obj.name} ():
 '''.split('\n'))
 
         code_construct_random.extend(f'''
-def random_list_{obj.name} (min:int = 0, max:int = 3):
+def random_optional_{obj.name} () -> {obj.name}|None:
+    if yes_no():
+        return None
+    return random_{obj.name}()
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
+def random_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]:
     size = random.randint(min,max)
     return [random_{obj.name}() for i in range(size)]
+'''.split('\n'))
+
+        code_construct_random.extend(f'''
+def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]|None:
+    if yes_no():
+        return None
+    return random_list_{obj.name}(min,max)
 '''.split('\n'))
 
         code_create.append(f'''
@@ -305,44 +355,45 @@ python_test_template = '''
 import sys, random, uuid
 from output.dto import *
 
-def random_string(len_max=5):
+def random_string(len_max:int = 5) -> str:
     return str(uuid.uuid4())[0:random.randint(0,len_max)]
 
-def random_list_string(min = 0, max = 3):
+def random_list_string(min:int = 0, max:int = 3) -> list[str]:
     n = random.randint(min,max)
     return [random_string() for i in range(n)]
 
-def random_int (min = -1000, max = 1000):
+def random_int (min = -1000, max = 1000) -> int:
     return random.randint(min,max)
 
-def random_list_int(min = 0, max = 3):
+def yes_no () -> bool:
+    return random_int(0,1)
+
+def random_list_int(min:int = 0, max:int = 3) -> list[int]:
     n = random.randint(min,max)
     return [random_int() for i in range(n)]
 
-def random_optional_list_int(min = 0, max = 3):
-    if random.randint(0,1): return None
-    n = random.randint(min,max)
-    return [random_int() for i in range(n)]
+def random_optional_list_int(min:int = 0, max:int = 3) -> list[int]|None:
+    if yes_no(): return None
+    return random_list_int(min,max)
 
-def random_float (min = -1e6, max = 1e6):
+def random_float (min:float = -1e6, max:float = 1e6) -> float:
     return random_int()
     # FIXME
     # return random.uniform(min,max)
 
-def random_optional_float (min = -1e6, max = 1e6):
-    if random.randint(0,1): return None
+def random_optional_float (min = -1e6, max = 1e6) -> float|None:
+    if yes_no(): return None
     return random_int()
     # FIXME
     # return random.uniform(min,max)
 
-def random_list_float (min = 0, max = 3):
+def random_list_float (min:int = 0, max:int = 3) -> list[float]:
     n = random.randint(min,max)
     return [random_float() for i in range(n)]
 
-def random_optional_list_float (min = 0, max = 3):
-    if random.randint(0,1): return None
-    n = random.randint(min,max)
-    return [random_float() for i in range(n)]
+def random_optional_list_float (min = 0, max = 3) -> list[float]|None:
+    if yes_no(): return None
+    return random_list_float(min,max)
 
 #create-struct-random#
 
