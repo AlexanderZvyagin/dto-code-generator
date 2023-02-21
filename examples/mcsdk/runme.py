@@ -233,8 +233,6 @@ void from_json(const json &j, std::vector<Updater> &u) {
     ))
     objs.append(obj)
 
-    # TODO: add Linear1DInterpolation
-
     obj = Struct('BrownianMotion',Updater)
     obj.methods.append(Function (
         obj.name,
@@ -389,6 +387,49 @@ void from_json(const json &j, std::vector<Updater> &u) {
         ])]
     ))
     
+    objs.append(obj)
+
+    obj = Struct('Linear1DInterpolation',Updater,gen_test=False)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('ref'    ,'int'   ,defval=-88),
+            Variable('xmin'   ,'float' ,defval=-1),
+            Variable('xmax'   ,'float' ,defval=1),
+            Variable('y'      ,'float' ,defval=[],list=True),
+            Variable('title'  ,'string',defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'Linear1DInterpolation',
+            [Variable('ref')],
+            [],
+            0, # start
+            Variable('title'),
+        ])],
+        code = {
+            'cpp' : '''
+if(y.size()<2)
+    throw std::invalid_argument("Linear1DInterpolation: y-vector must have at least 2 elements: y(xmin), y(xmax)");
+args.value() = std::vector<float>();
+args.value().reserve(2+y.size());
+args.value().push_back(xmin);
+args.value().push_back(xmax);
+for(auto item: y)
+    args.value().push_back(item);
+''',
+            'python' : '''
+if len(y)<2:
+    raise ValueError("Linear1DInterpolation: y-vector must have at least 2 elements: y(xmin), y(xmax)")
+self.args = [xmin,xmax] + y
+''',
+            'typescript' : '''
+if(y.length<2)
+    throw new Error("Linear1DInterpolation: y-vector must have at least 2 elements: y(xmin), y(xmax)");
+this.args = [...[xmin,xmax],...y];
+''',
+        }
+    ))
     objs.append(obj)
 
 
@@ -1024,6 +1065,22 @@ def EvaluationResults_from_response(r,model=None):
         }
     }))
 
+#     obj.methods.append(Function (
+#         'random_Linear1DInterpolation',
+#         Variable('',Linear1DInterpolation,list=True),
+#         args = [],
+#         code = {
+#             'cpp' : '''
+# return Linear1DInterpolation (
+#     random_int(),
+#     random_float(),
+#     random_float(),
+#     random_list_float(2,5),
+#     random_string()
+# );
+# '''
+#         }
+#     ))
 
     for language in languages:
         write_objs(fname,f'{fname}_tests',language,objs)

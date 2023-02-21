@@ -230,6 +230,8 @@ def Tests_cpp (objs):
     for obj in objs:
         if not isinstance(obj,Struct):
             continue
+        if not obj.gen_test:
+            continue
 
         struct_names.append(obj.name)
 

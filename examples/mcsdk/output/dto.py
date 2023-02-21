@@ -610,6 +610,55 @@ def Barrier_to_json(j:dict, obj:Barrier):
     Updater_to_json(j,obj)
 
 
+class Linear1DInterpolation (Updater):
+
+    
+    def __init__ (
+        self,
+        ref:int = -88,
+        xmin:float = -1,
+        xmax:float = 1,
+        y:list[float] = [],
+        title:str = ""
+    ):
+        super().__init__(
+            "Linear1DInterpolation",
+            [ref],
+            [],
+            0,
+            title,
+        )
+        
+        if len(y)<2:
+            raise ValueError("Linear1DInterpolation: y-vector must have at least 2 elements: y(xmin), y(xmax)")
+        self.args = [xmin,xmax] + y
+        
+        pass
+
+    def __eq__ (self, other):
+        if not super().__eq__(other): return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+    def json (self) -> str:
+        return Linear1DInterpolation_to_json_string(self)
+def Linear1DInterpolation_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Linear1DInterpolation()
+    Linear1DInterpolation_from_json(j,obj)
+    return obj
+
+def Linear1DInterpolation_to_json_string (self:Linear1DInterpolation):
+    j = {}
+    Linear1DInterpolation_to_json(j,self)
+    return json.dumps(j)
+def Linear1DInterpolation_from_json (j:dict, obj:Linear1DInterpolation):
+    assert isinstance(obj,Linear1DInterpolation)
+    Updater_from_json(j,obj)
+def Linear1DInterpolation_to_json(j:dict, obj:Linear1DInterpolation):
+    Updater_to_json(j,obj)
+
+
 class Multiplication (Updater):
 
     

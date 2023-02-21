@@ -30,6 +30,9 @@ class Variable:
     def TypeName (self) -> str:
         if isinstance(self.type,Struct):
             return self.type.name
+        elif isinstance(self.type,Variable):
+            self.type.TypeName()
+            return self.type.TypeName()
         else:
             assert isinstance(self.type,str)
             return self.type
@@ -49,13 +52,22 @@ class Struct:
     
     Should contain info enough to generate code for all languages.
     '''
-    def __init__ (self, name:str, base=None):
-        self.name : str = name
-        self.attributes : list[Variable] = []
-        self.methods : list [Function] = []
-        self.base : Struct|None = base
+
+    def __init__ (
+        self,
+        name:str,
+        base = None,
+        gen_test: bool = True
+    ):
+        self.name        : str             = name
+        self.attributes  : list [Variable] = []
+        self.methods     : list [Function] = []
+        self.base        : Struct|None     = base
+        self.gen_test    : bool            = gen_test
+
     def __repr__ (self):
         return f"Struct('{self.name}',base={self.base}) #attributes={len(self.attributes)} #methods={len(self.methods)}"
+
     def GetAllAttributes (self):
         attrs = []
         this = self
@@ -70,17 +82,25 @@ class CodeBlock:
 
 class Function:
 
-    def __init__ (self, name:str, type:str, args=[], code={}, mapping=[], const=False):
+    def __init__ (
+        self,
+        name: str,
+        type: str,
+        args = [],
+        code: dict[str,list[str]] = {},
+        mapping = [],
+        const: bool=False
+    ):
         '''code: dictionary of language:str=>list[str]
         
         mapping: it is an array of (key,value) pairs
         '''
-        self.name    : str = name
-        self.type    : str = type
-        self.args    : list[Variable] = args
-        self.code    : dict[str, list[str]] = code
-        self.mapping : tuple [str,list[Variable]] = mapping
-        self.const   : bool = const
+        self.name        : str = name
+        self.type        : str = type
+        self.args        : list[Variable] = args
+        self.code        : dict[str, list[str]] = code
+        self.mapping     : tuple [str,list[Variable]] = mapping
+        self.const       : bool = const
 
     def __repr__ (self):
         return f"Function('{self.name}','{self.type}',{self.args})"
@@ -119,6 +139,8 @@ def run_round_trip_tests(lang1,lang2,objs,outdir):
 
     for obj in objs:
         if not isinstance(obj,Struct):
+            continue
+        if not obj.gen_test:
             continue
         struct_name = obj.name
         json_file1 = f'{outdir}/{struct_name}-created-by-{lang1}.json'

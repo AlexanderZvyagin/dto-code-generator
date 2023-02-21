@@ -933,6 +933,78 @@ Barrier_from_json_string (jstr:string): Barrier {
 }
 
 
+class Linear1DInterpolation extends Updater {
+
+
+    constructor(
+        ref : number  = -88,
+        xmin : number  = -1,
+        xmax : number  = 1,
+        y : number[]  = [],
+        title : string  = "",
+    ){
+        super(
+            "Linear1DInterpolation",
+            [ref],
+            [],
+            0,
+            title,
+        );
+    
+        
+        if(y.length<2)
+            throw new Error("Linear1DInterpolation: y-vector must have at least 2 elements: y(xmin), y(xmax)");
+        this.args = [...[xmin,xmax],...y];
+        
+    }
+
+    json (): string {
+        return Linear1DInterpolation_to_json_string(this);
+    }
+}
+export function
+Linear1DInterpolation_equal (a: Linear1DInterpolation, b: Linear1DInterpolation) : boolean {
+    if(!Updater_equal(a,b)) return false;
+    return true;
+}
+
+export function
+Linear1DInterpolation_fromJSON (j:any, obj: Linear1DInterpolation): void {
+    Updater_fromJSON(j,obj)
+}
+export function
+Linear1DInterpolation_fromJSON_string (jstr:string): Linear1DInterpolation {
+    const j = JSON.parse(jstr);
+    const obj = new Linear1DInterpolation();
+    Linear1DInterpolation_fromJSON(j,obj);
+    return obj;
+}
+export function
+Linear1DInterpolation_to_json(j:object, obj:Linear1DInterpolation) {
+    Updater_to_json(j,obj);
+}
+
+export function
+Linear1DInterpolation_from_json(j:object, obj:Linear1DInterpolation) {
+    Updater_from_json(j,obj);
+}
+
+export function
+Linear1DInterpolation_to_json_string (self:Linear1DInterpolation) {
+    const j = {};
+    Linear1DInterpolation_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Linear1DInterpolation_from_json_string (jstr:string): Linear1DInterpolation {
+    const j: object = JSON.parse(jstr);
+    const obj: Linear1DInterpolation = new Linear1DInterpolation();
+    Linear1DInterpolation_from_json(j,obj);
+    return obj;
+}
+
+
 class Multiplication extends Updater {
 
 
@@ -1831,6 +1903,7 @@ export {
     ZeroCouponBond,
     Option,
     Barrier,
+    Linear1DInterpolation,
     Multiplication,
     HistogramAxis,
     Histogram,
