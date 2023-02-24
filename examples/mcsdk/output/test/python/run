@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+case "$1" in
+    build)
+        cp /home/zvyagin/Projects/dto-code-generator/cgdto/examples/mcsdk/output/dto/mcsdk.py /home/zvyagin/Projects/dto-code-generator/cgdto/examples/mcsdk/output/test/python/dto.py
+        cp /home/zvyagin/Projects/dto-code-generator/cgdto/examples/mcsdk/output/test/mcsdk_test.py /home/zvyagin/Projects/dto-code-generator/cgdto/examples/mcsdk/output/test/python
+        ;;
+    *)
+        ./run-python $@
+        ;;
+esac
