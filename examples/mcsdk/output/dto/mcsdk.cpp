@@ -1,4 +1,5 @@
-// This is an automatically generated file.
+
+// This is an automatically generated file.'
 
 #include <optional>
 #include <string>
@@ -6,8 +7,9 @@
 #include <stdexcept>
 #include <cmath>
 
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 using json = nlohmann::json;
+
 
 class UpdaterDoc;
 std::string UpdaterDoc_to_json_string(const UpdaterDoc &obj);

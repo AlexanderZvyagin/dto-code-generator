@@ -205,21 +205,21 @@ def Struct_from_JSON_string_cpp (self:Struct):
     return code
 
 def File_prefix_cpp (objs):
-    return [
-        f'// {autogen_text}',
-        '',
-        '#include <optional>',
-        '#include <string>',
-        '#include <vector>',
-        '#include <stdexcept>',
-        '#include <cmath>',
-        '',
-        '#include <nlohmann/json.hpp>',
-        'using json = nlohmann::json;',
-        '',
-    ]
+    return f'''
+// {autogen_text}'
 
-def Tests_cpp (objs):
+#include <optional>
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <cmath>
+
+#include "json.hpp"
+using json = nlohmann::json;
+
+'''.split('\n')
+
+def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
 
     struct_names = []
     code_construct_random = []
@@ -336,7 +336,10 @@ std::vector<{obj.name}> random_optional_list_{obj.name} (int min = 0, int max = 
 
     code = []
     for line in cpp_test_template.split('\n'):
-        if line=='//create-struct-random//':
+        if line=='//include-dto//':
+            dto_dir, dto_name = os.path.split(dto_file_path)
+            code.append(f'#include "{dto_name}.cpp"')
+        elif line=='//create-struct-random//':
             code.extend(code_construct_random)
         elif line=='//create-struct-tests//':
             code.extend(code_create)
@@ -356,7 +359,7 @@ cpp_test_template = '''
 #include <fstream>
 #include <stdexcept>
 
-#include "dto.cpp"
+//include-dto//
 
 namespace fs = std::filesystem;
 

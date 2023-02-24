@@ -11,6 +11,7 @@ def write_objs (
     objs        : any        = []
 ):
     '''fname: full path name without extension, the file will be overwritten. the directory path must exist.'''
+
     with open(f'{fname}.{ext[language]}','w') as file:
         file_prefix_code = globals().get(f'File_prefix_{language}')
         if file_prefix_code:
@@ -50,5 +51,5 @@ def write_objs (
             print(f'No code for {name}')
         else:
             with open(f'{fname_test}.{ext[language]}','w') as file:
-                for line in func(objs):
+                for line in func(objs,fname,fname_test):
                     file.write(line+'\n')

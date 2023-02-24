@@ -113,7 +113,7 @@ def get_code (body):
     else:
         return body
 
-def run_test(language,command,struct_name='',file1='',file2=''):
+def run_test(language,outdir,command,struct_name='',file1='',file2=''):
     '''run_test: version 2'''
     cmd = [
         './run',
@@ -122,8 +122,7 @@ def run_test(language,command,struct_name='',file1='',file2=''):
         os.path.abspath(file1) if file1 else '',
         os.path.abspath(file2) if file2 else ''
     ]
-    cwd=f'languages/{language}'
-    proc = subprocess.run (cmd, capture_output=True, text=True, cwd=cwd)
+    proc = subprocess.run (cmd, capture_output=True, text=True, cwd=f'{outdir}/{language}')
     if proc.returncode:
         for v in ['stdout','stderr']:
             if not getattr(proc,v):
@@ -135,16 +134,19 @@ def run_test(language,command,struct_name='',file1='',file2=''):
 def run_round_trip_tests(lang1,lang2,objs,outdir):
 
     for lang in [lang1,lang2]:
-        run_test(lang,'build')
+        print(f'  -> Building {lang}')
+        run_test(lang,outdir,'build')
 
     for obj in objs:
         if not isinstance(obj,Struct):
             continue
         if not obj.gen_test:
             continue
+        print(f'  -> {obj.name}')
         struct_name = obj.name
         json_file1 = f'{outdir}/{struct_name}-created-by-{lang1}.json'
-        run_test(lang1,'create',struct_name,json_file1)
+        run_test(lang,outdir,'build')
+        run_test(lang1,outdir,'create',struct_name,json_file1)
         json_file2 = f'{outdir}/{struct_name}-created-by-{lang1}-converted-by-{lang2}.json'
-        run_test(lang2,'convert',struct_name,json_file1,json_file2) 
-        run_test(lang1,'compare',struct_name,json_file1,json_file2)
+        run_test(lang2,outdir,'convert',struct_name,json_file1,json_file2) 
+        run_test(lang1,outdir,'compare',struct_name,json_file1,json_file2)

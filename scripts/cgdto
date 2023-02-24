@@ -1,0 +1,260 @@
+#!/usr/bin/env python3
+
+import argparse, os
+
+import importlib
+import importlib.machinery
+import importlib.util
+
+from cgdto import *
+
+def main():
+    parser = argparse.ArgumentParser (
+        prog        = 'cgdto-cli',
+        description = '''
+Command line interface (CLI) for generation of data transfer objects (DTOs).
+''',
+        epilog      = '---   ---   ---'
+    )
+
+    parser.add_argument(
+        '--languages',
+         type    = str,
+         default = 'cpp,python,typescript',
+         help    = 'Comma separated list of languages. (default: all known languages: %(default)s)'
+    )
+
+    parser.add_argument(
+        '--path-dto',
+         type    = str,
+         default = 'dto',
+         help    = '''
+Output path of DTO files (directory/file without extension).
+(default: %(default)s)'''
+    )
+
+    parser.add_argument(
+        '--path-test',
+         type    = str,
+         default = 'dto_test',
+         help    = '''
+Output path of auto-testing DTO files (directory/file without extension).
+(default: %(default)s)'''
+    )
+
+    parser.add_argument(
+        '--schema',
+         type    = str,
+#         required = True,
+         help    = 'DTO schema.'
+    )
+
+    parser.add_argument(
+        '--create-test-environment',
+         action='store_true',
+         help    = '''
+Create a test environemnt in the directory of --test.
+For each language in --languages the scrupt will create
+a subdirectoy (e.g. 'output/cpp', 'output/python', 'output/typescript')
+where the tests can be run.
+'''
+    )
+
+    args = parser.parse_args()
+
+    languages = args.languages.split(',')
+
+    if 1:
+        if not (args.path_test and args.path_dto):
+            raise Exception('Need both a DTO and a test directory.')
+
+        dname, fname = os.path.split(args.path_dto)
+        if not fname:
+            raise Exception('Bad file name.')
+        if not dname:
+            dname = './'
+        os.makedirs(dname,exist_ok=True)
+
+        path_test_dname, path_test_fname = os.path.split(args.path_test)
+        if not path_test_fname:
+            raise Exception('Bad file name.')
+        if not dname:
+            path_test_dname = './'
+
+        for lang in languages:
+            d = os.path.join(path_test_dname,lang)
+            os.makedirs(d,exist_ok=True)
+
+            func_name = f'create_test_env_{lang}'
+            func = globals().get(func_name)
+            if not func:
+                raise Exception(f'Not found: {func_name}')
+            func(d,args.path_dto,args.path_test)
+
+
+    if 1:
+        loader = importlib.machinery.SourceFileLoader( 'schema', args.schema )
+        spec = importlib.util.spec_from_loader( 'schema', loader )
+        user_module = importlib.util.module_from_spec( spec )
+        loader.exec_module( user_module )
+        objs = user_module.schema()
+        structs = [o for o in objs if isinstance(o,Struct)]
+        funcs   = [o for o in objs if isinstance(o,Function)]
+        cblocks = [o for o in objs if isinstance(o,CodeBlock)]
+        print(f'The schema "{args.schema}" has {len(objs)} objects:  {len(structs)} structs, {len(funcs)} functions and {len(cblocks)} code blocks')
+
+    for language in languages:
+        write_objs(args.path_dto,args.path_test,language,objs)
+
+    for lang1 in languages:
+        for lang2 in languages:
+            print(f'Testing: {lang1} {lang2}')
+            run_round_trip_tests(lang1,lang2,objs,path_test_dname)
+
+def create_test_env_cpp(dname,dto_path,test_path):
+    # print(dname,dto_path,test_path)
+    os.makedirs(dname,exist_ok=True)
+
+    include_dir, include_name = os.path.split(dto_path)
+    # test_dir, test_name = os.path.split(test_path)
+    
+    abs_test_source = os.path.abspath(f"{test_path}.{ext['cpp']}")
+    abs_include_dir = os.path.abspath(f"{include_dir}")
+
+    meson_build = f'''
+project (
+        'cpp',
+        ['cpp'],
+        default_options : [
+                'cpp_std=c++20',
+                'buildtype=release',
+        ]
+)
+
+add_global_arguments('-Wno-narrowing', language : 'cpp')
+
+executable (
+    'test-cpp',
+    sources: ['{abs_test_source}'],
+    include_directories : ['{abs_include_dir}'],
+    link_with    : [],
+    dependencies : []
+)
+'''
+
+    run = f'''#!/usr/bin/env bash
+
+# echo I am the c++ bash wrapper script with args: $@
+
+case "$1" in
+    build)
+        if [ ! -f json.hpp ]; then
+            wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp
+        fi
+        meson build
+        cd build
+        ninja
+        ;;
+    *)
+        cd build
+        ./test-cpp $@
+        ;;
+esac
+'''
+
+    with open(f'{dname}/meson.build','w') as f:
+        f.write(meson_build)
+
+    name = f'{dname}/run'
+    with open(name,'w') as f:
+        f.write(run)
+    os.chmod(name,0o777)
+
+
+def create_test_env_python(dname,dto_path,test_path):
+    os.makedirs(dname,exist_ok=True)
+
+    abs_dto_source  = os.path.abspath(f"{dto_path}.{ext['python']}")
+    dname_dto, fname_dto = os.path.split(dto_path)
+    abs_test_source = os.path.abspath(f"{test_path}.{ext['python']}")
+    dname_test, fname_test = os.path.split(test_path)
+
+    run_python = f'''#!/usr/bin/env python3
+
+from dto  import *
+from {fname_test} import *
+
+if __name__ == '__main__':
+    test_round_trip_python(
+        sys.argv[1],
+        sys.argv[2],
+        sys.argv[3],
+        sys.argv[4] if len(sys.argv)>4 else ''
+    )
+'''
+
+    run = f'''#!/usr/bin/env bash
+
+case "$1" in
+    build)
+        cp {abs_dto_source} {os.path.abspath(dname)}/dto.{ext['python']}
+        cp {abs_test_source} {os.path.abspath(dname)}
+        ;;
+    *)
+        ./run-python $@
+        ;;
+esac
+'''
+
+    name = f'{dname}/run-python'
+    with open(name,'w') as f:
+        f.write(run_python)
+    os.chmod(name,0o777)
+
+    name = f'{dname}/run'
+    with open(name,'w') as f:
+        f.write(run)
+    os.chmod(name,0o777)
+
+
+
+def create_test_env_typescript(dname,dto_path,test_path):
+    os.makedirs(dname,exist_ok=True)
+
+    abs_dto_source  = os.path.abspath(f"{dto_path}.{ext['typescript']}")
+    dname_dto, fname_dto = os.path.split(dto_path)
+    abs_test_source = os.path.abspath(f"{test_path}.{ext['typescript']}")
+    dname_test, fname_test = os.path.split(test_path)
+
+    run_typescript= f'''
+'''
+
+    run = f'''#!/usr/bin/env bash
+
+case "$1" in
+    build)
+        cp {abs_dto_source} {os.path.abspath(dname)}/dto.{ext['typescript']}
+        cp {abs_test_source} {os.path.abspath(dname)}/dto_tests.{ext['typescript']}
+        npm install typescript
+        npm install --save-dev @types/node
+        ./node_modules/typescript/bin/tsc --lib es2022 dto_tests.ts
+        ;;
+    *)
+        node dto_tests.js $@
+        ;;
+esac
+'''
+
+    name = f'{dname}/run-typescript'
+    with open(name,'w') as f:
+        f.write(run_typescript)
+    os.chmod(name,0o777)
+
+    name = f'{dname}/run'
+    with open(name,'w') as f:
+        f.write(run)
+    os.chmod(name,0o777)
+
+if __name__ == '__main__':
+    main()
+

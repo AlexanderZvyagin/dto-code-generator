@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from cg import *
+from cgdto import *
 from math import nan
 
-def create_dto(fname, languages):
+def schema ():
 
     objs = [] # objects in the file
 
@@ -1082,15 +1082,16 @@ def EvaluationResults_from_response(r,model=None):
 #         }
 #     ))
 
-    for language in languages:
-        write_objs(fname,f'{fname}_tests',language,objs)
-    
     return objs
 
 if __name__ == '__main__':
 
     languages = ['python','cpp','typescript']
-    objs = create_dto('output/dto',languages)
+    objs = schema()
+
+    for language in languages:
+        write_objs('output/dto','output/dto_test',language,objs)
+
     for lang1 in languages:
         for lang2 in languages:
             print(f'Testing: {lang1} {lang2}')

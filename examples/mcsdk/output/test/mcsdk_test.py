@@ -1,6 +1,6 @@
 
 import sys, random, uuid
-from output.dto import *
+from dto import *
 
 def random_string(len_max:int = 5) -> str:
     return str(uuid.uuid4())[0:random.randint(0,len_max)]

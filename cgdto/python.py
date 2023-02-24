@@ -251,7 +251,7 @@ def Struct_from_json_string_python (self) -> list[str]:
     code.append('')
     return code
 
-def Tests_python (objs) -> list[str]:
+def Tests_python (objs, dto_file_path:str, test_file_path:str) -> list[str]:
 
     struct_names = []
     code_construct_random = []
@@ -353,7 +353,7 @@ def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name
 
 python_test_template = '''
 import sys, random, uuid
-from output.dto import *
+from dto import *
 
 def random_string(len_max:int = 5) -> str:
     return str(uuid.uuid4())[0:random.randint(0,len_max)]

@@ -343,7 +343,7 @@ def Struct_fromJSON_string_typescript (self:Struct):
     code.append(f'}}')
     return code
 
-def Tests_typescript (objs):
+def Tests_typescript (objs, dto_file_path:str, test_file_path:str) -> list[str]:
 
     struct_names = []
     code_construct_random = []
