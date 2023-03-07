@@ -1470,6 +1470,7 @@ class Model {
     NumPaths : number;
     updaters : Updater[];
     evaluations : EvaluationPoint[];
+    RandomSeed : number;
     RunTimeoutSeconds : number;
     MemoryLimitKB : number;
 
@@ -1479,6 +1480,7 @@ class Model {
         NumPaths : number  = 0,
         updaters : Updater[]  = [],
         evaluations : EvaluationPoint[]  = [],
+        RandomSeed : number  = -1,
         RunTimeoutSeconds : number  = 1,
         MemoryLimitKB : number  = 1,
     ){
@@ -1487,6 +1489,7 @@ class Model {
         this.NumPaths = NumPaths;
         this.updaters = updaters;
         this.evaluations = evaluations;
+        this.RandomSeed = RandomSeed;
         this.RunTimeoutSeconds = RunTimeoutSeconds;
         this.MemoryLimitKB = MemoryLimitKB;
     
@@ -1532,6 +1535,7 @@ Model_equal (a: Model, b: Model) : boolean {
     if(!int_equal(a.NumPaths,b.NumPaths)) return false;
     if(!list_equal(a.updaters,b.updaters,Updater_equal)) return false;
     if(!list_equal(a.evaluations,b.evaluations,EvaluationPoint_equal)) return false;
+    if(!int_equal(a.RandomSeed,b.RandomSeed)) return false;
     if(!float_equal(a.RunTimeoutSeconds,b.RunTimeoutSeconds)) return false;
     if(!int_equal(a.MemoryLimitKB,b.MemoryLimitKB)) return false;
     return true;
@@ -1544,6 +1548,7 @@ Model_fromJSON (j:any, obj: Model): void {
     obj.NumPaths = j["NumPaths"];
     obj.updaters = j["updaters"];
     obj.evaluations = j["evaluations"];
+    obj.RandomSeed = j["RandomSeed"];
     obj.RunTimeoutSeconds = j["RunTimeoutSeconds"];
     obj.MemoryLimitKB = j["MemoryLimitKB"];
 }
@@ -1571,6 +1576,7 @@ Model_to_json(j:object, obj:Model) {
         EvaluationPoint_to_json(jj,item);
         j["evaluations"].push(jj);
     }
+    j["RandomSeed"] = obj.RandomSeed;
     j["RunTimeoutSeconds"] = obj.RunTimeoutSeconds;
     j["MemoryLimitKB"] = obj.MemoryLimitKB;
 }
@@ -1590,6 +1596,7 @@ Model_from_json(j:object, obj:Model) {
         EvaluationPoint_from_json(item,v);
         obj.evaluations.push(v);
     }
+    obj.RandomSeed = j["RandomSeed"]
     obj.RunTimeoutSeconds = j["RunTimeoutSeconds"]
     obj.MemoryLimitKB = j["MemoryLimitKB"]
 }

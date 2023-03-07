@@ -966,6 +966,7 @@ class Model:
         NumPaths:int = 0,
         updaters:list[Updater] = [],
         evaluations:list[EvaluationPoint] = [],
+        RandomSeed:int = -1,
         RunTimeoutSeconds:float = 1,
         MemoryLimitKB:int = 1
     ):
@@ -974,6 +975,7 @@ class Model:
         self.NumPaths : int = NumPaths
         self.updaters : list[Updater] = deepcopy(updaters)
         self.evaluations : list[EvaluationPoint] = deepcopy(evaluations)
+        self.RandomSeed : int = RandomSeed
         self.RunTimeoutSeconds : float = RunTimeoutSeconds
         self.MemoryLimitKB : int = MemoryLimitKB
         pass
@@ -1012,6 +1014,7 @@ class Model:
         if self.NumPaths != other.NumPaths: return False
         if self.updaters != other.updaters: return False
         if self.evaluations != other.evaluations: return False
+        if self.RandomSeed != other.RandomSeed: return False
         if self.RunTimeoutSeconds != other.RunTimeoutSeconds: return False
         if self.MemoryLimitKB != other.MemoryLimitKB: return False
         return True
@@ -1042,6 +1045,7 @@ def Model_from_json (j:dict, obj:Model):
         v = EvaluationPoint()
         EvaluationPoint_from_json(item,v)
         obj.evaluations.append(v)
+    obj.RandomSeed = j["RandomSeed"]
     obj.RunTimeoutSeconds = j["RunTimeoutSeconds"]
     obj.MemoryLimitKB = j["MemoryLimitKB"]
 def Model_to_json(j:dict, obj:Model):
@@ -1058,6 +1062,7 @@ def Model_to_json(j:dict, obj:Model):
         jj = {}
         EvaluationPoint_to_json(jj,item)
         j["evaluations"].append(jj)
+    j["RandomSeed"] = obj.RandomSeed
     j["RunTimeoutSeconds"] = obj.RunTimeoutSeconds
     j["MemoryLimitKB"] = obj.MemoryLimitKB
 

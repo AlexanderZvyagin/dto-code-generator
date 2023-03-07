@@ -1173,6 +1173,7 @@ public:
     int NumPaths;
     std::vector<Updater> updaters;
     std::vector<EvaluationPoint> evaluations;
+    int RandomSeed;
     float RunTimeoutSeconds;
     int MemoryLimitKB;
 
@@ -1183,6 +1184,7 @@ public:
         int NumPaths = 0,
         std::vector<Updater> updaters = {},
         std::vector<EvaluationPoint> evaluations = {},
+        int RandomSeed = -1,
         float RunTimeoutSeconds = 1,
         int MemoryLimitKB = 1
     )
@@ -1200,6 +1202,9 @@ public:
     )
     , evaluations (
         evaluations
+    )
+    , RandomSeed (
+        RandomSeed
     )
     , RunTimeoutSeconds (
         RunTimeoutSeconds
@@ -1249,6 +1254,7 @@ public:
         if (NumPaths != other.NumPaths) return false;
         if (updaters != other.updaters) return false;
         if (evaluations != other.evaluations) return false;
+        if (RandomSeed != other.RandomSeed) return false;
         if (RunTimeoutSeconds != other.RunTimeoutSeconds) return false;
         if (MemoryLimitKB != other.MemoryLimitKB) return false;
         return true;
@@ -1264,6 +1270,7 @@ void to_json(json &j, const Model &obj) {
     j["NumPaths"] = obj.NumPaths;
     j["updaters"] = obj.updaters;
     j["evaluations"] = obj.evaluations;
+    j["RandomSeed"] = obj.RandomSeed;
     j["RunTimeoutSeconds"] = obj.RunTimeoutSeconds;
     j["MemoryLimitKB"] = obj.MemoryLimitKB;
 }
@@ -1279,6 +1286,7 @@ void from_json(const json &j, Model &obj) {
     j.at("NumPaths").get_to(obj.NumPaths);
     j.at("updaters").get_to(obj.updaters);
     j.at("evaluations").get_to(obj.evaluations);
+    j.at("RandomSeed").get_to(obj.RandomSeed);
     j.at("RunTimeoutSeconds").get_to(obj.RunTimeoutSeconds);
     j.at("MemoryLimitKB").get_to(obj.MemoryLimitKB);
 }
