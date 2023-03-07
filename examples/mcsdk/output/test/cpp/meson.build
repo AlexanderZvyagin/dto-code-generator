@@ -12,8 +12,8 @@ add_global_arguments('-Wno-narrowing', language : 'cpp')
 
 executable (
     'test-cpp',
-    sources: ['/home/zvyagin/Projects/dto-code-generator/cgdto/examples/mcsdk/output/test/mcsdk_test.cpp'],
-    include_directories : ['/home/zvyagin/Projects/dto-code-generator/cgdto/examples/mcsdk/output/dto'],
+    sources: ['/home/zvyagin/Projects/MonteCarlo/f/cgdto/examples/mcsdk/output/test/mcsdk_test.cpp'],
+    include_directories : ['/home/zvyagin/Projects/MonteCarlo/f/cgdto/examples/mcsdk/output/dto'],
     link_with    : [],
     dependencies : []
 )
