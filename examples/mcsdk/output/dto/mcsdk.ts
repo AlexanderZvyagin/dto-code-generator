@@ -28,6 +28,124 @@ function string_equal (a:string, b:string) : boolean {
 }
 
 
+class Error {
+
+    message : string|undefined;
+    details : string|undefined;
+    code : number|undefined;
+    errors : Error[]|undefined;
+
+    constructor(
+        message : string|undefined  = undefined,
+        details : string|undefined  = undefined,
+        code : number|undefined  = undefined,
+        errors : Error[]|undefined  = undefined,
+    ){
+        this.message = message;
+        this.details = details;
+        this.code = code;
+        this.errors = errors;
+    
+    }
+
+    json (): string {
+        return Error_to_json_string(this);
+    }
+}
+export function
+Error_equal (a: Error, b: Error) : boolean {
+    if(a.message===undefined && b.message!==undefined) return false;
+    if(a.message!==undefined && b.message===undefined) return false;
+    if(a.message!==undefined && b.message!==undefined)
+    if(!string_equal(a.message!,b.message!)) return false;
+    if(a.details===undefined && b.details!==undefined) return false;
+    if(a.details!==undefined && b.details===undefined) return false;
+    if(a.details!==undefined && b.details!==undefined)
+    if(!string_equal(a.details!,b.details!)) return false;
+    if(a.code===undefined && b.code!==undefined) return false;
+    if(a.code!==undefined && b.code===undefined) return false;
+    if(a.code!==undefined && b.code!==undefined)
+    if(!int_equal(a.code!,b.code!)) return false;
+    if(a.errors===undefined && b.errors!==undefined) return false;
+    if(a.errors!==undefined && b.errors===undefined) return false;
+    if(a.errors!==undefined && b.errors!==undefined)
+        if(!list_equal(a.errors!,b.errors!,Error_equal)) return false;
+    return true;
+}
+
+export function
+Error_fromJSON (j:any, obj: Error): void {
+    if("message" in j)
+        obj.message = j["message"];
+    if("details" in j)
+        obj.details = j["details"];
+    if("code" in j)
+        obj.code = j["code"];
+    if("errors" in j)
+        obj.errors = j["errors"];
+}
+export function
+Error_fromJSON_string (jstr:string): Error {
+    const j = JSON.parse(jstr);
+    const obj = new Error();
+    Error_fromJSON(j,obj);
+    return obj;
+}
+export function
+Error_to_json(j:object, obj:Error) {
+    if( obj.message !== undefined) {
+        j["message"] = obj.message;
+    }
+    if( obj.details !== undefined) {
+        j["details"] = obj.details;
+    }
+    if( obj.code !== undefined) {
+        j["code"] = obj.code;
+    }
+    if( obj.errors !== undefined) {
+        j["errors"] = [];
+        for(let item of obj.errors) {
+            const jj = {};
+            Error_to_json(jj,item);
+            j["errors"].push(jj);
+        }
+    }
+}
+
+export function
+Error_from_json(j:object, obj:Error) {
+    if("message" in j)
+        obj.message = j["message"] as string|undefined;
+    else
+        obj.message = undefined;
+    if("details" in j)
+        obj.details = j["details"] as string|undefined;
+    else
+        obj.details = undefined;
+    if("code" in j)
+        obj.code = j["code"] as number|undefined;
+    else
+        obj.code = undefined;
+    if( "errors" in j)
+        obj.errors = j["errors"] as Error[]|undefined;
+}
+
+export function
+Error_to_json_string (self:Error) {
+    const j = {};
+    Error_to_json(j,self);
+    return JSON.stringify(j);
+}
+
+export function
+Error_from_json_string (jstr:string): Error {
+    const j: object = JSON.parse(jstr);
+    const obj: Error = new Error();
+    Error_from_json(j,obj);
+    return obj;
+}
+
+
 class UpdaterDoc {
 
     name : string;
@@ -1898,6 +2016,7 @@ EvaluationResults_from_json_string (jstr:string): EvaluationResults {
 
 
 export {
+    Error,
     UpdaterDoc,
     UpdaterDto,
     Updater,

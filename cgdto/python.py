@@ -123,6 +123,10 @@ def Function_python(self:Function, obj:Struct=None) -> list[str]:
 
 def Struct_python (self:Struct) -> list[str]:
     code = []
+
+    code.append(f'# Forward declaration')
+    code.append(f'class {self.name}: pass')
+
     if self.base:
         code.append(f'class {self.name} ({self.base.name}):')
     else:
@@ -175,27 +179,32 @@ def Struct_to_json_python (self:Struct) -> list[str]:
     for attr in self.attributes:
         if attr.skip_dto: continue
         var_code = []
+
+        code_not_optional = []
+
+        # Ignore optionality first
+        # For a naitive type, we don't need to check the 'list' attribute
         if isinstance(attr.type,str):
-            var_code.append(f'j["{attr.name}"] = obj.{attr.name}')
+            code_not_optional.append(f'j["{attr.name}"] = obj.{attr.name}')
         elif isinstance(attr.type,Struct) and not attr.list:
-            var_code.append(f'jj = {{}}')
-            var_code.append(f'{attr.TypeName()}_to_json(jj,obj.{attr.name})')
-            var_code.append(f'j["{attr.name}"] = jj')
+            code_not_optional.append(f'jj = {{}}')
+            code_not_optional.append(f'{attr.TypeName()}_to_json(jj,obj.{attr.name})')
+            code_not_optional.append(f'j["{attr.name}"] = jj')
         elif isinstance(attr.type,Struct) and attr.list:
-            var_code.append(f'j["{attr.name}"] = []')
-            var_code.append(f'for item in obj.{attr.name}:')
-            var_code.append(f'{indent}jj = {{}}')
-            var_code.append(f'{indent}{attr.TypeName()}_to_json(jj,item)')
-            var_code.append(f'{indent}j["{attr.name}"].append(jj)')
+            code_not_optional.append(f'j["{attr.name}"] = []')
+            code_not_optional.append(f'for item in obj.{attr.name}:')
+            code_not_optional.append(f'{indent}jj = {{}}')
+            code_not_optional.append(f'{indent}{attr.TypeName()}_to_json(jj,item)')
+            code_not_optional.append(f'{indent}j["{attr.name}"].append(jj)')
         else:
             raise NotImplementedError()
+
         if attr.optional:
-            code.append(f'{indent*1}if obj.{attr.name} is not None:')
-            for line in var_code:
-                code.append(f'{indent*2}{line}')
+            code.append(f'{indent}if obj.{attr.name} is not None:')
+            n = 2
         else:
-            for line in var_code:
-                code.append(f'{indent*1}{line}')
+            n = 1
+        code.extend([f'{indent*n}{line}' for line in code_not_optional])
     if not code:
         code.append(f'{indent}pass')
     code.append('')
@@ -219,25 +228,44 @@ def Struct_from_json_python (self) -> list[str]:
 
     for attr in self.attributes:
         if attr.skip_dto: continue
+
+        n = 1
+        if attr.optional:
+            code.append(f'{indent*1}if j.get("{attr.name}",None) is not None:')
+            n += 1
         if isinstance(attr.type,Struct):
-            if attr.optional and not attr.list:
-                code.append(f'{indent*1}if j.get("{attr.name}",None) is not None:')
-                code.append(f'{indent*2}obj.{attr.name} = {attr.TypeName()}()')
-                code.append(f'{indent*2}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
-                code.append(f'{indent*1}else:')
-                code.append(f'{indent*2}obj.{attr.name} = None')
-            elif not attr.optional and attr.list:
-                code.append(f'{indent*1}for item in j["{attr.name}"]:')
-                code.append(f'{indent*2}v = {attr.TypeName()}()')
-                code.append(f'{indent*2}{attr.TypeName()}_from_json(item,v)')
-                code.append(f'{indent*2}obj.{attr.name}.append(v)')
+            if attr.list:
+                code.append(f'{indent*(n+0)}obj.{attr.name} = []')
+                code.append(f'{indent*(n+0)}for item in j["{attr.name}"]:')
+                code.append(f'{indent*(n+1)}v = {attr.TypeName()}()')
+                code.append(f'{indent*(n+1)}{attr.TypeName()}_from_json(item,v)')
+                code.append(f'{indent*(n+1)}obj.{attr.name}.append(v)')
             else:
-                code.append(f'{indent}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
+                if attr.optional:
+                    code.append(f'{indent*(n+0)}obj.{attr.name} = {attr.TypeName()}()')
+                code.append(f'{indent*(n+0)}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
         else:
-            if attr.optional:
-                code.append(f'{indent}obj.{attr.name} = j.get("{attr.name}",None)')
-            else:
-                code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
+            code.append(f'{indent*(n+0)}obj.{attr.name} = j["{attr.name}"]')
+        
+        # if isinstance(attr.type,Struct):
+        #     if attr.optional and not attr.list:
+        #         code.append(f'{indent*1}if j.get("{attr.name}",None) is not None:')
+        #         code.append(f'{indent*2}obj.{attr.name} = {attr.TypeName()}()')
+        #         code.append(f'{indent*2}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
+        #         code.append(f'{indent*1}else:')
+        #         code.append(f'{indent*2}obj.{attr.name} = None')
+        #     elif not attr.optional and attr.list:
+        #         code.append(f'{indent*1}for item in j["{attr.name}"]:')
+        #         code.append(f'{indent*2}v = {attr.TypeName()}()')
+        #         code.append(f'{indent*2}{attr.TypeName()}_from_json(item,v)')
+        #         code.append(f'{indent*2}obj.{attr.name}.append(v)')
+        #     else:
+        #         code.append(f'{indent}{attr.TypeName()}_from_json(j["{attr.name}"],obj.{attr.name})')
+        # else:
+        #     if attr.optional:
+        #         code.append(f'{indent}obj.{attr.name} = j.get("{attr.name}",None)')
+        #     else:
+        #         code.append(f'{indent}obj.{attr.name} = j["{attr.name}"]')
 
     return code
 
@@ -362,11 +390,23 @@ def random_list_string(min:int = 0, max:int = 3) -> list[str]:
     n = random.randint(min,max)
     return [random_string() for i in range(n)]
 
+def random_optional_string (len_max:int=5) -> str|None:
+    if yes_no(): return None
+    return random_string()
+
+def random_optional_list_string(min:int = 0, max:int = 3) -> list[str]:
+    if yes_no(): return None
+    return random_list_string(min,max)
+
 def random_int (min = -1000, max = 1000) -> int:
     return random.randint(min,max)
 
 def yes_no () -> bool:
     return random_int(0,1)
+
+def random_optional_int (min = -1000, max = 1000) -> int:
+    if yes_no(): return None
+    return random_int(min,max)
 
 def random_list_int(min:int = 0, max:int = 3) -> list[int]:
     n = random.randint(min,max)

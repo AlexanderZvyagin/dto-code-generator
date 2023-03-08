@@ -22,6 +22,75 @@ def float_equal(a:float|None, b:float|None) -> bool:
     return False
 
 
+# Forward declaration
+class Error: pass
+class Error:
+
+    
+    def __init__ (
+        self,
+        message:str|None = None,
+        details:str|None = None,
+        code:int|None = None,
+        errors:list[Error]|None = None
+    ):
+        self.message : str|None = message
+        self.details : str|None = details
+        self.code : int|None = code
+        self.errors : list[Error]|None = deepcopy(errors)
+        pass
+
+    def __eq__ (self, other):
+        if self.message != other.message: return False
+        if self.details != other.details: return False
+        if self.code != other.code: return False
+        if self.errors != other.errors: return False
+        return True
+    def __neq__ (self, other):
+        return not self==other
+    def json (self) -> str:
+        return Error_to_json_string(self)
+def Error_from_json_string (jstr):
+    j = json.loads(jstr)
+    obj = Error()
+    Error_from_json(j,obj)
+    return obj
+
+def Error_to_json_string (self:Error):
+    j = {}
+    Error_to_json(j,self)
+    return json.dumps(j)
+def Error_from_json (j:dict, obj:Error):
+    assert isinstance(obj,Error)
+    if j.get("message",None) is not None:
+        obj.message = j["message"]
+    if j.get("details",None) is not None:
+        obj.details = j["details"]
+    if j.get("code",None) is not None:
+        obj.code = j["code"]
+    if j.get("errors",None) is not None:
+        obj.errors = []
+        for item in j["errors"]:
+            v = Error()
+            Error_from_json(item,v)
+            obj.errors.append(v)
+def Error_to_json(j:dict, obj:Error):
+    if obj.message is not None:
+        j["message"] = obj.message
+    if obj.details is not None:
+        j["details"] = obj.details
+    if obj.code is not None:
+        j["code"] = obj.code
+    if obj.errors is not None:
+        j["errors"] = []
+        for item in obj.errors:
+            jj = {}
+            Error_to_json(jj,item)
+            j["errors"].append(jj)
+
+
+# Forward declaration
+class UpdaterDoc: pass
 class UpdaterDoc:
 
     
@@ -81,6 +150,8 @@ def UpdaterDoc_to_json(j:dict, obj:UpdaterDoc):
     j["nrefs_min"] = obj.nrefs_min
 
 
+# Forward declaration
+class UpdaterDto: pass
 class UpdaterDto:
 
     
@@ -120,9 +191,12 @@ def UpdaterDto_to_json_string (self:UpdaterDto):
 def UpdaterDto_from_json (j:dict, obj:UpdaterDto):
     assert isinstance(obj,UpdaterDto)
     obj.name = j["name"]
-    obj.refs = j.get("refs",None)
-    obj.args = j.get("args",None)
-    obj.start = j.get("start",None)
+    if j.get("refs",None) is not None:
+        obj.refs = j["refs"]
+    if j.get("args",None) is not None:
+        obj.args = j["args"]
+    if j.get("start",None) is not None:
+        obj.start = j["start"]
 def UpdaterDto_to_json(j:dict, obj:UpdaterDto):
     j["name"] = obj.name
     if obj.refs is not None:
@@ -133,6 +207,8 @@ def UpdaterDto_to_json(j:dict, obj:UpdaterDto):
         j["start"] = obj.start
 
 
+# Forward declaration
+class Updater: pass
 class Updater (UpdaterDto):
 
     
@@ -217,6 +293,8 @@ def Updater_to_json(j:dict, obj:Updater):
     UpdaterDto_to_json(j,obj)
 
 
+# Forward declaration
+class IndependentGaussian: pass
 class IndependentGaussian (Updater):
 
     
@@ -258,6 +336,8 @@ def IndependentGaussian_to_json(j:dict, obj:IndependentGaussian):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class CorrelatedGaussian: pass
 class CorrelatedGaussian (Updater):
 
     
@@ -301,6 +381,8 @@ def CorrelatedGaussian_to_json(j:dict, obj:CorrelatedGaussian):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class BrownianMotion: pass
 class BrownianMotion (Updater):
 
     
@@ -344,6 +426,8 @@ def BrownianMotion_to_json(j:dict, obj:BrownianMotion):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class BrownianMotionRef: pass
 class BrownianMotionRef (Updater):
 
     
@@ -387,6 +471,8 @@ def BrownianMotionRef_to_json(j:dict, obj:BrownianMotionRef):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class GeometricalBrownianMotion: pass
 class GeometricalBrownianMotion (Updater):
 
     
@@ -430,6 +516,8 @@ def GeometricalBrownianMotion_to_json(j:dict, obj:GeometricalBrownianMotion):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class GeometricalBrownianMotionRef: pass
 class GeometricalBrownianMotionRef (Updater):
 
     
@@ -473,6 +561,8 @@ def GeometricalBrownianMotionRef_to_json(j:dict, obj:GeometricalBrownianMotionRe
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class ZeroCouponBond: pass
 class ZeroCouponBond (Updater):
 
     
@@ -515,6 +605,8 @@ def ZeroCouponBond_to_json(j:dict, obj:ZeroCouponBond):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class Option: pass
 class Option (Updater):
 
     Call : int = 0
@@ -560,6 +652,8 @@ def Option_to_json(j:dict, obj:Option):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class Barrier: pass
 class Barrier (Updater):
 
     DirectionUp : int = 1
@@ -610,6 +704,8 @@ def Barrier_to_json(j:dict, obj:Barrier):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class Linear1DInterpolation: pass
 class Linear1DInterpolation (Updater):
 
     
@@ -659,6 +755,8 @@ def Linear1DInterpolation_to_json(j:dict, obj:Linear1DInterpolation):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class Multiplication: pass
 class Multiplication (Updater):
 
     
@@ -701,6 +799,8 @@ def Multiplication_to_json(j:dict, obj:Multiplication):
     Updater_to_json(j,obj)
 
 
+# Forward declaration
+class HistogramAxis: pass
 class HistogramAxis:
 
     
@@ -750,6 +850,8 @@ def HistogramAxis_to_json(j:dict, obj:HistogramAxis):
     j["max"] = obj.max
 
 
+# Forward declaration
+class Histogram: pass
 class Histogram:
 
     
@@ -786,8 +888,6 @@ def Histogram_from_json (j:dict, obj:Histogram):
     if j.get("y",None) is not None:
         obj.y = HistogramAxis()
         HistogramAxis_from_json(j["y"],obj.y)
-    else:
-        obj.y = None
 def Histogram_to_json(j:dict, obj:Histogram):
     jj = {}
     HistogramAxis_to_json(jj,obj.x)
@@ -798,6 +898,8 @@ def Histogram_to_json(j:dict, obj:Histogram):
         j["y"] = jj
 
 
+# Forward declaration
+class EvaluationPoint: pass
 class EvaluationPoint:
 
     
@@ -887,8 +989,11 @@ def EvaluationPoint_from_json (j:dict, obj:EvaluationPoint):
     assert isinstance(obj,EvaluationPoint)
     obj.state = j["state"]
     obj.time = j["time"]
-    obj.value = j.get("value",None)
-    obj.error = j.get("error",None)
+    if j.get("value",None) is not None:
+        obj.value = j["value"]
+    if j.get("error",None) is not None:
+        obj.error = j["error"]
+    obj.histograms = []
     for item in j["histograms"]:
         v = Histogram()
         Histogram_from_json(item,v)
@@ -907,6 +1012,8 @@ def EvaluationPoint_to_json(j:dict, obj:EvaluationPoint):
         j["histograms"].append(jj)
 
 
+# Forward declaration
+class Parameter: pass
 class Parameter:
 
     
@@ -956,6 +1063,8 @@ def Parameter_to_json(j:dict, obj:Parameter):
     j["max"] = obj.max
 
 
+# Forward declaration
+class Model: pass
 class Model:
 
     
@@ -1037,10 +1146,12 @@ def Model_from_json (j:dict, obj:Model):
     obj.TimeStart = j["TimeStart"]
     obj.TimeSteps = j["TimeSteps"]
     obj.NumPaths = j["NumPaths"]
+    obj.updaters = []
     for item in j["updaters"]:
         v = Updater()
         Updater_from_json(item,v)
         obj.updaters.append(v)
+    obj.evaluations = []
     for item in j["evaluations"]:
         v = EvaluationPoint()
         EvaluationPoint_from_json(item,v)
@@ -1067,6 +1178,8 @@ def Model_to_json(j:dict, obj:Model):
     j["MemoryLimitKB"] = obj.MemoryLimitKB
 
 
+# Forward declaration
+class Result: pass
 class Result:
 
     
@@ -1148,6 +1261,8 @@ def Result_to_json(j:dict, obj:Result):
     j["skewness"] = obj.skewness
 
 
+# Forward declaration
+class EvaluationResults: pass
 class EvaluationResults:
 
     
@@ -1274,6 +1389,7 @@ def EvaluationResults_from_json (j:dict, obj:EvaluationResults):
     obj.skewness = j["skewness"]
     obj.time_points = j["time_points"]
     obj.time_steps = j["time_steps"]
+    obj.histograms = []
     for item in j["histograms"]:
         v = Histogram()
         Histogram_from_json(item,v)
@@ -1281,8 +1397,6 @@ def EvaluationResults_from_json (j:dict, obj:EvaluationResults):
     if j.get("model",None) is not None:
         obj.model = Model()
         Model_from_json(j["model"],obj.model)
-    else:
-        obj.model = None
 def EvaluationResults_to_json(j:dict, obj:EvaluationResults):
     j["names"] = obj.names
     j["npaths"] = obj.npaths

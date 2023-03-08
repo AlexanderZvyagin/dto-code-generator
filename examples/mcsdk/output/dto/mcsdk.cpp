@@ -11,6 +11,83 @@
 using json = nlohmann::json;
 
 
+class Error;
+std::string Error_to_json_string(const Error &obj);
+class Error {
+public:
+
+    std::optional<std::string> message;
+    std::optional<std::string> details;
+    std::optional<int> code;
+    std::optional<std::vector<Error>> errors;
+
+    
+    Error (
+        std::optional<std::string> message = {},
+        std::optional<std::string> details = {},
+        std::optional<int> code = {},
+        std::optional<std::vector<Error>> errors = {}
+    )
+    : message (
+        message
+    )
+    , details (
+        details
+    )
+    , code (
+        code
+    )
+    , errors (
+        errors
+    )
+    {
+    }
+
+    bool operator == (const Error &other) const {
+        if (message != other.message) return false;
+        if (details != other.details) return false;
+        if (code != other.code) return false;
+        if (errors != other.errors) return false;
+        return true;
+    }
+    bool operator != (const Error &other) const {return not(*this==other);}
+    std::string json (void) const {
+        return Error_to_json_string(*this);
+    }
+};
+void to_json(json &j, const Error &obj) {
+    j = json::object();
+    if(obj.message.has_value())
+        j["message"] = obj.message.value();
+    if(obj.details.has_value())
+        j["details"] = obj.details.value();
+    if(obj.code.has_value())
+        j["code"] = obj.code.value();
+    if(obj.errors.has_value())
+        j["errors"] = obj.errors.value();
+}
+
+std::string Error_to_json_string(const Error &obj) {
+    json j;
+    to_json(j,obj);
+    return j.dump();
+}
+void from_json(const json &j, Error &obj) {
+    if(auto it=j.find("message"); it!=j.end() and !it->is_null())
+        obj.message = *it;
+    if(auto it=j.find("details"); it!=j.end() and !it->is_null())
+        obj.details = *it;
+    if(auto it=j.find("code"); it!=j.end() and !it->is_null())
+        obj.code = *it;
+    if(auto it=j.find("errors"); it!=j.end() and !it->is_null())
+        obj.errors = *it;
+}
+Error Error_from_json(const json &j) {
+    Error obj;
+    from_json(j,obj);
+    return obj;
+}
+
 class UpdaterDoc;
 std::string UpdaterDoc_to_json_string(const UpdaterDoc &obj);
 class UpdaterDoc {
@@ -68,6 +145,7 @@ public:
     }
 };
 void to_json(json &j, const UpdaterDoc &obj) {
+    j = json::object();
     j["name"] = obj.name;
     j["title"] = obj.title;
     j["doc_md"] = obj.doc_md;
@@ -140,6 +218,7 @@ public:
     }
 };
 void to_json(json &j, const UpdaterDto &obj) {
+    j = json::object();
     j["name"] = obj.name;
     if(obj.refs.has_value())
         j["refs"] = obj.refs.value();
@@ -252,6 +331,7 @@ public:
     }
 };
 void to_json(json &j, const Updater &obj) {
+    j = json::object();
     to_json(j,static_cast<const UpdaterDto &>(obj));
 }
 
@@ -306,6 +386,7 @@ public:
     }
 };
 void to_json(json &j, const IndependentGaussian &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -356,6 +437,7 @@ public:
     }
 };
 void to_json(json &j, const CorrelatedGaussian &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -406,6 +488,7 @@ public:
     }
 };
 void to_json(json &j, const BrownianMotion &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -456,6 +539,7 @@ public:
     }
 };
 void to_json(json &j, const BrownianMotionRef &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -506,6 +590,7 @@ public:
     }
 };
 void to_json(json &j, const GeometricalBrownianMotion &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -556,6 +641,7 @@ public:
     }
 };
 void to_json(json &j, const GeometricalBrownianMotionRef &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -605,6 +691,7 @@ public:
     }
 };
 void to_json(json &j, const ZeroCouponBond &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -657,6 +744,7 @@ public:
     }
 };
 void to_json(json &j, const Option &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -714,6 +802,7 @@ public:
     }
 };
 void to_json(json &j, const Barrier &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -775,6 +864,7 @@ public:
     }
 };
 void to_json(json &j, const Linear1DInterpolation &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -824,6 +914,7 @@ public:
     }
 };
 void to_json(json &j, const Multiplication &obj) {
+    j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 }
 
@@ -886,6 +977,7 @@ public:
     }
 };
 void to_json(json &j, const HistogramAxis &obj) {
+    j = json::object();
     j["state"] = obj.state;
     j["nbins"] = obj.nbins;
     j["min"] = obj.min;
@@ -942,6 +1034,7 @@ public:
     }
 };
 void to_json(json &j, const Histogram &obj) {
+    j = json::object();
     j["x"] = obj.x;
     if(obj.y.has_value())
         j["y"] = obj.y.value();
@@ -1066,6 +1159,7 @@ public:
     }
 };
 void to_json(json &j, const EvaluationPoint &obj) {
+    j = json::object();
     j["state"] = obj.state;
     j["time"] = obj.time;
     if(obj.value.has_value())
@@ -1140,6 +1234,7 @@ public:
     }
 };
 void to_json(json &j, const Parameter &obj) {
+    j = json::object();
     j["value"] = obj.value;
     j["step"] = obj.step;
     j["min"] = obj.min;
@@ -1265,6 +1360,7 @@ public:
     }
 };
 void to_json(json &j, const Model &obj) {
+    j = json::object();
     j["TimeStart"] = obj.TimeStart;
     j["TimeSteps"] = obj.TimeSteps;
     j["NumPaths"] = obj.NumPaths;
@@ -1373,6 +1469,7 @@ public:
     }
 };
 void to_json(json &j, const Result &obj) {
+    j = json::object();
     j["n"] = obj.n;
     j["mean"] = obj.mean;
     j["stddev"] = obj.stddev;
@@ -1510,6 +1607,7 @@ public:
     }
 };
 void to_json(json &j, const EvaluationResults &obj) {
+    j = json::object();
     j["names"] = obj.names;
     j["npaths"] = obj.npaths;
     j["mean"] = obj.mean;

@@ -7,6 +7,7 @@ import * as fs from 'fs'
 
 import * as dto from './dto'
 import {
+    Error,
     UpdaterDoc,
     UpdaterDto,
     Updater,
@@ -95,6 +96,40 @@ function random_list_string (min:number = 0, max:number = 3) : string[] {
 
 function random_optional_list_string() : string[]|undefined {
     return yes_no() ? random_list_string() : undefined;
+}
+
+
+function random_Error () : Error {
+    return new Error (
+        random_optional_string(),
+        random_optional_string(),
+        random_optional_int(),
+        random_optional_list_Error()
+
+    );
+}
+
+
+function random_optional_Error () : Error|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Error ();
+}
+
+
+function random_list_Error (min:number = 0, max:number = 3) : Error[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:Error[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_Error());
+    return list;
+}
+
+
+function random_optional_list_Error () : Error[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Error ();
 }
 
 
@@ -791,6 +826,18 @@ function random_optional_list_EvaluationResults () : EvaluationResults[]|undefin
 function create (struct_name:string, file_name:string){
     if(false){
 
+    } else if (struct_name === 'Error') {
+        const obj1: Error = random_Error();
+        const j: object = {};
+        dto.Error_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: Error = new Error();
+        dto.Error_from_json(j,obj2);
+        if(!dto.Error_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
     } else if (struct_name === 'UpdaterDoc') {
         const obj1: UpdaterDoc = random_UpdaterDoc();
         const j: object = {};
@@ -1037,6 +1084,12 @@ function create (struct_name:string, file_name:string){
 function convert (struct_name:string, file1_name:string, file2_name:string){
     if(false){
 
+    } else if (struct_name === 'Error') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: Error = dto.Error_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
     } else if (struct_name === 'UpdaterDoc') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: UpdaterDoc = dto.UpdaterDoc_fromJSON_string(jstr);
@@ -1162,6 +1215,15 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
 
 function compare (struct_name:string, file1_name:string, file2_name:string){
     if(false){
+
+    } else if (struct_name === 'Error') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: Error = dto.Error_fromJSON_string(jstr1);
+        const obj2: Error = dto.Error_fromJSON_string(jstr2);
+        if(!dto.Error_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
 
     } else if (struct_name === 'UpdaterDoc') {
         const jstr1: string = fs.readFileSync(file1_name,'utf-8');

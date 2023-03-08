@@ -197,8 +197,8 @@ if __name__ == '__main__':
 
 case "$1" in
     build)
-        cp {abs_dto_source} {os.path.abspath(dname)}/dto.{ext['python']}
-        cp {abs_test_source} {os.path.abspath(dname)}
+        ln -sf {abs_dto_source} {os.path.abspath(dname)}/dto.{ext['python']}
+        ln -sf {abs_test_source} {os.path.abspath(dname)}
         ;;
     *)
         ./run-python $@
@@ -226,15 +226,12 @@ def create_test_env_typescript(dname,dto_path,test_path):
     abs_test_source = os.path.abspath(f"{test_path}.{ext['typescript']}")
     dname_test, fname_test = os.path.split(test_path)
 
-    run_typescript= f'''
-'''
-
     run = f'''#!/usr/bin/env bash
 
 case "$1" in
     build)
-        cp {abs_dto_source} {os.path.abspath(dname)}/dto.{ext['typescript']}
-        cp {abs_test_source} {os.path.abspath(dname)}/dto_tests.{ext['typescript']}
+        ln -sf {abs_dto_source} {os.path.abspath(dname)}/dto.{ext['typescript']}
+        ln -sf {abs_test_source} {os.path.abspath(dname)}/dto_tests.{ext['typescript']}
         npm install typescript
         npm install --save-dev @types/node
         ./node_modules/typescript/bin/tsc --lib es2022 dto_tests.ts
@@ -245,11 +242,6 @@ case "$1" in
 esac
 '''
 
-    name = f'{dname}/run-typescript'
-    with open(name,'w') as f:
-        f.write(run_typescript)
-    os.chmod(name,0o777)
-
     name = f'{dname}/run'
     with open(name,'w') as f:
         f.write(run)
@@ -257,4 +249,3 @@ esac
 
 if __name__ == '__main__':
     main()
-

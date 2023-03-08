@@ -158,6 +158,7 @@ def Struct_compare_cpp(self:Struct):
 def Struct_to_JSON_cpp (self:Struct):
     code = []
     code.append(f'void to_json(json &j, const {self.name} &obj) {{')
+    code.append(f'{indent}j = json::object();')
     if self.base:
         code.append(f'{indent}to_json(j,static_cast<const {self.base.name} &>(obj));')
     for attr in self.attributes:
@@ -221,7 +222,6 @@ using json = nlohmann::json;
 
 def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
 
-    struct_names = []
     code_construct_random = []
     code_create = []
     code_convert = []
@@ -233,12 +233,11 @@ def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
         if not obj.gen_test:
             continue
 
-        struct_names.append(obj.name)
-
         random_args = ''
 
         ctors = [method for method in obj.methods if method.name == obj.name]
         assert len(ctors)==1
+
 
         for i,arg in enumerate(ctors[0].args):
             tname = arg.TypeName()
@@ -254,6 +253,14 @@ def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
                 raise Exception('Development error')
             ending = '' if (i+1)==len(ctors[0].args) else ','
             random_args += f'{indent*2}{random_arg}{ending}\n'
+
+        code_construct_random.append(f'// Forward declarations for {obj.name}')
+        code_construct_random.append(f'class {obj.name};')
+        code_construct_random.append(f'{obj.name} random_{obj.name} (void);')
+        code_construct_random.append(f'std::optional<{obj.name}> random_optional_{obj.name} (void);')
+        code_construct_random.append(f'std::vector<{obj.name}> random_list_{obj.name} (int min=0, int max=3);')
+        code_construct_random.append(f'std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min=0, int max=3);')
+        code_construct_random.append(f'')
 
         code_construct_random.extend(f'''
 {obj.name} random_{obj.name} (void) {{
@@ -272,7 +279,7 @@ std::optional<{obj.name}> random_optional_{obj.name} (void) {{
 '''.split('\n'))
 
         code_construct_random.extend(f'''
-std::vector<{obj.name}> random_list_{obj.name} (int min = 0, int max = 3) {{
+std::vector<{obj.name}> random_list_{obj.name} (int min, int max) {{
     const auto size = random_int(min,max);
     std::vector<{obj.name}> list;
     for(int i=0; i<size; i++)
@@ -282,7 +289,7 @@ std::vector<{obj.name}> random_list_{obj.name} (int min = 0, int max = 3) {{
 '''.split('\n'))
 
         code_construct_random.extend(f'''
-std::vector<{obj.name}> random_optional_list_{obj.name} (int min = 0, int max = 3) {{
+std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min, int max) {{
     if(yes_no())
         return {{}};
     return random_list_{obj.name} (min,max);
