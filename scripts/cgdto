@@ -45,7 +45,6 @@ Output path of auto-testing DTO files (directory/file without extension).
     parser.add_argument(
         '--schema',
          type    = str,
-#         required = True,
          help    = 'DTO schema.'
     )
 
@@ -61,6 +60,10 @@ where the tests can be run.
     )
 
     args = parser.parse_args()
+
+    if not args.schema:
+        print('Need --schema option for more work')
+        return
 
     languages = args.languages.split(',')
 
