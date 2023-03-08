@@ -1,9 +1,9 @@
-
 from setuptools import setup
+import cgdto
 
 setup(
     name='cgdto',
-    version='0.0',    
+    version = cgdto.version(),
     description='Code Generator of Data Transfer Objects',
     # url='https://github.com/shuds13/pyexample',
     author='Alexander ZVYAGIN',

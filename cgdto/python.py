@@ -31,8 +31,12 @@ def python_value_to_string (arg) -> str:
         return str(arg)
 
 def File_prefix_python (objs)  -> list[str]:
-    return f'''
-# {autogen_text}
+    code = []
+    for line in autogen_text.split('\n'):
+        code.append(f'# {line}')
+
+    code.extend(f'''
+
 from copy import deepcopy
 import math
 from math import nan
@@ -54,7 +58,8 @@ def float_equal(a:float|None, b:float|None) -> bool:
     if ab_ratio<eps: return True
     return False
 
-'''.split('\n')
+'''.split('\n'))
+    return code
 
 def Constructor_python(ctor:Function,base:Struct) -> list[str]:
 

@@ -206,8 +206,11 @@ def Struct_from_JSON_string_cpp (self:Struct):
     return code
 
 def File_prefix_cpp (objs):
-    return f'''
-// {autogen_text}'
+    code = []
+    for line in autogen_text.split('\n'):
+        code.append(f'// {line}')
+
+    code.extend(f'''
 
 #include <optional>
 #include <string>
@@ -218,7 +221,8 @@ def File_prefix_cpp (objs):
 #include "json.hpp"
 using json = nlohmann::json;
 
-'''.split('\n')
+'''.split('\n'))
+    return code
 
 def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
 

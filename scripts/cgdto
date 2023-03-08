@@ -10,12 +10,14 @@ from cgdto import *
 
 def main():
     parser = argparse.ArgumentParser (
-        prog        = 'cgdto-cli',
+        prog        = 'Code Generator for Data Transfer Objects (cgdto)',
         description = '''
 Command line interface (CLI) for generation of data transfer objects (DTOs).
 ''',
         epilog      = '---   ---   ---'
     )
+
+    parser.add_argument('--version', action='version', version=f'%(prog)s {version()}')
 
     parser.add_argument(
         '--languages',
@@ -225,9 +227,7 @@ def create_test_env_typescript(dname,dto_path,test_path):
     os.makedirs(dname,exist_ok=True)
 
     abs_dto_source  = os.path.abspath(f"{dto_path}.{ext['typescript']}")
-    dname_dto, fname_dto = os.path.split(dto_path)
     abs_test_source = os.path.abspath(f"{test_path}.{ext['typescript']}")
-    dname_test, fname_test = os.path.split(test_path)
 
     run = f'''#!/usr/bin/env bash
 

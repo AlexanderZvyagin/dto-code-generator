@@ -39,7 +39,10 @@ def typescript_value_to_string (arg):
         return str(arg)
 
 def File_prefix_typescript (objs):
-    code = [f'// {autogen_text}']
+    code = []
+    for line in autogen_text.split('\n'):
+        code.append(f'// {line}')
+
     code.extend('''
 
 function list_equal<Type> (

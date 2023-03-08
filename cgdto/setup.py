@@ -1,8 +1,9 @@
+import cgdto
 from setuptools import setup
 
 setup(
     name='cgdto',
-    version='0.0',    
+    version=cgdto.version(),
     description='Code Generator of Data Transfer Objects',
     keywords = 'code generator dto c++ python typescript',
     # url='https://github.com/shuds13/pyexample',
@@ -10,7 +11,7 @@ setup(
     author_email='zvyagin.alexander@gmail.com',
     license='GPL',
     packages=['cgdto'],
-    scripts=['cgdto-cli'],
+    scripts=['cgdto'],
     install_requires=[],
     classifiers=[
         # 'Development Status :: 1 - Planning',
