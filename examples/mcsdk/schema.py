@@ -7,12 +7,12 @@ def schema ():
 
     objs = [] # objects in the file
 
-    obj = Struct('Error')
-    Error = obj
+    obj = Struct('DtoError')
+    DtoError = obj
     obj.attributes.append(Variable('message','string', optional=True))
     obj.attributes.append(Variable('details','string', optional=True))
     obj.attributes.append(Variable('code','int', optional=True))
-    obj.attributes.append(Variable('errors',Error, optional=True, list=True))
+    obj.attributes.append(Variable('errors',DtoError, optional=True, list=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -20,7 +20,7 @@ def schema ():
             Variable('message','string',optional=True,defval=None),
             Variable('details','string',optional=True,defval=None),
             Variable('code','int',optional=True,defval=None),
-            Variable('errors',Error,optional=True,list=True,defval=None),
+            Variable('errors',DtoError,optional=True,list=True,defval=None),
         ],
         mapping = [
             ('message',[Variable('message')]),
@@ -30,6 +30,7 @@ def schema ():
         ]
     ))
     objs.append(obj)
+
 
     obj = Struct('UpdaterDoc')
     obj.attributes.append(Variable('name','string'))
