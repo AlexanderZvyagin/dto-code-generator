@@ -8,14 +8,15 @@ def write_objs (
     fname       : str,
     fname_test  : str,
     language    : list[str],
-    objs        : any        = []
+    objs        : any        = [],
+    schema      : str = ''
 ):
     '''fname: full path name without extension, the file will be overwritten. the directory path must exist.'''
 
     with open(f'{fname}.{ext[language]}','w') as file:
         file_prefix_code = globals().get(f'File_prefix_{language}')
         if file_prefix_code:
-            for line in file_prefix_code(objs):
+            for line in file_prefix_code(objs,schema):
                 file.write(line+'\n')
         for obj in objs:
             if isinstance(obj,Struct):

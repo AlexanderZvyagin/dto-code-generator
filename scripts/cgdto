@@ -109,7 +109,7 @@ where the tests can be run.
         print(f'The schema "{args.schema}" has {len(objs)} objects:  {len(structs)} structs, {len(funcs)} functions and {len(cblocks)} code blocks')
 
     for language in languages:
-        write_objs(args.path_dto,args.path_test,language,objs)
+        write_objs(args.path_dto,args.path_test,language,objs,user_module.schema_version())
 
     for lang1 in languages:
         for lang2 in languages:

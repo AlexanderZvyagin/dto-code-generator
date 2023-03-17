@@ -3,15 +3,21 @@ import math
 
 def typescript_type_to_string (var:Variable):
 
-    tname = var.TypeName()
-
-    type_str = {
+    m = {
         'void'    : 'void',
         'string'  : 'string',
         'boolean' : 'boolean',
         'int'     : 'number',
         'float'   : 'number',
-    } .get(tname,tname)
+    }
+
+    tname = var.TypeName()
+
+    kv = detect_dict_key_value(tname)
+    if kv:
+        tname = f'{{[key:{m.get(kv[0],kv[0])}]: {m.get(kv[1],kv[1])}}}'
+
+    type_str = m.get(tname,tname)
 
     if var.list:
         type_str = f'{type_str}[]'
@@ -38,9 +44,9 @@ def typescript_value_to_string (arg):
     else:
         return str(arg)
 
-def File_prefix_typescript (objs):
+def File_prefix_typescript (objs, schema=None):
     code = []
-    for line in autogen_text.split('\n'):
+    for line in autogen_text(schema).split('\n'):
         code.append(f'// {line}')
 
     code.extend('''

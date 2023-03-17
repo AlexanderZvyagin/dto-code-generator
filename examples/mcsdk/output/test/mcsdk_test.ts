@@ -7,7 +7,7 @@ import * as fs from 'fs'
 
 import * as dto from './dto'
 import {
-    Error,
+    DtoError,
     UpdaterDoc,
     UpdaterDto,
     Updater,
@@ -99,37 +99,37 @@ function random_optional_list_string() : string[]|undefined {
 }
 
 
-function random_Error () : Error {
-    return new Error (
+function random_DtoError () : DtoError {
+    return new DtoError (
         random_optional_string(),
         random_optional_string(),
         random_optional_int(),
-        random_optional_list_Error()
+        random_optional_list_DtoError()
 
     );
 }
 
 
-function random_optional_Error () : Error|undefined {
+function random_optional_DtoError () : DtoError|undefined {
     if(yes_no())
         return undefined;
-    return random_Error ();
+    return random_DtoError ();
 }
 
 
-function random_list_Error (min:number = 0, max:number = 3) : Error[] {
+function random_list_DtoError (min:number = 0, max:number = 3) : DtoError[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
-    const list:Error[] = [];
+    const list:DtoError[] = [];
     for(let i=0; i<size; i++)
-        list.push(random_Error());
+        list.push(random_DtoError());
     return list;
 }
 
 
-function random_optional_list_Error () : Error[]|undefined {
+function random_optional_list_DtoError () : DtoError[]|undefined {
     if(yes_no())
         return undefined;
-    return random_list_Error ();
+    return random_list_DtoError ();
 }
 
 
@@ -826,15 +826,15 @@ function random_optional_list_EvaluationResults () : EvaluationResults[]|undefin
 function create (struct_name:string, file_name:string){
     if(false){
 
-    } else if (struct_name === 'Error') {
-        const obj1: Error = random_Error();
+    } else if (struct_name === 'DtoError') {
+        const obj1: DtoError = random_DtoError();
         const j: object = {};
-        dto.Error_to_json(j,obj1);
+        dto.DtoError_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        const obj2: Error = new Error();
-        dto.Error_from_json(j,obj2);
-        if(!dto.Error_equal(obj1,obj2))
+        const obj2: DtoError = new DtoError();
+        dto.DtoError_from_json(j,obj2);
+        if(!dto.DtoError_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
 
@@ -1084,9 +1084,9 @@ function create (struct_name:string, file_name:string){
 function convert (struct_name:string, file1_name:string, file2_name:string){
     if(false){
 
-    } else if (struct_name === 'Error') {
+    } else if (struct_name === 'DtoError') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
-        const obj: Error = dto.Error_fromJSON_string(jstr);
+        const obj: DtoError = dto.DtoError_fromJSON_string(jstr);
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
@@ -1216,12 +1216,12 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
 function compare (struct_name:string, file1_name:string, file2_name:string){
     if(false){
 
-    } else if (struct_name === 'Error') {
+    } else if (struct_name === 'DtoError') {
         const jstr1: string = fs.readFileSync(file1_name,'utf-8');
         const jstr2: string = fs.readFileSync(file2_name,'utf-8');
-        const obj1: Error = dto.Error_fromJSON_string(jstr1);
-        const obj2: Error = dto.Error_fromJSON_string(jstr2);
-        if(!dto.Error_equal(obj1,obj2))
+        const obj1: DtoError = dto.DtoError_fromJSON_string(jstr1);
+        const obj2: DtoError = dto.DtoError_fromJSON_string(jstr2);
+        if(!dto.DtoError_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
 

@@ -1,17 +1,23 @@
 from .all import *
-import math
+import math, re
 
 def cpp_type_to_string (var:Variable):
 
-    tname = var.TypeName()
-
-    type_str = {
+    m = {
         'void'    : 'void',
         'string'  : 'std::string',
         'boolean' : 'bool',
         'int'     : 'int',
         'float'   : 'float',
-    } .get(tname,tname)
+    }
+
+    tname = var.TypeName()
+
+    kv = detect_dict_key_value(tname)
+    if kv:
+        tname = f'std::map<{m.get(kv[0],kv[0])},{m.get(kv[1],kv[1])}>'
+
+    type_str = m.get(tname,tname)
 
     if var.list:
         type_str = f'std::vector<{type_str}>'
@@ -205,9 +211,9 @@ def Struct_from_JSON_string_cpp (self:Struct):
     code.append(f'}}')
     return code
 
-def File_prefix_cpp (objs):
+def File_prefix_cpp (objs,schema=None):
     code = []
-    for line in autogen_text.split('\n'):
+    for line in autogen_text(schema).split('\n'):
         code.append(f'// {line}')
 
     code.extend(f'''
@@ -215,6 +221,7 @@ def File_prefix_cpp (objs):
 #include <optional>
 #include <string>
 #include <vector>
+#include <map>
 #include <stdexcept>
 #include <cmath>
 
