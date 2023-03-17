@@ -1093,6 +1093,9 @@ class Model:
         self.RandomSeed : int = RandomSeed
         self.RunTimeoutSeconds : float = RunTimeoutSeconds
         self.MemoryLimitKB : int = MemoryLimitKB
+        
+        self.titles = {}
+        
         pass
 
     def GetNumberOfUpdaters (

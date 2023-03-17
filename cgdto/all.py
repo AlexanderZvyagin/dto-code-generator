@@ -4,7 +4,7 @@
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,3,0)
+__version__ = (0,3,1)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
