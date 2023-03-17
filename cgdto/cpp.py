@@ -128,7 +128,7 @@ def Struct_cpp (self:Struct):
     code.append('')
 
     for func in self.methods:
-        if func.code and not 'cpp' in func.code: continue
+        if func.code and func.code.get('cpp','') is None: continue
         for line in Function_cpp(func,self):
             code.append(f'{indent}{line}')
         code.append('')

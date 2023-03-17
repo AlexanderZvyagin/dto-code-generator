@@ -150,7 +150,7 @@ def Struct_python (self:Struct) -> list[str]:
             code.append(f'{indent}{attr.name} : {python_type_to_string(attr)} = {python_value_to_string(attr.defval)}')
 
     for func in self.methods:
-        if func.code and not 'python' in func.code: continue
+        if func.code and func.code.get('python','') is None: continue
         for line in Function_python(func,self):
             code.append(f'{indent}{line}')
         code.append('')
