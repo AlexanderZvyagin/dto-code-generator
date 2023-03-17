@@ -1,1 +1,1 @@
-/home/zvyagin/Projects/MonteCarlo/f/cgdto/examples/mcsdk/output/test/mcsdk_test.py
+/Users/zvyagin/Projects/az/dto-code-generator/examples/mcsdk/output/test/mcsdk_test.py

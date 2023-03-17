@@ -156,45 +156,45 @@ std::optional<std::vector<std::string>> random_optional_list_string (
         return {};
 }
 
-// Forward declarations for Error
-class Error;
-Error random_Error (void);
-std::optional<Error> random_optional_Error (void);
-std::vector<Error> random_list_Error (int min=0, int max=3);
-std::optional<std::vector<Error>> random_optional_list_Error (int min=0, int max=3);
+// Forward declarations for DtoError
+class DtoError;
+DtoError random_DtoError (void);
+std::optional<DtoError> random_optional_DtoError (void);
+std::vector<DtoError> random_list_DtoError (int min=0, int max=3);
+std::optional<std::vector<DtoError>> random_optional_list_DtoError (int min=0, int max=3);
 
 
-Error random_Error (void) {
-    return Error (
+DtoError random_DtoError (void) {
+    return DtoError (
         random_optional_string(),
         random_optional_string(),
         random_optional_int(),
-        random_optional_list_Error()
+        random_optional_list_DtoError()
 
     );
 }
 
 
-std::optional<Error> random_optional_Error (void) {
+std::optional<DtoError> random_optional_DtoError (void) {
     if(yes_no())
         return {};
-    return random_Error ();
+    return random_DtoError ();
 }
 
 
-std::vector<Error> random_list_Error (int min, int max) {
+std::vector<DtoError> random_list_DtoError (int min, int max) {
     const auto size = random_int(min,max);
-    std::vector<Error> list;
+    std::vector<DtoError> list;
     for(int i=0; i<size; i++)
-        list.push_back(random_Error());
+        list.push_back(random_DtoError());
     return list;
 }
 
 
-std::optional<std::vector<Error>> random_optional_list_Error (int min, int max) {
+std::optional<std::vector<DtoError>> random_optional_list_DtoError (int min, int max) {
     if(yes_no())
         return {};
-    return random_list_Error (min,max);
+    return random_list_DtoError (min,max);
 }
 
 // Forward declarations for UpdaterDoc
@@ -1045,11 +1045,11 @@ int main (int argc, const char **argv) try {
 
         if (false) {
 
-        } else if (struct_name == "Error") {
-            auto obj1 = random_Error();
-            std::ofstream(file1_path) << Error_to_json_string(obj1);
+        } else if (struct_name == "DtoError") {
+            auto obj1 = random_DtoError();
+            std::ofstream(file1_path) << DtoError_to_json_string(obj1);
             auto obj2 =
-                Error_from_json (
+                DtoError_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1327,15 +1327,15 @@ int main (int argc, const char **argv) try {
 
         if (false) {
 
-        } else if (struct_name == "Error") {
+        } else if (struct_name == "DtoError") {
             auto obj =
-                Error_from_json (
+                DtoError_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << Error_to_json_string(obj);
+            out << DtoError_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1607,15 +1607,15 @@ int main (int argc, const char **argv) try {
 
         if (false) {
 
-        } else if (struct_name == "Error") {
+        } else if (struct_name == "DtoError") {
             auto obj1 =
-                Error_from_json (
+                DtoError_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Error_from_json (
+                DtoError_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
