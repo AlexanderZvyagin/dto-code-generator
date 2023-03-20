@@ -13,6 +13,10 @@ def write_objs (
 ):
     '''fname: full path name without extension, the file will be overwritten. the directory path must exist.'''
 
+    file_writer = globals().get(f'FileWriter_{language}')
+    if file_writer:
+        return file_writer(fname,fname_test,objs,schema)
+
     with open(f'{fname}.{ext[language]}','w') as file:
         file_prefix_code = globals().get(f'File_prefix_{language}')
         if file_prefix_code:

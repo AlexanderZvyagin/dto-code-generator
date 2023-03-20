@@ -584,3 +584,38 @@ catch (...) {
     return 1;
 }
 '''
+
+
+def FileWriter_cpp (
+    fname       : str,
+    fname_test  : str,
+    objs        : any        = [],
+    schema      : str = ''
+):
+    ext_cpp = ext['cpp']
+    exh_hpp = 'hpp'
+
+    with open(f'{fname}.{ext_cpp}','w') as file:
+        for line in File_prefix_cpp(objs,schema):
+            file.write(line+'\n')
+        for obj in objs:
+            if isinstance(obj,Struct):
+                for line in Struct_cpp(obj):
+                    file.write(line+'\n')
+                file.write('\n')
+            elif isinstance(obj,CodeBlock):
+                for line in obj.code.get('cpp',[]):
+                    file.write(line+'\n')
+            elif isinstance(obj,Function):
+                for line in Function_cpp(obj):
+                    file.write(line+'\n')
+            else:
+                print(f'Cannot handle {type(obj)}')
+
+            # for line in File_suffix_cpp(objs):
+            #     file.write(line+'\n')
+
+    if fname_test:
+        with open(f'{fname_test}.{ext_cpp}','w') as file:
+            for line in Tests_cpp(objs,fname,fname_test):
+                file.write(line+'\n')
