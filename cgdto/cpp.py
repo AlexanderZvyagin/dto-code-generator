@@ -1,6 +1,8 @@
 from .all import *
 import math, re
 
+ext_hpp = 'hpp'
+
 def cpp_type_to_string (var:Variable):
 
     m = {
@@ -70,7 +72,6 @@ def Constructor_cpp(ctor:Function,base:Struct):
     return code
 
 def Function_cpp(self:Function, obj:Struct=None):
-
     code = []
 
     if obj and self.name==obj.name:
@@ -102,8 +103,12 @@ def Function_cpp(self:Function, obj:Struct=None):
 
     return code
 
-def Struct_cpp (self:Struct):
+def Struct_cpp (self:Struct, split_headers:bool=False):
     code = []
+
+    if split_headers:
+        for dep in self.dependencies:
+            code.append(f'#include "{dep.name}.{ext_hpp}"')
 
     # Start with a forward declarations
     code.append(f'class {self.name};')
@@ -163,6 +168,7 @@ def Struct_compare_cpp(self:Struct):
 
 def Struct_to_JSON_cpp (self:Struct):
     code = []
+    code.append('inline')
     code.append(f'void to_json(json &j, const {self.name} &obj) {{')
     code.append(f'{indent}j = json::object();')
     if self.base:
@@ -180,6 +186,7 @@ def Struct_to_JSON_cpp (self:Struct):
 
 def Struct_from_JSON_cpp (self:Struct):
     code = []
+    code.append('inline')
     code.append(f'void from_json(const json &j, {self.name} &obj) {{')
     if self.base:
         code.append(f'{indent}from_json(j,static_cast<{self.base.name} &>(obj));')
@@ -195,6 +202,7 @@ def Struct_from_JSON_cpp (self:Struct):
 
 def Struct_to_JSON_string_cpp (self:Struct):
     code = []
+    code.append('inline')
     code.append(f'std::string {self.name}_to_json_string(const {self.name} &obj) {{')
     code.append(f'{indent}json j;')
     code.append(f'{indent}to_json(j,obj);')
@@ -204,6 +212,7 @@ def Struct_to_JSON_string_cpp (self:Struct):
 
 def Struct_from_JSON_string_cpp (self:Struct):
     code = []
+    code.append('inline')
     code.append(f'{self.name} {self.name}_from_json(const json &j) {{')
     code.append(f'{indent}{self.name} obj;')
     code.append(f'{indent}from_json(j,obj);')
@@ -587,15 +596,26 @@ catch (...) {
 
 
 def FileWriter_cpp (
-    fname       : str,
-    fname_test  : str,
+    path_dto    : str,
+    path_test   : str,
+    objs        : any        = [],
+    schema      : str = ''
+):
+    FileWriter_single_cpp(path_dto,path_test,objs,schema)
+    FileWriter_multiple_cpp(path_dto,path_test,objs,schema)
+    
+
+def FileWriter_single_cpp (
+    path_dto    : str,
+    path_test   : str,
     objs        : any        = [],
     schema      : str = ''
 ):
     ext_cpp = ext['cpp']
-    exh_hpp = 'hpp'
 
-    with open(f'{fname}.{ext_cpp}','w') as file:
+    os.makedirs(path_dto,exist_ok=True)
+
+    with open(f'{path_dto}.{ext_cpp}','w') as file:
         for line in File_prefix_cpp(objs,schema):
             file.write(line+'\n')
         for obj in objs:
@@ -615,7 +635,27 @@ def FileWriter_cpp (
             # for line in File_suffix_cpp(objs):
             #     file.write(line+'\n')
 
-    if fname_test:
-        with open(f'{fname_test}.{ext_cpp}','w') as file:
-            for line in Tests_cpp(objs,fname,fname_test):
+    if path_test:
+        with open(f'{path_test}.{ext_cpp}','w') as file:
+            for line in Tests_cpp(objs,path_dto,path_test):
                 file.write(line+'\n')
+
+
+def FileWriter_multiple_cpp (
+    path_dto    : str,
+    path_test   : str,
+    objs        : any        = [],
+    schema      : str = ''
+):
+    ext_cpp = ext['cpp']
+
+    os.makedirs(path_dto,exist_ok=True)
+
+    for obj in objs:
+        if isinstance(obj,Struct):
+            with open(f'{path_dto}/{obj.name}.{ext_hpp}','w') as file:
+                for line in File_prefix_cpp(objs,schema):
+                    file.write(line+'\n')
+                for line in Struct_cpp(obj,split_headers=True):
+                    file.write(line+'\n')
+                file.write('\n')
