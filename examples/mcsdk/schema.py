@@ -4,7 +4,7 @@ from cgdto import *
 from math import nan
 
 def schema_version () -> str:
-    return 'MonteCarlo SDK version (0.1.0)'
+    return 'MonteCarlo SDK version (0.1.2)'
 
 def schema ():
 
@@ -792,7 +792,9 @@ return this.updaters.filter(
 '''
 self.updaters.append(updater)
 updater._equation = self.GetNumberOfUpdaters()-1
-updater._state = self.GetNumberOfStates()-1 if updater.HasState() else None
+if updater.HasState():
+    updater._state = self.GetNumberOfStates()-1
+    self.titles[updater._state] = updater.title
 return updater
 ''',
             'cpp':
@@ -800,16 +802,20 @@ return updater
 updaters.push_back(updater);
 auto &u = updaters.back();
 u._equation = GetNumberOfUpdaters()-1;
-if(u.HasState())
+if(u.HasState()){
     u._state = GetNumberOfStates()-1;
+    titles[u._state] = u.title;
+}
 return u;
 ''',
             'typescript':
 '''
 this.updaters.push(updater);
 updater._equation = this.GetNumberOfUpdaters()-1;
-if(updater.HasState())
+if(updater.HasState()){
     updater._state = this.GetNumberOfStates()-1;
+    this.titles[updater._state] = updater.title;
+}
 return updater;
 ''',
         }
