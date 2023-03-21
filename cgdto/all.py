@@ -6,6 +6,10 @@ from collections import namedtuple
 
 __version__ = (0,4,0)
 
+name_dto             = 'dto'
+name_dto_tests       = 'dto_tests'
+name_dto_run_tests   = 'dto_run_tests'
+
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
 
@@ -55,7 +59,7 @@ class Variable:
         else:
             assert isinstance(self.type,str)
             return self.type
-    
+
     def __repr__ (self):
         return f'Variable(name={self.name},type={self.type},defval={self.defval},list={self.list},optional={self.optional},skip_dto={self.skip_dto})'
 
@@ -68,7 +72,7 @@ ext = {
 
 class Struct:
     '''Holds info on a structure.
-    
+
     Should contain info enough to generate code for all languages.
     '''
 
@@ -118,7 +122,7 @@ class Function:
         const: bool=False
     ):
         '''code: dictionary of language:str=>list[str]
-        
+
         mapping: it is an array of (key,value) pairs
         '''
         self.name        : str = name
@@ -139,8 +143,9 @@ def get_code (body):
     else:
         return body
 
-def run_test(language,outdir,command,struct_name='',file1='',file2=''):
+def run_test(outdir,command,struct_name='',file1='',file2=''):
     '''run_test: version 2'''
+
     cmd = [
         './run',
         command,
@@ -148,7 +153,7 @@ def run_test(language,outdir,command,struct_name='',file1='',file2=''):
         os.path.abspath(file1) if file1 else '',
         os.path.abspath(file2) if file2 else ''
     ]
-    proc = subprocess.run (cmd, capture_output=True, text=True, cwd=f'{outdir}/{language}')
+    proc = subprocess.run (cmd, capture_output=True, text=True, cwd=outdir)
     if proc.returncode:
         for v in ['stdout','stderr']:
             if not getattr(proc,v):
@@ -160,8 +165,8 @@ def run_test(language,outdir,command,struct_name='',file1='',file2=''):
 def run_round_trip_tests(lang1,lang2,objs,outdir):
 
     for lang in [lang1,lang2]:
-        print(f'  -> Building {lang}')
-        run_test(lang,outdir,'build')
+        print(f'  -> Building {lang} in {outdir}/{lang}')
+        run_test(f'{outdir}/{lang}','build')
 
     for obj in objs:
         if not isinstance(obj,Struct):
@@ -171,8 +176,7 @@ def run_round_trip_tests(lang1,lang2,objs,outdir):
         print(f'  -> {obj.name}')
         struct_name = obj.name
         json_file1 = f'{outdir}/{struct_name}-created-by-{lang1}.json'
-        run_test(lang,outdir,'build')
-        run_test(lang1,outdir,'create',struct_name,json_file1)
+        run_test(f'{outdir}/{lang1}','create',struct_name,json_file1)
         json_file2 = f'{outdir}/{struct_name}-created-by-{lang1}-converted-by-{lang2}.json'
-        run_test(lang2,outdir,'convert',struct_name,json_file1,json_file2) 
-        run_test(lang1,outdir,'compare',struct_name,json_file1,json_file2)
+        run_test(f'{outdir}/{lang2}','convert',struct_name,json_file1,json_file2)
+        run_test(f'{outdir}/{lang1}','compare',struct_name,json_file1,json_file2)

@@ -290,7 +290,7 @@ def Struct_from_json_string_python (self) -> list[str]:
     code.append('')
     return code
 
-def Tests_python (objs, dto_file_path:str, test_file_path:str) -> list[str]:
+def Tests_python (objs) -> list[str]:
 
     struct_names = []
     code_construct_random = []
@@ -473,3 +473,47 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
     else:
         raise Exception(f'Not supported command {command}')
 '''
+
+def create_test_env_python(dir_run_tests,dir_dto,dir_tests):
+
+    ext_py = ext['python']
+    os.symlink(f'../../{name_dto}/python/{name_dto}.{ext_py}',f'{dir_tests}/{name_dto}.{ext_py}')
+    os.symlink(f'../../{name_dto}/python/{name_dto}.{ext_py}',f'{dir_run_tests}/{name_dto}.{ext_py}')
+    os.symlink(f'../../{name_dto_tests}/python/{name_dto_tests}.{ext_py}',f'{dir_run_tests}/{name_dto_tests}.{ext_py}')
+
+    run_python = f'''#!/usr/bin/env python3
+
+from {name_dto}  import *
+from {name_dto_tests} import *
+
+if __name__ == '__main__':
+    test_round_trip_python(
+        sys.argv[1],
+        sys.argv[2],
+        sys.argv[3],
+        sys.argv[4] if len(sys.argv)>4 else ''
+    )
+'''
+
+    run = f'''#!/usr/bin/env bash
+
+case "$1" in
+    build)
+        #ln -sf {dir_dto} {dir_run_tests}
+        #ln -sf {dir_tests} {dir_run_tests}
+        ;;
+    *)
+        ./run-python $@
+        ;;
+esac
+'''
+
+    name = f'{dir_run_tests}/run-python'
+    with open(name,'w') as f:
+        f.write(run_python)
+    os.chmod(name,0o777)
+
+    name = f'{dir_run_tests}/run'
+    with open(name,'w') as f:
+        f.write(run)
+    os.chmod(name,0o777)

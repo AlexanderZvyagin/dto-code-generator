@@ -659,3 +659,58 @@ def FileWriter_multiple_cpp (
                 for line in Struct_cpp(obj,split_headers=True):
                     file.write(line+'\n')
                 file.write('\n')
+
+def create_test_env_cpp(dname,dto_path,test_path):
+    include_dir, include_name = os.path.split(dto_path)
+    
+    abs_test_source = os.path.abspath(f"{test_path}.{ext['cpp']}")
+    abs_include_dir = os.path.abspath(f"{include_dir}")
+
+    meson_build = f'''
+project (
+        'cpp',
+        ['cpp'],
+        default_options : [
+                'cpp_std=c++20',
+                'buildtype=release',
+        ]
+)
+
+add_global_arguments('-Wno-narrowing', language : 'cpp')
+
+executable (
+    'test-cpp',
+    sources: ['{abs_test_source}'],
+    include_directories : ['{abs_include_dir}'],
+    link_with    : [],
+    dependencies : []
+)
+'''
+
+    run = f'''#!/usr/bin/env bash
+
+# echo I am the c++ bash wrapper script with args: $@
+
+case "$1" in
+    build)
+        if [ ! -f json.hpp ]; then
+            wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp
+        fi
+        meson build
+        cd build
+        ninja
+        ;;
+    *)
+        cd build
+        ./test-cpp $@
+        ;;
+esac
+'''
+
+    with open(f'{dname}/meson.build','w') as f:
+        f.write(meson_build)
+
+    name = f'{dname}/run'
+    with open(name,'w') as f:
+        f.write(run)
+    os.chmod(name,0o777)

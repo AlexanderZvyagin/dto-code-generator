@@ -352,7 +352,7 @@ def Struct_fromJSON_string_typescript (self:Struct):
     code.append(f'}}')
     return code
 
-def Tests_typescript (objs, dto_file_path:str, test_file_path:str) -> list[str]:
+def Tests_typescript (objs) -> list[str]:
 
     struct_names = []
     code_construct_random = []
@@ -597,3 +597,29 @@ function main () {
 
 main();
 '''
+
+def create_test_env_typescript (dir_run_tests,dir_dto,dir_tests):
+
+    e = ext['typescript']
+    os.symlink(f'../../{name_dto}/typescript/{name_dto}.{e}',f'{dir_tests}/{name_dto}.{e}')
+    os.symlink(f'../../{name_dto}/typescript/{name_dto}.{e}',f'{dir_run_tests}/{name_dto}.{e}')
+    os.symlink(f'../../{name_dto_tests}/typescript/{name_dto_tests}.{e}',f'{dir_run_tests}/{name_dto_tests}.{e}')
+
+    run = f'''#!/usr/bin/env bash
+
+case "$1" in
+    build)
+        npm install typescript
+        npm install --save-dev @types/node
+        ./node_modules/typescript/bin/tsc --lib es2022 dto_tests.ts
+        ;;
+    *)
+        node dto_tests.js $@
+        ;;
+esac
+'''
+
+    name = f'{dir_run_tests}/run'
+    with open(name,'w') as f:
+        f.write(run)
+    os.chmod(name,0o777)
