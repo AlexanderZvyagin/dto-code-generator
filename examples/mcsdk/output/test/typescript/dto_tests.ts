@@ -1,1 +1,0 @@
-/Users/zvyagin/Projects/az/dto-code-generator/examples/mcsdk/output/test/mcsdk_test.ts
