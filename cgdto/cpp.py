@@ -1,6 +1,8 @@
 from .all import *
 import math, re
 
+ext_hpp = 'hpp'
+
 def cpp_type_to_string (var:Variable):
 
     m = {
@@ -48,7 +50,7 @@ def Constructor_cpp(ctor:Function,base:Struct):
     assert ctor.name == base.name
     code = []
     code.append('')
-    
+
     code.append(f'{ctor.name} (')
     for i,arg in enumerate(ctor.args):
         if arg.defval is not None:
@@ -70,7 +72,6 @@ def Constructor_cpp(ctor:Function,base:Struct):
     return code
 
 def Function_cpp(self:Function, obj:Struct=None):
-
     code = []
 
     if obj and self.name==obj.name:
@@ -102,8 +103,12 @@ def Function_cpp(self:Function, obj:Struct=None):
 
     return code
 
-def Struct_cpp (self:Struct):
+def Struct_cpp (self:Struct, split_headers:bool=False):
     code = []
+
+    if split_headers:
+        for dep in self.dependencies:
+            code.append(f'#include "{dep.name}.{ext_hpp}"')
 
     # Start with a forward declarations
     code.append(f'class {self.name};')
@@ -163,6 +168,7 @@ def Struct_compare_cpp(self:Struct):
 
 def Struct_to_JSON_cpp (self:Struct):
     code = []
+    code.append('inline')
     code.append(f'void to_json(json &j, const {self.name} &obj) {{')
     code.append(f'{indent}j = json::object();')
     if self.base:
@@ -180,6 +186,7 @@ def Struct_to_JSON_cpp (self:Struct):
 
 def Struct_from_JSON_cpp (self:Struct):
     code = []
+    code.append('inline')
     code.append(f'void from_json(const json &j, {self.name} &obj) {{')
     if self.base:
         code.append(f'{indent}from_json(j,static_cast<{self.base.name} &>(obj));')
@@ -195,6 +202,7 @@ def Struct_from_JSON_cpp (self:Struct):
 
 def Struct_to_JSON_string_cpp (self:Struct):
     code = []
+    code.append('inline')
     code.append(f'std::string {self.name}_to_json_string(const {self.name} &obj) {{')
     code.append(f'{indent}json j;')
     code.append(f'{indent}to_json(j,obj);')
@@ -204,6 +212,7 @@ def Struct_to_JSON_string_cpp (self:Struct):
 
 def Struct_from_JSON_string_cpp (self:Struct):
     code = []
+    code.append('inline')
     code.append(f'{self.name} {self.name}_from_json(const json &j) {{')
     code.append(f'{indent}{self.name} obj;')
     code.append(f'{indent}from_json(j,obj);')
@@ -233,6 +242,7 @@ using json = nlohmann::json;
 
 def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
 
+    code_include = []
     code_construct_random = []
     code_create = []
     code_convert = []
@@ -244,11 +254,12 @@ def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
         if not obj.gen_test:
             continue
 
+        code_include.append(f'#include "{obj.name}.{ext_hpp}"')
+
         random_args = ''
 
         ctors = [method for method in obj.methods if method.name == obj.name]
         assert len(ctors)==1
-
 
         for i,arg in enumerate(ctors[0].args):
             tname = arg.TypeName()
@@ -356,7 +367,8 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
     for line in cpp_test_template.split('\n'):
         if line=='//include-dto//':
             dto_dir, dto_name = os.path.split(dto_file_path)
-            code.append(f'#include "{dto_name}.cpp"')
+            #code.append(f'#include "{dto_name}.cpp"')
+            code.extend(code_include)
         elif line=='//create-struct-random//':
             code.extend(code_construct_random)
         elif line=='//create-struct-tests//':
@@ -584,3 +596,87 @@ catch (...) {
     return 1;
 }
 '''
+
+def FileWriter_cpp (
+    path_dto    : str,
+    path_test   : str,
+    objs        : any        = [],
+    schema      : str = ''
+):
+    ext_cpp = ext['cpp']
+
+    os.makedirs(path_dto,exist_ok=True)
+
+    for obj in objs:
+        if isinstance(obj,Struct):
+            with open(f'{path_dto}/{obj.name}.{ext_hpp}','w') as file:
+                file.write('#pragma once\n')
+                for line in File_prefix_cpp(objs,schema):
+                    file.write(line+'\n')
+                for line in Struct_cpp(obj,split_headers=True):
+                    file.write(line+'\n')
+                file.write('\n')
+
+    if path_test:
+        with open(f'{path_test}/{name_dto_tests}.{ext_cpp}','w') as file:
+            for line in Tests_cpp(objs,path_dto,path_test):
+                file.write(line+'\n')
+
+
+def create_test_env_cpp(dname,dto_path,test_path):
+
+    print('create_test_env_cpp:',dname,dto_path,test_path)
+
+    include_dir, include_name = os.path.split(dto_path)
+
+    abs_test_source = os.path.abspath(f"{test_path}/{name_dto_tests}.{ext['cpp']}")
+    abs_include_dir = os.path.abspath(f"{include_dir}/cpp")
+
+    meson_build = f'''
+project (
+        'cpp',
+        ['cpp'],
+        default_options : [
+                'cpp_std=c++20',
+                'buildtype=release',
+        ]
+)
+
+add_global_arguments('-Wno-narrowing', language : 'cpp')
+
+executable (
+    'test-cpp',
+    sources: ['{abs_test_source}'],
+    include_directories : ['{abs_include_dir}'],
+    link_with    : [],
+    dependencies : []
+)
+'''
+
+    run = f'''#!/usr/bin/env bash
+
+# echo I am the c++ bash wrapper script with args: $@
+
+case "$1" in
+    build)
+        if [ ! -f json.hpp ]; then
+            wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp
+        fi
+        meson build
+        cd build
+        ninja
+        ;;
+    *)
+        cd build
+        ./test-cpp $@
+        ;;
+esac
+'''
+
+    with open(f'{dname}/meson.build','w') as f:
+        f.write(meson_build)
+
+    name = f'{dname}/run'
+    with open(name,'w') as f:
+        f.write(run)
+    os.chmod(name,0o777)

@@ -5,15 +5,19 @@ from .cpp import *
 from .csharp import *
 
 def write_objs (
-    fname       : str,
-    fname_test  : str,
-    language    : list[str],
+    dir_dto     : str,
+    dir_tests   : str,
+    language    : str,
     objs        : any        = [],
     schema      : str = ''
 ):
     '''fname: full path name without extension, the file will be overwritten. the directory path must exist.'''
 
-    with open(f'{fname}.{ext[language]}','w') as file:
+    file_writer = globals().get(f'FileWriter_{language}')
+    if file_writer:
+        return file_writer(dir_dto,dir_tests,objs,schema)
+
+    with open(f'{dir_dto}/dto.{ext[language]}','w') as file:
         file_prefix_code = globals().get(f'File_prefix_{language}')
         if file_prefix_code:
             for line in file_prefix_code(objs,schema):
@@ -45,12 +49,12 @@ def write_objs (
             for line in file_suffix_code(objs):
                 file.write(line+'\n')
 
-    if fname_test:
+    if 1:
         name = f'Tests_{language}'
         func = globals().get(name)
         if not func:
             print(f'No code for {name}')
         else:
-            with open(f'{fname_test}.{ext[language]}','w') as file:
-                for line in func(objs,fname,fname_test):
+            with open(f'{dir_tests}/{name_dto_tests}.{ext[language]}','w') as file:
+                for line in func(objs):
                     file.write(line+'\n')
