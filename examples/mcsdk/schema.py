@@ -10,12 +10,12 @@ def schema ():
 
     objs = [] # objects in the file
 
-    obj = Struct('DtoError')
-    DtoError = obj
+    obj = Struct('Error')
+    Error = obj
     obj.AddAttribute(Variable('message','string', optional=True))
     obj.AddAttribute(Variable('details','string', optional=True))
     obj.AddAttribute(Variable('code','int', optional=True))
-    obj.AddAttribute(Variable('errors',DtoError, optional=True, list=True))
+    obj.AddAttribute(Variable('errors',Error, optional=True, list=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -23,7 +23,7 @@ def schema ():
             Variable('message','string',optional=True,defval=None),
             Variable('details','string',optional=True,defval=None),
             Variable('code','int',optional=True,defval=None),
-            Variable('errors',DtoError,optional=True,list=True,defval=None),
+            Variable('errors',Error,optional=True,list=True,defval=None),
         ],
         mapping = [
             ('message',[Variable('message')]),

@@ -239,7 +239,7 @@ def File_prefix_cpp (objs,schema=None):
 #include <stdexcept>
 #include <cmath>
 
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 '''.split('\n'))
@@ -671,8 +671,9 @@ executable (
 
 case "$1" in
     build)
-        if [ ! -f json.hpp ]; then
-            wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp
+        if [ ! -f nlohmann/json.hpp ]; then
+            mkdir nlohmann
+            (cd nlohmann; wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp)
         fi
         meson build
         cd build
