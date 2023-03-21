@@ -50,7 +50,7 @@ def Constructor_cpp(ctor:Function,base:Struct):
     assert ctor.name == base.name
     code = []
     code.append('')
-    
+
     code.append(f'{ctor.name} (')
     for i,arg in enumerate(ctor.args):
         if arg.defval is not None:
@@ -242,6 +242,7 @@ using json = nlohmann::json;
 
 def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
 
+    code_include = []
     code_construct_random = []
     code_create = []
     code_convert = []
@@ -253,11 +254,12 @@ def Tests_cpp (objs, dto_file_path:str, test_file_path:str) -> list[str]:
         if not obj.gen_test:
             continue
 
+        code_include.append(f'#include "{obj.name}.{ext_hpp}"')
+
         random_args = ''
 
         ctors = [method for method in obj.methods if method.name == obj.name]
         assert len(ctors)==1
-
 
         for i,arg in enumerate(ctors[0].args):
             tname = arg.TypeName()
@@ -365,7 +367,8 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
     for line in cpp_test_template.split('\n'):
         if line=='//include-dto//':
             dto_dir, dto_name = os.path.split(dto_file_path)
-            code.append(f'#include "{dto_name}.cpp"')
+            #code.append(f'#include "{dto_name}.cpp"')
+            code.extend(code_include)
         elif line=='//create-struct-random//':
             code.extend(code_construct_random)
         elif line=='//create-struct-tests//':
@@ -594,54 +597,7 @@ catch (...) {
 }
 '''
 
-
 def FileWriter_cpp (
-    path_dto    : str,
-    path_test   : str,
-    objs        : any        = [],
-    schema      : str = ''
-):
-    FileWriter_single_cpp(path_dto,path_test,objs,schema)
-    FileWriter_multiple_cpp(path_dto,path_test,objs,schema)
-    
-
-def FileWriter_single_cpp (
-    path_dto    : str,
-    path_test   : str,
-    objs        : any        = [],
-    schema      : str = ''
-):
-    ext_cpp = ext['cpp']
-
-    os.makedirs(path_dto,exist_ok=True)
-
-    with open(f'{path_dto}.{ext_cpp}','w') as file:
-        for line in File_prefix_cpp(objs,schema):
-            file.write(line+'\n')
-        for obj in objs:
-            if isinstance(obj,Struct):
-                for line in Struct_cpp(obj):
-                    file.write(line+'\n')
-                file.write('\n')
-            elif isinstance(obj,CodeBlock):
-                for line in obj.code.get('cpp',[]):
-                    file.write(line+'\n')
-            elif isinstance(obj,Function):
-                for line in Function_cpp(obj):
-                    file.write(line+'\n')
-            else:
-                print(f'Cannot handle {type(obj)}')
-
-            # for line in File_suffix_cpp(objs):
-            #     file.write(line+'\n')
-
-    if path_test:
-        with open(f'{path_test}.{ext_cpp}','w') as file:
-            for line in Tests_cpp(objs,path_dto,path_test):
-                file.write(line+'\n')
-
-
-def FileWriter_multiple_cpp (
     path_dto    : str,
     path_test   : str,
     objs        : any        = [],
@@ -654,17 +610,27 @@ def FileWriter_multiple_cpp (
     for obj in objs:
         if isinstance(obj,Struct):
             with open(f'{path_dto}/{obj.name}.{ext_hpp}','w') as file:
+                file.write('#pragma once\n')
                 for line in File_prefix_cpp(objs,schema):
                     file.write(line+'\n')
                 for line in Struct_cpp(obj,split_headers=True):
                     file.write(line+'\n')
                 file.write('\n')
 
+    if path_test:
+        with open(f'{path_test}/{name_dto_tests}.{ext_cpp}','w') as file:
+            for line in Tests_cpp(objs,path_dto,path_test):
+                file.write(line+'\n')
+
+
 def create_test_env_cpp(dname,dto_path,test_path):
+
+    print('create_test_env_cpp:',dname,dto_path,test_path)
+
     include_dir, include_name = os.path.split(dto_path)
-    
-    abs_test_source = os.path.abspath(f"{test_path}.{ext['cpp']}")
-    abs_include_dir = os.path.abspath(f"{include_dir}")
+
+    abs_test_source = os.path.abspath(f"{test_path}/{name_dto_tests}.{ext['cpp']}")
+    abs_include_dir = os.path.abspath(f"{include_dir}/cpp")
 
     meson_build = f'''
 project (
