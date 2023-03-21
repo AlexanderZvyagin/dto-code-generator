@@ -2,6 +2,7 @@ from .all import *
 import math, re
 
 ext_hpp = 'hpp'
+namespace = 'dto'
 
 def cpp_type_to_string (var:Variable):
 
@@ -110,6 +111,8 @@ def Struct_cpp (self:Struct, split_headers:bool=False):
         for dep in self.dependencies:
             code.append(f'#include "{dep.name}.{ext_hpp}"')
 
+    code.append(f'namespace {namespace} {{')
+
     # Start with a forward declarations
     code.append(f'class {self.name};')
     code.append(f'std::string {self.name}_to_json_string(const {self.name} &obj);')
@@ -150,6 +153,8 @@ def Struct_cpp (self:Struct, split_headers:bool=False):
     code.extend(Struct_to_JSON_string_cpp(self))
     code.extend(Struct_from_JSON_cpp(self))
     code.extend(Struct_from_JSON_string_cpp(self))
+
+    code.append(f'}} // namespace {namespace}')
 
     return code
 
@@ -320,10 +325,10 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
 
         code_create.append(f'''
         }} else if (struct_name == "{obj.name}") {{
-            auto obj1 = random_{obj.name}();
-            std::ofstream(file1_path) << {obj.name}_to_json_string(obj1);
+            auto obj1 = {namespace}::random_{obj.name}();
+            std::ofstream(file1_path) << {namespace}::{obj.name}_to_json_string(obj1);
             auto obj2 =
-                {obj.name}_from_json (
+                {namespace}::{obj.name}_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -335,7 +340,7 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
         code_convert.extend(f'''
         }} else if (struct_name == "{obj.name}") {{
             auto obj =
-                {obj.name}_from_json (
+                {namespace}::{obj.name}_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -348,13 +353,13 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
         code_compare.extend(f'''
         }} else if (struct_name == "{obj.name}") {{
             auto obj1 =
-                {obj.name}_from_json (
+                {namespace}::{obj.name}_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                {obj.name}_from_json (
+                {namespace}::{obj.name}_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -365,9 +370,12 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
 
     code = []
     for line in cpp_test_template.split('\n'):
-        if line=='//include-dto//':
+        if line=='//namespace-begin//':
+            code.append(f'namespace {namespace} {{')
+        elif line=='//namespace-end//':
+            code.append(f'}} // namespace {namespace}')
+        elif line=='//include-dto//':
             dto_dir, dto_name = os.path.split(dto_file_path)
-            #code.append(f'#include "{dto_name}.cpp"')
             code.extend(code_include)
         elif line=='//create-struct-random//':
             code.extend(code_construct_random)
@@ -392,6 +400,8 @@ cpp_test_template = '''
 //include-dto//
 
 namespace fs = std::filesystem;
+
+//namespace-begin//
 
 std::random_device rd;
 std::mt19937 generator(rd());
@@ -540,6 +550,8 @@ std::optional<std::vector<std::string>> random_optional_list_string (
 }
 
 //create-struct-random//
+
+//namespace-end//
 
 int main (int argc, const char **argv) try {
 

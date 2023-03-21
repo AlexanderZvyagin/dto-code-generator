@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Histogram.hpp"
+namespace dto {
 class EvaluationPoint;
 std::string EvaluationPoint_to_json_string(const EvaluationPoint &obj);
 class EvaluationPoint {
@@ -149,4 +150,5 @@ EvaluationPoint EvaluationPoint_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

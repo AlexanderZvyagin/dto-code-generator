@@ -20,6 +20,7 @@ using json = nlohmann::json;
 
 #include "Updater.hpp"
 #include "EvaluationPoint.hpp"
+namespace dto {
 class Model;
 std::string Model_to_json_string(const Model &obj);
 class Model {
@@ -160,4 +161,5 @@ Model Model_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

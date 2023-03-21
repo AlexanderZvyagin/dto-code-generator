@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class GeometricalBrownianMotionRef;
 std::string GeometricalBrownianMotionRef_to_json_string(const GeometricalBrownianMotionRef &obj);
 class GeometricalBrownianMotionRef: public Updater {
@@ -73,4 +74,5 @@ GeometricalBrownianMotionRef GeometricalBrownianMotionRef_from_json(const json &
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

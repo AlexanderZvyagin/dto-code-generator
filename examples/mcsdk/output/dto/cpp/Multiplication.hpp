@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class Multiplication;
 std::string Multiplication_to_json_string(const Multiplication &obj);
 class Multiplication: public Updater {
@@ -72,4 +73,5 @@ Multiplication Multiplication_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

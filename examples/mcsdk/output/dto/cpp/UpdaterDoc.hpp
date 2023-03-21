@@ -18,6 +18,7 @@
 using json = nlohmann::json;
 
 
+namespace dto {
 class UpdaterDoc;
 std::string UpdaterDoc_to_json_string(const UpdaterDoc &obj);
 class UpdaterDoc {
@@ -106,4 +107,5 @@ UpdaterDoc UpdaterDoc_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class Linear1DInterpolation;
 std::string Linear1DInterpolation_to_json_string(const Linear1DInterpolation &obj);
 class Linear1DInterpolation: public Updater {
@@ -84,4 +85,5 @@ Linear1DInterpolation Linear1DInterpolation_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

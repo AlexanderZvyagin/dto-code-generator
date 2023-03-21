@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class Option;
 std::string Option_to_json_string(const Option &obj);
 class Option: public Updater {
@@ -75,4 +76,5 @@ Option Option_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

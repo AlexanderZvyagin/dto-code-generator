@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class IndependentGaussian;
 std::string IndependentGaussian_to_json_string(const IndependentGaussian &obj);
 class IndependentGaussian: public Updater {
@@ -71,4 +72,5 @@ IndependentGaussian IndependentGaussian_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

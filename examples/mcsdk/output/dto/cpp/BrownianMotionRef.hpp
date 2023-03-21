@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class BrownianMotionRef;
 std::string BrownianMotionRef_to_json_string(const BrownianMotionRef &obj);
 class BrownianMotionRef: public Updater {
@@ -73,4 +74,5 @@ BrownianMotionRef BrownianMotionRef_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

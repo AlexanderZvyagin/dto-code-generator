@@ -18,6 +18,7 @@
 using json = nlohmann::json;
 
 
+namespace dto {
 class DtoError;
 std::string DtoError_to_json_string(const DtoError &obj);
 class DtoError {
@@ -98,4 +99,5 @@ DtoError DtoError_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

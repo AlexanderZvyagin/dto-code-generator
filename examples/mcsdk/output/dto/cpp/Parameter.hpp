@@ -18,6 +18,7 @@
 using json = nlohmann::json;
 
 
+namespace dto {
 class Parameter;
 std::string Parameter_to_json_string(const Parameter &obj);
 class Parameter {
@@ -90,4 +91,5 @@ Parameter Parameter_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

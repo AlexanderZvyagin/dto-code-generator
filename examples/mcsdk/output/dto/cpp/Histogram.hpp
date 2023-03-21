@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "HistogramAxis.hpp"
+namespace dto {
 class Histogram;
 std::string Histogram_to_json_string(const Histogram &obj);
 class Histogram {
@@ -77,4 +78,5 @@ Histogram Histogram_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

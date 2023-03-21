@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class BrownianMotion;
 std::string BrownianMotion_to_json_string(const BrownianMotion &obj);
 class BrownianMotion: public Updater {
@@ -73,4 +74,5 @@ BrownianMotion BrownianMotion_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

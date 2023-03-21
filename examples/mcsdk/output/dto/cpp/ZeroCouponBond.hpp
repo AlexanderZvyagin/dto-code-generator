@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class ZeroCouponBond;
 std::string ZeroCouponBond_to_json_string(const ZeroCouponBond &obj);
 class ZeroCouponBond: public Updater {
@@ -72,4 +73,5 @@ ZeroCouponBond ZeroCouponBond_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class CorrelatedGaussian;
 std::string CorrelatedGaussian_to_json_string(const CorrelatedGaussian &obj);
 class CorrelatedGaussian: public Updater {
@@ -73,4 +74,5 @@ CorrelatedGaussian CorrelatedGaussian_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

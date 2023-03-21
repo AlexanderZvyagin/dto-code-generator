@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 
 #include "Updater.hpp"
+namespace dto {
 class Barrier;
 std::string Barrier_to_json_string(const Barrier &obj);
 class Barrier: public Updater {
@@ -80,4 +81,5 @@ Barrier Barrier_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 

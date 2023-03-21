@@ -30,6 +30,8 @@
 
 namespace fs = std::filesystem;
 
+namespace dto {
+
 std::random_device rd;
 std::mt19937 generator(rd());
 
@@ -1048,6 +1050,8 @@ std::optional<std::vector<EvaluationResults>> random_optional_list_EvaluationRes
 }
 
 
+} // namespace dto
+
 int main (int argc, const char **argv) try {
 
     const std::string
@@ -1066,10 +1070,10 @@ int main (int argc, const char **argv) try {
         if (false) {
 
         } else if (struct_name == "DtoError") {
-            auto obj1 = random_DtoError();
-            std::ofstream(file1_path) << DtoError_to_json_string(obj1);
+            auto obj1 = dto::random_DtoError();
+            std::ofstream(file1_path) << dto::DtoError_to_json_string(obj1);
             auto obj2 =
-                DtoError_from_json (
+                dto::DtoError_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1079,10 +1083,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "UpdaterDoc") {
-            auto obj1 = random_UpdaterDoc();
-            std::ofstream(file1_path) << UpdaterDoc_to_json_string(obj1);
+            auto obj1 = dto::random_UpdaterDoc();
+            std::ofstream(file1_path) << dto::UpdaterDoc_to_json_string(obj1);
             auto obj2 =
-                UpdaterDoc_from_json (
+                dto::UpdaterDoc_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1092,10 +1096,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "UpdaterDto") {
-            auto obj1 = random_UpdaterDto();
-            std::ofstream(file1_path) << UpdaterDto_to_json_string(obj1);
+            auto obj1 = dto::random_UpdaterDto();
+            std::ofstream(file1_path) << dto::UpdaterDto_to_json_string(obj1);
             auto obj2 =
-                UpdaterDto_from_json (
+                dto::UpdaterDto_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1105,10 +1109,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Updater") {
-            auto obj1 = random_Updater();
-            std::ofstream(file1_path) << Updater_to_json_string(obj1);
+            auto obj1 = dto::random_Updater();
+            std::ofstream(file1_path) << dto::Updater_to_json_string(obj1);
             auto obj2 =
-                Updater_from_json (
+                dto::Updater_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1118,10 +1122,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "IndependentGaussian") {
-            auto obj1 = random_IndependentGaussian();
-            std::ofstream(file1_path) << IndependentGaussian_to_json_string(obj1);
+            auto obj1 = dto::random_IndependentGaussian();
+            std::ofstream(file1_path) << dto::IndependentGaussian_to_json_string(obj1);
             auto obj2 =
-                IndependentGaussian_from_json (
+                dto::IndependentGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1131,10 +1135,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "CorrelatedGaussian") {
-            auto obj1 = random_CorrelatedGaussian();
-            std::ofstream(file1_path) << CorrelatedGaussian_to_json_string(obj1);
+            auto obj1 = dto::random_CorrelatedGaussian();
+            std::ofstream(file1_path) << dto::CorrelatedGaussian_to_json_string(obj1);
             auto obj2 =
-                CorrelatedGaussian_from_json (
+                dto::CorrelatedGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1144,10 +1148,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "BrownianMotion") {
-            auto obj1 = random_BrownianMotion();
-            std::ofstream(file1_path) << BrownianMotion_to_json_string(obj1);
+            auto obj1 = dto::random_BrownianMotion();
+            std::ofstream(file1_path) << dto::BrownianMotion_to_json_string(obj1);
             auto obj2 =
-                BrownianMotion_from_json (
+                dto::BrownianMotion_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1157,10 +1161,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "BrownianMotionRef") {
-            auto obj1 = random_BrownianMotionRef();
-            std::ofstream(file1_path) << BrownianMotionRef_to_json_string(obj1);
+            auto obj1 = dto::random_BrownianMotionRef();
+            std::ofstream(file1_path) << dto::BrownianMotionRef_to_json_string(obj1);
             auto obj2 =
-                BrownianMotionRef_from_json (
+                dto::BrownianMotionRef_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1170,10 +1174,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "GeometricalBrownianMotion") {
-            auto obj1 = random_GeometricalBrownianMotion();
-            std::ofstream(file1_path) << GeometricalBrownianMotion_to_json_string(obj1);
+            auto obj1 = dto::random_GeometricalBrownianMotion();
+            std::ofstream(file1_path) << dto::GeometricalBrownianMotion_to_json_string(obj1);
             auto obj2 =
-                GeometricalBrownianMotion_from_json (
+                dto::GeometricalBrownianMotion_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1183,10 +1187,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "GeometricalBrownianMotionRef") {
-            auto obj1 = random_GeometricalBrownianMotionRef();
-            std::ofstream(file1_path) << GeometricalBrownianMotionRef_to_json_string(obj1);
+            auto obj1 = dto::random_GeometricalBrownianMotionRef();
+            std::ofstream(file1_path) << dto::GeometricalBrownianMotionRef_to_json_string(obj1);
             auto obj2 =
-                GeometricalBrownianMotionRef_from_json (
+                dto::GeometricalBrownianMotionRef_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1196,10 +1200,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "ZeroCouponBond") {
-            auto obj1 = random_ZeroCouponBond();
-            std::ofstream(file1_path) << ZeroCouponBond_to_json_string(obj1);
+            auto obj1 = dto::random_ZeroCouponBond();
+            std::ofstream(file1_path) << dto::ZeroCouponBond_to_json_string(obj1);
             auto obj2 =
-                ZeroCouponBond_from_json (
+                dto::ZeroCouponBond_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1209,10 +1213,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Option") {
-            auto obj1 = random_Option();
-            std::ofstream(file1_path) << Option_to_json_string(obj1);
+            auto obj1 = dto::random_Option();
+            std::ofstream(file1_path) << dto::Option_to_json_string(obj1);
             auto obj2 =
-                Option_from_json (
+                dto::Option_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1222,10 +1226,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Barrier") {
-            auto obj1 = random_Barrier();
-            std::ofstream(file1_path) << Barrier_to_json_string(obj1);
+            auto obj1 = dto::random_Barrier();
+            std::ofstream(file1_path) << dto::Barrier_to_json_string(obj1);
             auto obj2 =
-                Barrier_from_json (
+                dto::Barrier_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1235,10 +1239,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Multiplication") {
-            auto obj1 = random_Multiplication();
-            std::ofstream(file1_path) << Multiplication_to_json_string(obj1);
+            auto obj1 = dto::random_Multiplication();
+            std::ofstream(file1_path) << dto::Multiplication_to_json_string(obj1);
             auto obj2 =
-                Multiplication_from_json (
+                dto::Multiplication_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1248,10 +1252,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "HistogramAxis") {
-            auto obj1 = random_HistogramAxis();
-            std::ofstream(file1_path) << HistogramAxis_to_json_string(obj1);
+            auto obj1 = dto::random_HistogramAxis();
+            std::ofstream(file1_path) << dto::HistogramAxis_to_json_string(obj1);
             auto obj2 =
-                HistogramAxis_from_json (
+                dto::HistogramAxis_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1261,10 +1265,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Histogram") {
-            auto obj1 = random_Histogram();
-            std::ofstream(file1_path) << Histogram_to_json_string(obj1);
+            auto obj1 = dto::random_Histogram();
+            std::ofstream(file1_path) << dto::Histogram_to_json_string(obj1);
             auto obj2 =
-                Histogram_from_json (
+                dto::Histogram_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1274,10 +1278,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "EvaluationPoint") {
-            auto obj1 = random_EvaluationPoint();
-            std::ofstream(file1_path) << EvaluationPoint_to_json_string(obj1);
+            auto obj1 = dto::random_EvaluationPoint();
+            std::ofstream(file1_path) << dto::EvaluationPoint_to_json_string(obj1);
             auto obj2 =
-                EvaluationPoint_from_json (
+                dto::EvaluationPoint_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1287,10 +1291,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Parameter") {
-            auto obj1 = random_Parameter();
-            std::ofstream(file1_path) << Parameter_to_json_string(obj1);
+            auto obj1 = dto::random_Parameter();
+            std::ofstream(file1_path) << dto::Parameter_to_json_string(obj1);
             auto obj2 =
-                Parameter_from_json (
+                dto::Parameter_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1300,10 +1304,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Model") {
-            auto obj1 = random_Model();
-            std::ofstream(file1_path) << Model_to_json_string(obj1);
+            auto obj1 = dto::random_Model();
+            std::ofstream(file1_path) << dto::Model_to_json_string(obj1);
             auto obj2 =
-                Model_from_json (
+                dto::Model_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1313,10 +1317,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Result") {
-            auto obj1 = random_Result();
-            std::ofstream(file1_path) << Result_to_json_string(obj1);
+            auto obj1 = dto::random_Result();
+            std::ofstream(file1_path) << dto::Result_to_json_string(obj1);
             auto obj2 =
-                Result_from_json (
+                dto::Result_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1326,10 +1330,10 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "EvaluationResults") {
-            auto obj1 = random_EvaluationResults();
-            std::ofstream(file1_path) << EvaluationResults_to_json_string(obj1);
+            auto obj1 = dto::random_EvaluationResults();
+            std::ofstream(file1_path) << dto::EvaluationResults_to_json_string(obj1);
             auto obj2 =
-                EvaluationResults_from_json (
+                dto::EvaluationResults_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1349,7 +1353,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "DtoError") {
             auto obj =
-                DtoError_from_json (
+                dto::DtoError_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1362,7 +1366,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "UpdaterDoc") {
             auto obj =
-                UpdaterDoc_from_json (
+                dto::UpdaterDoc_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1375,7 +1379,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "UpdaterDto") {
             auto obj =
-                UpdaterDto_from_json (
+                dto::UpdaterDto_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1388,7 +1392,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Updater") {
             auto obj =
-                Updater_from_json (
+                dto::Updater_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1401,7 +1405,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "IndependentGaussian") {
             auto obj =
-                IndependentGaussian_from_json (
+                dto::IndependentGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1414,7 +1418,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "CorrelatedGaussian") {
             auto obj =
-                CorrelatedGaussian_from_json (
+                dto::CorrelatedGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1427,7 +1431,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "BrownianMotion") {
             auto obj =
-                BrownianMotion_from_json (
+                dto::BrownianMotion_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1440,7 +1444,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "BrownianMotionRef") {
             auto obj =
-                BrownianMotionRef_from_json (
+                dto::BrownianMotionRef_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1453,7 +1457,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "GeometricalBrownianMotion") {
             auto obj =
-                GeometricalBrownianMotion_from_json (
+                dto::GeometricalBrownianMotion_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1466,7 +1470,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "GeometricalBrownianMotionRef") {
             auto obj =
-                GeometricalBrownianMotionRef_from_json (
+                dto::GeometricalBrownianMotionRef_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1479,7 +1483,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "ZeroCouponBond") {
             auto obj =
-                ZeroCouponBond_from_json (
+                dto::ZeroCouponBond_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1492,7 +1496,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Option") {
             auto obj =
-                Option_from_json (
+                dto::Option_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1505,7 +1509,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Barrier") {
             auto obj =
-                Barrier_from_json (
+                dto::Barrier_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1518,7 +1522,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Multiplication") {
             auto obj =
-                Multiplication_from_json (
+                dto::Multiplication_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1531,7 +1535,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "HistogramAxis") {
             auto obj =
-                HistogramAxis_from_json (
+                dto::HistogramAxis_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1544,7 +1548,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Histogram") {
             auto obj =
-                Histogram_from_json (
+                dto::Histogram_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1557,7 +1561,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "EvaluationPoint") {
             auto obj =
-                EvaluationPoint_from_json (
+                dto::EvaluationPoint_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1570,7 +1574,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Parameter") {
             auto obj =
-                Parameter_from_json (
+                dto::Parameter_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1583,7 +1587,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Model") {
             auto obj =
-                Model_from_json (
+                dto::Model_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1596,7 +1600,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Result") {
             auto obj =
-                Result_from_json (
+                dto::Result_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1609,7 +1613,7 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "EvaluationResults") {
             auto obj =
-                EvaluationResults_from_json (
+                dto::EvaluationResults_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1629,13 +1633,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "DtoError") {
             auto obj1 =
-                DtoError_from_json (
+                dto::DtoError_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                DtoError_from_json (
+                dto::DtoError_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1646,13 +1650,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "UpdaterDoc") {
             auto obj1 =
-                UpdaterDoc_from_json (
+                dto::UpdaterDoc_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                UpdaterDoc_from_json (
+                dto::UpdaterDoc_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1663,13 +1667,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "UpdaterDto") {
             auto obj1 =
-                UpdaterDto_from_json (
+                dto::UpdaterDto_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                UpdaterDto_from_json (
+                dto::UpdaterDto_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1680,13 +1684,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Updater") {
             auto obj1 =
-                Updater_from_json (
+                dto::Updater_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Updater_from_json (
+                dto::Updater_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1697,13 +1701,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "IndependentGaussian") {
             auto obj1 =
-                IndependentGaussian_from_json (
+                dto::IndependentGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                IndependentGaussian_from_json (
+                dto::IndependentGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1714,13 +1718,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "CorrelatedGaussian") {
             auto obj1 =
-                CorrelatedGaussian_from_json (
+                dto::CorrelatedGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                CorrelatedGaussian_from_json (
+                dto::CorrelatedGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1731,13 +1735,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "BrownianMotion") {
             auto obj1 =
-                BrownianMotion_from_json (
+                dto::BrownianMotion_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                BrownianMotion_from_json (
+                dto::BrownianMotion_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1748,13 +1752,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "BrownianMotionRef") {
             auto obj1 =
-                BrownianMotionRef_from_json (
+                dto::BrownianMotionRef_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                BrownianMotionRef_from_json (
+                dto::BrownianMotionRef_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1765,13 +1769,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "GeometricalBrownianMotion") {
             auto obj1 =
-                GeometricalBrownianMotion_from_json (
+                dto::GeometricalBrownianMotion_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                GeometricalBrownianMotion_from_json (
+                dto::GeometricalBrownianMotion_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1782,13 +1786,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "GeometricalBrownianMotionRef") {
             auto obj1 =
-                GeometricalBrownianMotionRef_from_json (
+                dto::GeometricalBrownianMotionRef_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                GeometricalBrownianMotionRef_from_json (
+                dto::GeometricalBrownianMotionRef_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1799,13 +1803,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "ZeroCouponBond") {
             auto obj1 =
-                ZeroCouponBond_from_json (
+                dto::ZeroCouponBond_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                ZeroCouponBond_from_json (
+                dto::ZeroCouponBond_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1816,13 +1820,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Option") {
             auto obj1 =
-                Option_from_json (
+                dto::Option_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Option_from_json (
+                dto::Option_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1833,13 +1837,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Barrier") {
             auto obj1 =
-                Barrier_from_json (
+                dto::Barrier_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Barrier_from_json (
+                dto::Barrier_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1850,13 +1854,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Multiplication") {
             auto obj1 =
-                Multiplication_from_json (
+                dto::Multiplication_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Multiplication_from_json (
+                dto::Multiplication_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1867,13 +1871,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "HistogramAxis") {
             auto obj1 =
-                HistogramAxis_from_json (
+                dto::HistogramAxis_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                HistogramAxis_from_json (
+                dto::HistogramAxis_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1884,13 +1888,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Histogram") {
             auto obj1 =
-                Histogram_from_json (
+                dto::Histogram_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Histogram_from_json (
+                dto::Histogram_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1901,13 +1905,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "EvaluationPoint") {
             auto obj1 =
-                EvaluationPoint_from_json (
+                dto::EvaluationPoint_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                EvaluationPoint_from_json (
+                dto::EvaluationPoint_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1918,13 +1922,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Parameter") {
             auto obj1 =
-                Parameter_from_json (
+                dto::Parameter_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Parameter_from_json (
+                dto::Parameter_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1935,13 +1939,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Model") {
             auto obj1 =
-                Model_from_json (
+                dto::Model_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Model_from_json (
+                dto::Model_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1952,13 +1956,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Result") {
             auto obj1 =
-                Result_from_json (
+                dto::Result_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                Result_from_json (
+                dto::Result_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -1969,13 +1973,13 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "EvaluationResults") {
             auto obj1 =
-                EvaluationResults_from_json (
+                dto::EvaluationResults_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                EvaluationResults_from_json (
+                dto::EvaluationResults_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path

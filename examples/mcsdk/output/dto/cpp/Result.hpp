@@ -18,6 +18,7 @@
 using json = nlohmann::json;
 
 
+namespace dto {
 class Result;
 std::string Result_to_json_string(const Result &obj);
 class Result {
@@ -122,4 +123,5 @@ Result Result_from_json(const json &j) {
     from_json(j,obj);
     return obj;
 }
+} // namespace dto
 
