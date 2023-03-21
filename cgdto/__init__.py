@@ -4,7 +4,6 @@ from .typescript import *
 from .cpp import *
 from .csharp import *
 
-# FIXME: move into 'all'
 def write_objs (
     dir_dto     : str,
     dir_tests   : str,
