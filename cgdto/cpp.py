@@ -173,8 +173,9 @@ def Struct_compare_cpp(self:Struct):
 
 def Struct_to_JSON_cpp (self:Struct):
     code = []
+    function_name = f'void to_json(json &j, const {self.name} &obj)'
     code.append('inline')
-    code.append(f'void to_json(json &j, const {self.name} &obj) {{')
+    code.append(f'{function_name} try {{')
     code.append(f'{indent}j = json::object();')
     if self.base:
         code.append(f'{indent}to_json(j,static_cast<const {self.base.name} &>(obj));')
@@ -185,14 +186,17 @@ def Struct_to_JSON_cpp (self:Struct):
             code.append(f'{indent*2}j["{attr.name}"] = obj.{attr.name}.value();')
         else:
             code.append(f'{indent}j["{attr.name}"] = obj.{attr.name};')
+    code.append(f'}} catch (const std::exception &e) {{')
+    code.append(f'{indent}std::throw_with_nested(std::runtime_error("{function_name} exception"));')
     code.append(f'}}')
     code.append('')
     return code
 
 def Struct_from_JSON_cpp (self:Struct):
     code = []
+    function_name = f'void from_json(const json &j, {self.name} &obj)'
     code.append('inline')
-    code.append(f'void from_json(const json &j, {self.name} &obj) {{')
+    code.append(f'{function_name} try {{')
     if self.base:
         code.append(f'{indent}from_json(j,static_cast<{self.base.name} &>(obj));')
     for attr in self.attributes:
@@ -202,6 +206,8 @@ def Struct_from_JSON_cpp (self:Struct):
             code.append(f'{indent*2}obj.{attr.name} = *it;')
         else:
             code.append(f'{indent}j.at("{attr.name}").get_to(obj.{attr.name});')
+    code.append(f'}} catch (const std::exception &e) {{')
+    code.append(f'{indent}std::throw_with_nested(std::runtime_error("{function_name} exception"));')
     code.append(f'}}')
     return code
 
@@ -666,8 +672,6 @@ executable (
 '''
 
     run = f'''#!/usr/bin/env bash
-
-# echo I am the c++ bash wrapper script with args: $@
 
 case "$1" in
     build)
