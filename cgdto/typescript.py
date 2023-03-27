@@ -611,7 +611,7 @@ case "$1" in
     build)
         npm install typescript
         npm install --save-dev @types/node
-        ./node_modules/typescript/bin/tsc --lib es2022 dto_tests.ts
+        tsc --lib es2022 dto_tests.ts
         ;;
     *)
         node dto_tests.js $@
