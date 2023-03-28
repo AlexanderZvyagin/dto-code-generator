@@ -4,7 +4,7 @@
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,4,2)
+__version__ = (0,4,3)
 
 name_dto             = 'dto'
 name_dto_tests       = 'dto_tests'

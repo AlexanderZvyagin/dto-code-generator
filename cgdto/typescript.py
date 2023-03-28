@@ -609,7 +609,7 @@ def create_test_env_typescript (dir_run_tests,dir_dto,dir_tests):
 
 case "$1" in
     build)
-        npm install typescript
+        npm install --save-dev typescript
         npm install --save-dev @types/node
         tsc --lib es2022 dto_tests.ts
         ;;
