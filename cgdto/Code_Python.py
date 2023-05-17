@@ -1,132 +1,10 @@
+import os
 from .all import *
+from .Code import *
 
-experimental_version = 1
-
-'''
-
-There are two things to generate:
-
-The generator interface does not know:
-- how many files will be generated
-- what are the file names, the purpose of files
-
-yield {'directory':outdir,'file':file_name,'line':code_line}
-yield {'path':relative_path,'line':code_line}
-'''
-class Generator:
-    def __init__ (self, language, extension):
-        self.language = language
-        self.extension = extension
-
-    def Process (self, objs, args):
-        # outdir = args.get('dir_dto')
-        # if outdir: self.ProcessDto(objs, outdir)
-        self.ProcessDto(objs, args)
-
-        print(f'experimental_version={experimental_version}')
-        self.ProcessTestsSingleFile(objs, args)
-        # outdir = args.get('dir_tests')
-        # if outdir: self.ProcessTests(objs, outdir)
-
-        # outdir = args.get('dir_run_tests')
-        # if outdir: self.ProcessRunTests(objs, outdir)
-
-    def ProcessDtoSingleFilePrefix (self, args):
-        return []
-
-    def ProcessDtoSingleFileSuffix (self, args):
-        return []
-
-    def ProcessDtoSingleFile (self, objs, args):
-        outdir = args.get('dir_dto')
-        if not outdir: return
-
-        name = f'{outdir}/dto.{self.extension}'
-
-        with open(name,'w') as file:
-
-            for line in self.ProcessDtoSingleFilePrefix(args):
-                file.write(line+'\n')
-            file.write('\n')
-
-            for obj in objs:
-                if isinstance(obj,Struct):
-                    for line in self.StructCode(obj):
-                        file.write(line+'\n')
-                    file.write('\n')
-                elif isinstance(obj,Function):
-                    for line in self.FunctionCode(obj):
-                        file.write(line+'\n')
-                    file.write('\n')
-                elif isinstance(obj,CodeBlock):
-                    for line in obj.code.get(self.language,[]):
-                        file.write(line+'\n')
-                else:
-                    print(f'Cannot handle {type(obj)}')
-
-            schema_version = args.get('schema_version')
-            if schema_version:
-                for line in self.ProcessDtoSingleFileSuffix(schema_version):
-                    file.write(line+'\n')
-                file.write('\n')
-
-    def ProcessDto(self, objs, args):
-        print(f'Code is missing for: ProcessDto {self.language}')
-
-    def ProcessTests(self, objs, outdir):
-        print(f'Code is missing for: ProcessTests {self.language}')
-
-    # def ProcessRunTests(self, objs, outdir):
-    #     print(f'Code is missing for: ProcessRunTests {self.language}')
-
-    def StructCode (self, obj):
-        print(f'Code is missing for: StructCode {self.language}')
-        return []
-
-    def FunctionCode (self, func:Function, obj:Struct=None):
-        print(f'Code is missing for: FunctionCode {self.language}')
-        return []
-
-    def ConstructorCode(self, ctor:Function, base:Struct=None):
-        print(f'Code is missing for: ConstructorCode {self.language}')
-        return []
-
-    def StructFromJson (self, obj:Struct):
-        return []
-
-    def StructToJson (self, obj:Struct):
-        return []
-
-    def StructFromJsonString (self, obj:Struct):
-        return []
-
-    def StructToJsonString (self, obj:Struct):
-        return []
-
-    def ProcessTestsSingleFile (self, objs, args):
-        print('----------------------')
-        outdir = args.get('dir_tests')
-        print('aqqqqq',outdir)
-        if not outdir: return
-        name = f'{outdir}/{self.name_test}.{self.extension}'
-        print(f'AAAAAAAAAAAAAAAAAAAAAAAAA!!!!! {name}')
-        with open(name,'w') as file:
-            for line in self.ProcessTests(objs):
-                yield line
-
-class GeneratorCpp (Generator):
-    def __init__ (self):
-        super().__init__ ('cpp','cpp')
-
-'''
-Python code generator
-
-It generates two files: the dto file and the test file.
-'''
-class GeneratorPython (Generator):
-
-    def __init__ (self):
-        super().__init__ ('python','py')
+class CodePython (Code):
+    def __init__ (self, options={}):
+        super().__init__('python','py',options)
 
     def TypeToString (self, var:Variable) -> str:
 
@@ -164,12 +42,77 @@ class GeneratorPython (Generator):
         else:
             return str(arg)
 
-    def ProcessDto(self, objs, args):
-        # outdir = args.get('dir_dto')
-        # if outdir: self.ProcessDtoSingleFile(objs, outdir)
-        self.ProcessDtoSingleFile(objs, args)
+    def GeneratorDto (self, objs):
+        path = f'{self.GetDirDto()}/{self.name_dto}.{self.extension}'
 
-    def StructCode (self, obj:Struct):
+        for line in self.GeneratorSingleDtoFilePrefix (objs):
+            yield (path, line)
+
+        for line in self.GeneratorSingleDtoFileBody   (objs):
+            yield (path, line)
+
+        for line in self.GeneratorSingleDtoFileSuffix (objs):
+            yield (path, line)
+
+    def GeneratorTests (self, objs):
+        path = f'{self.GetDirTest()}/{self.name_test}.{self.extension}'
+
+        for line in self.GeneratorTest (objs):
+            yield (path, line)
+
+    def GeneratorSingleDtoFilePrefix (self, objs):
+        schema_version = self.options.get('schema_version')
+        if schema_version:
+            for line in autogen_text(schema_version).split('\n'):
+                yield f'# {line}'
+
+        code = f'''
+from copy import deepcopy
+import math
+from math import nan
+import json
+try:
+    import pandas as pd
+except:
+    print('Warning: "pandas" package was not found.')
+
+def float_equal(a:float|None, b:float|None) -> bool:
+    if a is None and b is None: return True
+    if a is None and b is not None: return False
+    if b is None and a is not None: return False
+    if math.isnan(a) and math.isnan(b): return True
+    eps = 1e-9
+    ab_diff = abs(a-b)
+    if ab_diff<eps: return True
+    ab_ratio = ab_diff/(abs(a/2 + b/2) + eps)
+    if ab_ratio<eps: return True
+    return False
+
+'''
+        for line in code.split('\n'):
+            yield line
+
+    def GeneratorSingleDtoFileSuffix (self, objs):
+        return ()
+
+    def GeneratorSingleDtoFileBody (self, objs):
+        for obj in objs:
+            if isinstance(obj,Struct):
+                for line in self.GeneratorStruct(obj):
+                    yield line
+                yield ''
+            elif isinstance(obj,Function):
+                for line in self.GeneratorFunction(objs):
+                    yield line
+                yield ''
+            elif isinstance(obj,CodeBlock):
+                for line in obj.code.get(self.language,[]):
+                    yield line
+                yield ''
+            else:
+                print(f'Cannot handle {type(obj)}')
+
+    def GeneratorStruct (self, obj:Struct):
 
         yield f'# Forward declaration'
         yield f'class {obj.name}: pass'
@@ -187,7 +130,7 @@ class GeneratorPython (Generator):
 
         for func in obj.methods:
             if func.code and func.code.get('python','') is None: continue
-            for line in self.FunctionCode(func,obj):
+            for line in self.GeneratorFunction(func,obj):
                 yield f'{indent}{line}'
             yield ''
 
@@ -210,23 +153,23 @@ class GeneratorPython (Generator):
         yield f'{indent*1}def json (self) -> str:'
         yield f'{indent*2}return {obj.name}_to_json_string(self)'
 
-        for line in self.StructFromJsonString(obj):
+        for line in self.GeneratorStructFromJsonString(obj):
             yield line
-        for line in self.StructToJsonString(obj):
+        for line in self.GeneratorStructToJsonString(obj):
             yield line
         # code.extend(Struct_from_json_string_python(self))
         # code.extend(Struct_to_json_string_python(self))
 
-        for line in self.StructFromJson(obj):
+        for line in self.GeneratorStructFromJson(obj):
             yield line
-        for line in self.StructToJson(obj):
+        for line in self.GeneratorStructToJson(obj):
             yield line
         # code.extend(Struct_from_json_python(self))
         # code.extend(Struct_to_json_python(self))
 
-    def FunctionCode(self, func:Function, base:Struct=None) -> list[str]:
+    def GeneratorFunction (self, func:Function, base:Struct=None) -> list[str]:
         if base and func.name==base.name:
-            for line in self.ConstructorCode(func,base):
+            for line in self.GeneratorConstructor(func,base):
                 yield line
         else:
             yield f'def {func.name} ('
@@ -243,7 +186,7 @@ class GeneratorPython (Generator):
 
         yield f'{indent}pass'
 
-    def ConstructorCode(self, ctor:Function, base:Struct=None):
+    def GeneratorConstructor(self, ctor:Function, base:Struct=None):
         assert ctor.name == base.name
 
         yield ''
@@ -282,39 +225,7 @@ class GeneratorPython (Generator):
                 else:
                     yield f'{indent*1}self.{attr.name} : {self.TypeToString(attr)} = {self.ValueToString(arg)}'
 
-    def ProcessDtoSingleFilePrefix (self, args):
-        schema_version = args.get('schema_version')
-        if schema_version:
-            for line in autogen_text(schema_version).split('\n'):
-                yield f'# {line}'
-
-        code = f'''
-from copy import deepcopy
-import math
-from math import nan
-import json
-try:
-    import pandas as pd
-except:
-    print('Warning: "pandas" package was not found.')
-
-def float_equal(a:float|None, b:float|None) -> bool:
-    if a is None and b is None: return True
-    if a is None and b is not None: return False
-    if b is None and a is not None: return False
-    if math.isnan(a) and math.isnan(b): return True
-    eps = 1e-9
-    ab_diff = abs(a-b)
-    if ab_diff<eps: return True
-    ab_ratio = ab_diff/(abs(a/2 + b/2) + eps)
-    if ab_ratio<eps: return True
-    return False
-
-'''
-        for line in code.split('\n'):
-            yield line
-
-    def StructFromJson (self, obj:Struct):
+    def GeneratorStructFromJson (self, obj:Struct):
         yield f'def {obj.name}_from_json (j:dict, obj:{obj.name}):'
         yield f'{indent}assert isinstance(obj,{obj.name})'
         if obj.base:
@@ -341,7 +252,7 @@ def float_equal(a:float|None, b:float|None) -> bool:
             else:
                 yield f'{indent*(n+0)}obj.{attr.name} = j["{attr.name}"]'
 
-    def StructFromJsonString (self, obj:Struct):
+    def GeneratorStructFromJsonString (self, obj:Struct):
         yield f'def {obj.name}_from_json_string (jstr):'
         yield f'{indent}j = json.loads(jstr)'
         yield f'{indent}obj = {obj.name}()'
@@ -349,7 +260,7 @@ def float_equal(a:float|None, b:float|None) -> bool:
         yield f'{indent}return obj'
         yield ''
 
-    def StructToJson (self, obj:Struct):
+    def GeneratorStructToJson (self, obj:Struct):
         yield f'def {obj.name}_to_json(j:dict, obj:{obj.name}):'
         if obj.base:
             yield f'{indent}{obj.base.name}_to_json(j,obj)'
@@ -383,18 +294,15 @@ def float_equal(a:float|None, b:float|None) -> bool:
                 n = 1
             for line in code_not_optional:
                 yield f'{indent*n}{line}'
-            # code.extend([f'{indent*n}{line}' for line in code_not_optional])
-        # FIXME?!
         yield f'{indent}pass'
-        yield ''
 
-    def StructToJsonString (self, obj:Struct):
+    def GeneratorStructToJsonString (self, obj:Struct):
         yield f'def {obj.name}_to_json_string (self:{obj.name}):'
         yield f'{indent}j = {{}}'
         yield f'{indent}{obj.name}_to_json(j,self)'
         yield f'{indent}return json.dumps(j)'
 
-    def TestsCode (self, objs):
+    def GeneratorTest (self, objs):
 
         struct_names = []
         code_construct_random = []
@@ -437,27 +345,27 @@ def random_{obj.name} ():
     )
 '''.split('\n'))
 
-        code_construct_random.extend(f'''
+            code_construct_random.extend(f'''
 def random_optional_{obj.name} () -> {obj.name}|None:
     if yes_no():
         return None
     return random_{obj.name}()
 '''.split('\n'))
 
-        code_construct_random.extend(f'''
+            code_construct_random.extend(f'''
 def random_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]:
     size = random.randint(min,max)
     return [random_{obj.name}() for i in range(size)]
 '''.split('\n'))
 
-        code_construct_random.extend(f'''
+            code_construct_random.extend(f'''
 def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]|None:
     if yes_no():
         return None
     return random_list_{obj.name}(min,max)
 '''.split('\n'))
 
-        code_create.append(f'''
+            code_create.append(f'''
         elif struct_name=='{obj.name}':
             obj1 = random_{obj.name}()
             open(file1_name,'w').write({obj.name}_to_json_string(obj1))
@@ -467,18 +375,18 @@ def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name
             assert obj1==obj2
 ''')
 
-        code_convert.extend(f'''
+            code_convert.extend(f'''
         elif struct_name=='{obj.name}':
             obj = {obj.name}_from_json_string(open(file1_name).read())
             open(file2_name,'w').write({obj.name}_to_json_string(obj))
 '''.split('\n'))
 
-        code_compare.extend(f'''
+            code_compare.extend(f'''
         elif struct_name=='{obj.name}':
             obj1 = {obj.name}_from_json_string(open(file1_name).read())
             obj2 = {obj.name}_from_json_string(open(file2_name).read())
             assert obj1==obj2
-    '''.split('\n'))
+'''.split('\n'))
 
         test_template = '''
 import sys, random, uuid
@@ -564,35 +472,63 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         raise Exception(f'Not supported command {command}')
 '''
 
+        code = []
         for line in test_template.split('\n'):
             if line=='#create-struct-random#':
-                for code_line in code_construct_random:
-                    yield code_line
+                code.extend(code_construct_random)
             elif line=='#create-struct-tests#':
-                for code_line in code_create:
-                    yield code_line
+                code.extend(code_create)
             elif line=='#convert-struct-tests#':
-                for code_line in code_convert:
-                    yield code_line
+                code.extend(code_convert)
             elif line=='#compare-struct-tests#':
-                for code_line in code_compare:
-                    yield code_line
+                code.extend(code_compare)
             else:
-                yield line
+                code.append(line)
+        return code
 
+    def CreateTestEnv(self, objs):
 
-class GeneratorTypescript (Generator):
-    def __init__ (self):
-        super().__init__ ('typescript','ts')
+        os.makedirs (self.GetDirTestEnv(), exist_ok=True)
 
-def process (objs, lang, args):
-    if lang=='cpp':
-        g = GeneratorCpp()
-    elif lang=='python':
-        g = GeneratorPython()
-    elif lang=='typescript':
-        g = GeneratorTypescript()
-    else:
-        raise NotImplemented
+        ext_py = self.extension
+        name = f'{self.name_dto}.{ext_py}'
+        os.symlink(f'../../{self.name_dto}/{self.language}/{name}',f'{self.GetDirTest()}/{name}')
+        os.symlink(f'../../{self.name_dto}/{self.language}/{name}',f'{self.GetDirTestEnv()}/{name}')
+        name = f'{self.name_test}.{ext_py}'
+        os.symlink(f'../../{self.name_test}/{self.language}/{name}',f'{self.GetDirTestEnv()}/{name}')
 
-    g.Process(objs, args)
+        run_python = f'''#!/usr/bin/env python3
+
+from {self.name_dto}  import *
+from {self.name_test} import *
+
+if __name__ == '__main__':
+    test_round_trip_python(
+        sys.argv[1],
+        sys.argv[2],
+        sys.argv[3],
+        sys.argv[4] if len(sys.argv)>4 else ''
+    )
+'''
+
+        run = f'''#!/usr/bin/env bash
+
+case "$1" in
+    build)
+        ;;
+    *)
+        ./run-python $@
+        ;;
+esac
+'''
+
+        name = f'{self.GetDirTestEnv()}/run-python'
+        with open(name,'w') as f:
+            f.write(run_python)
+        os.chmod(name,0o777)
+
+        name = f'{self.GetDirTestEnv()}/run'
+        with open(name,'w') as f:
+            f.write(run)
+        os.chmod(name,0o777)
+        
