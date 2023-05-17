@@ -52,12 +52,11 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
     #     help    = 'Create automatic tests.'
     # )
 
-    # parser.add_argument(
-    #     '--run-tests',
-    #     type    = bool,
-    #     action  = 'store_true',
-    #     help    = 'Run automatic tests.'
-    # )
+    parser.add_argument(
+        '--run-tests',
+        action  = 'store_true',
+        help    = 'Run automatic tests.'
+    )
 
 #     parser.add_argument(
 #         '--create-test-environment',
@@ -110,9 +109,10 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
                     objs,
                 )
 
-            for lang1 in languages:
-                for lang2 in languages:
-                    code[lang1].RunTests(code[lang2],objs)
+            if args.run_tests:
+                for lang1 in languages:
+                    for lang2 in languages:
+                        code[lang1].RunTests(code[lang2],objs)
 
         else:
             raise NotImplemented

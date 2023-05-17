@@ -381,7 +381,6 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
         elif line=='//namespace-end//':
             code.append(f'}} // namespace {namespace}')
         elif line=='//include-dto//':
-            dto_dir, dto_name = os.path.split(dto_file_path)
             code.extend(code_include)
         elif line=='//create-struct-random//':
             code.extend(code_construct_random)

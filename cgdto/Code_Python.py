@@ -167,7 +167,7 @@ def float_equal(a:float|None, b:float|None) -> bool:
         # code.extend(Struct_from_json_python(self))
         # code.extend(Struct_to_json_python(self))
 
-    def GeneratorFunction (self, func:Function, base:Struct=None) -> list[str]:
+    def GeneratorFunction (self, func:Function, base:Struct=None):
         if base and func.name==base.name:
             for line in self.GeneratorConstructor(func,base):
                 yield line
