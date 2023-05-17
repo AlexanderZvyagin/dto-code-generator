@@ -31,6 +31,7 @@ class Code:
         self.name_test      = 'test'
         self.name_test_env  = 'test_rundir'
         self.outdir         = 'outdir'
+        self.test_environment_ready = False
 
     def Process (self, objs):
 
@@ -68,12 +69,13 @@ class Code:
         return f'{self.options[self.outdir]}/{self.name_test_env}/{self.language}'
 
     def RunTests (self, other, objs):
+
         for obj in objs:
             if not isinstance(obj,Struct):
                 continue
             if not obj.gen_test:
                 continue
-            print(f'  -> {obj.name}')
+            print(f'  -> [{self.language}] {obj.name}')
             struct_name = obj.name
             outdir1 = self.GetDirTestEnv()
             outdir2 = self.GetDirTestEnv()

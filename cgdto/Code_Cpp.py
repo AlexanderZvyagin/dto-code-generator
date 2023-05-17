@@ -53,7 +53,6 @@ class CodeCpp (Code):
             return str(arg)
         
     def GeneratorDto (self, objs):
-        ext_cpp = self.extension
         ext_hpp = self.header_extension
 
         for obj in objs:
@@ -66,25 +65,10 @@ class CodeCpp (Code):
                     yield (fname, line)
                 yield (fname, '')
 
-        fname = f'{self.GetDirTest()}/{name_dto_tests}.{ext_cpp}'
+    def GeneratorTests (self, objs):
+        fname = self.GetTestFileName()
         for line in self.GeneratorTest(objs):
             yield (fname, line)
-
-        # for obj in objs:
-        #     if isinstance(obj,Struct):
-        #         for line in self.GeneratorStruct(obj):
-        #             yield (path, line)
-        #         yield (path, '')
-        #     elif isinstance(obj,Function):
-        #         for line in self.GeneratorFunction(objs):
-        #             yield (path, line)
-        #         yield (path, '')
-        #     elif isinstance(obj,CodeBlock):
-        #         for line in obj.code.get(self.language,[]):
-        #             yield (path, line)
-        #         yield (path, '')
-        #     else:
-        #         print(f'Cannot handle {type(obj)}')
 
     def GeneratorFilePrefix (self, objs):
 
@@ -150,8 +134,8 @@ using json = nlohmann::json;
         yield f'{indent*2}return {obj.name}_to_json_string(*this);'
         yield f'{indent*1}}}'
 
-        for line in self.GeneratorStructCompare(obj):
-            yield line
+        yield f'}}; // {obj.name}'
+
         for line in self.GeneratorStructToJson(obj):
             yield line
         for line in self.GeneratorStructToJsonString(obj):
@@ -160,8 +144,6 @@ using json = nlohmann::json;
             yield line
         for line in self.GeneratorStructFromJsonString(obj):
             yield line
-
-        yield f'}};'
 
         yield f'}} // namespace {self.namespace}'
 
@@ -279,6 +261,9 @@ using json = nlohmann::json;
         yield f'{indent}return obj;'
         yield f'}}'
         return 
+
+    def GetTestFileName (self):
+        return f'{self.GetDirTest()}/{name_dto_tests}.{self.extension}'
 
     def GeneratorTest (self, objs):
 
@@ -403,30 +388,7 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 '''.split('\n'))
 
-        for line in cpp_test_template.split('\n'):
-            if line=='//namespace-begin//':
-                yield f'namespace {self.namespace} {{'
-            elif line=='//namespace-end//':
-                yield f'}} // namespace {self.namespace}'
-            elif line=='//include-dto//':
-                for line in code_include:
-                    yield line
-            elif line=='//create-struct-random//':
-                for line in code_construct_random:
-                    yield line
-            elif line=='//create-struct-tests//':
-                for line in code_create:
-                    yield line
-            elif line=='//convert-struct-tests//':
-                for line in code_convert:
-                    yield line
-            elif line=='//compare-struct-tests//':
-                for line in code_compare:
-                    yield line
-            else:
-                yield line
-
-cpp_test_template = '''
+        cpp_test_template = '''
 #include <random>
 #include <limits>
 #include <filesystem>
@@ -645,3 +607,90 @@ catch (...) {
     return 1;
 }
 '''
+
+        for line in cpp_test_template.split('\n'):
+            if line=='//namespace-begin//':
+                yield f'namespace {self.namespace} {{'
+            elif line=='//namespace-end//':
+                yield f'}} // namespace {self.namespace}'
+            elif line=='//include-dto//':
+                for line in code_include:
+                    yield line
+            elif line=='//create-struct-random//':
+                for line in code_construct_random:
+                    yield line
+            elif line=='//create-struct-tests//':
+                for line in code_create:
+                    yield line
+            elif line=='//convert-struct-tests//':
+                for line in code_convert:
+                    yield line
+            elif line=='//compare-struct-tests//':
+                for line in code_compare:
+                    yield line
+            else:
+                yield line
+
+    def CreateTestEnv(self, objs):
+
+        os.makedirs (self.GetDirTestEnv(), exist_ok=True)
+
+        # include_dir, include_name = os.path.split(dto_path)
+
+        # abs_test_source = os.path.abspath(f"{test_path}/{name_dto_tests}.{ext['cpp']}")
+        # abs_include_dir = os.path.abspath(f"{include_dir}/cpp")
+
+        abs_test_source = os.path.abspath(self.GetTestFileName())
+        abs_include_dir = os.path.abspath(self.GetDirDto())
+
+        meson_build = f'''
+project (
+        'cpp',
+        ['cpp'],
+        default_options : [
+                'cpp_std=c++20',
+                'buildtype=release',
+        ]
+)
+
+add_global_arguments('-Wno-narrowing', language : 'cpp')
+
+executable (
+    'test-cpp',
+    sources: ['{abs_test_source}'],
+    include_directories : ['{abs_include_dir}'],
+    link_with    : [],
+    dependencies : []
+)
+'''
+
+        run = f'''#!/usr/bin/env bash
+
+case "$1" in
+    build)
+        if [ ! -f nlohmann/json.hpp ]; then
+            mkdir nlohmann
+            (cd nlohmann; wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp)
+        fi
+        meson build
+        cd build
+        ninja
+        ;;
+    *)
+        cd build
+        ./test-cpp $@
+        ;;
+esac
+'''
+
+        with open(f'{self.GetDirTestEnv()}/meson.build','w') as f:
+            f.write(meson_build)
+
+        name = f'{self.GetDirTestEnv()}/run'
+        with open(name,'w') as f:
+            f.write(run)
+        os.chmod(name,0o777)
+
+        run_test(self.GetDirTestEnv(),'build')
+
+        self.test_environment_ready = True

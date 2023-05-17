@@ -111,7 +111,12 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
 
             if args.run_tests:
                 for lang1 in languages:
+                    if not code[lang1].test_environment_ready:
+                        print(f'Language "{lang1}" has no run test environment')
+                        continue
                     for lang2 in languages:
+                        if not code[lang1].test_environment_ready:
+                            continue
                         code[lang1].RunTests(code[lang2],objs)
 
         else:
