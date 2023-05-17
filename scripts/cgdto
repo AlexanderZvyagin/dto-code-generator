@@ -39,6 +39,13 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
         help    = 'DTO schema.'
     )
 
+    parser.add_argument(
+        '--experimental-code',
+        type    = int,
+        default = 0,
+        help    = 'Run experimental code.'
+    )
+
     # parser.add_argument(
     #     '--write-tests',
     #     action  = 'store_true',
@@ -82,29 +89,73 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
 
     languages = args.languages.split(',')
 
-    if 1:
+    if args.experimental_code>0:
         for lang in languages:
 
-            lang_dir_run_tests   = f'{args.output}/{name_dto_run_tests}/{lang}'
-            lang_dir_dto         = f'{lang_dir_run_tests}/../../{name_dto}/{lang}'
-            lang_dir_tests       = f'{lang_dir_run_tests}/../../{name_dto_tests}/{lang}'
 
-            os.makedirs(lang_dir_run_tests,exist_ok=True)
-            os.makedirs(lang_dir_dto,exist_ok=True)
-            os.makedirs(lang_dir_tests,exist_ok=True)
+            # func_name = f'create_test_env_{lang}'
+            # func = globals().get(func_name)
+            # if not func:
+            #     raise Exception(f'Not found: {func_name}')
+            # func(lang_dir_run_tests,lang_dir_dto,lang_dir_tests)
 
-            func_name = f'create_test_env_{lang}'
-            func = globals().get(func_name)
-            if not func:
-                raise Exception(f'Not found: {func_name}')
-            func(lang_dir_run_tests,lang_dir_dto,lang_dir_tests)
+            # write_objs(lang_dir_dto,lang_dir_tests,lang,objs,user_module.schema_version())
 
-            write_objs(lang_dir_dto,lang_dir_tests,lang,objs,user_module.schema_version())
+            if args.experimental_code==1:
 
-    for lang1 in languages:
-        for lang2 in languages:
-            print(f'Testing: {lang1} {lang2}')
-            run_round_trip_tests(lang1,lang2,objs,f'{args.output}/{name_dto_run_tests}')
+                lang_dir_run_tests   = f'{args.output}/{name_dto_run_tests}/{lang}'
+                lang_dir_dto         = f'{lang_dir_run_tests}/../../{name_dto}/{lang}'
+                lang_dir_tests       = f'{lang_dir_run_tests}/../../{name_dto_tests}/{lang}'
+
+                os.makedirs(lang_dir_run_tests,exist_ok=True)
+                os.makedirs(lang_dir_dto,exist_ok=True)
+                os.makedirs(lang_dir_tests,exist_ok=True)
+
+                experimental1.process(
+                    objs,
+                    lang,
+                    {
+                        'dir_dto':lang_dir_dto,
+                        'dir_tests':lang_dir_tests,
+                        'dir_run_tests':lang_dir_run_tests,
+                        'schema_version':user_module.schema_version()
+                    }
+                )
+            elif args.experimental_code==2:
+                experimental2.process(
+                    objs,
+                    lang,
+                    {
+                        'outdir':f'{args.output}',
+                        'schema_version':user_module.schema_version()
+                    }
+                )
+            else:
+                raise NotImplemented
+    else:
+        if 1:
+            for lang in languages:
+
+                lang_dir_run_tests   = f'{args.output}/{name_dto_run_tests}/{lang}'
+                lang_dir_dto         = f'{lang_dir_run_tests}/../../{name_dto}/{lang}'
+                lang_dir_tests       = f'{lang_dir_run_tests}/../../{name_dto_tests}/{lang}'
+
+                os.makedirs(lang_dir_run_tests,exist_ok=True)
+                os.makedirs(lang_dir_dto,exist_ok=True)
+                os.makedirs(lang_dir_tests,exist_ok=True)
+
+                func_name = f'create_test_env_{lang}'
+                func = globals().get(func_name)
+                if not func:
+                    raise Exception(f'Not found: {func_name}')
+                func(lang_dir_run_tests,lang_dir_dto,lang_dir_tests)
+
+                write_objs(lang_dir_dto,lang_dir_tests,lang,objs,user_module.schema_version())
+
+        for lang1 in languages:
+            for lang2 in languages:
+                print(f'Testing: {lang1} {lang2}')
+                run_round_trip_tests(lang1,lang2,objs,f'{args.output}/{name_dto_run_tests}')
 
 if __name__ == '__main__':
     main()

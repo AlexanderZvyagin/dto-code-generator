@@ -113,7 +113,7 @@ def Struct_cpp (self:Struct, split_headers:bool=False):
 
     code.append(f'namespace {namespace} {{')
 
-    # Start with a forward declarations
+    # Start with the forward declarations
     code.append(f'class {self.name};')
     code.append(f'std::string {self.name}_to_json_string(const {self.name} &obj);')
 
