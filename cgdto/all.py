@@ -145,7 +145,6 @@ def get_code (body):
 
 def run_test(outdir,command,struct_name='',file1='',file2=''):
     '''run_test: version 2'''
-
     cmd = [
         './run',
         command,
@@ -160,6 +159,7 @@ def run_test(outdir,command,struct_name='',file1='',file2=''):
                 continue
             print(f'*** {v} ***')
             print(getattr(proc,v))
+            print(f'**************')
     proc.check_returncode()
 
 def run_round_trip_tests(lang1,lang2,objs,outdir):

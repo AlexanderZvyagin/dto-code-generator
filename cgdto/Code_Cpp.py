@@ -635,11 +635,6 @@ catch (...) {
 
         os.makedirs (self.GetDirTestEnv(), exist_ok=True)
 
-        # include_dir, include_name = os.path.split(dto_path)
-
-        # abs_test_source = os.path.abspath(f"{test_path}/{name_dto_tests}.{ext['cpp']}")
-        # abs_include_dir = os.path.abspath(f"{include_dir}/cpp")
-
         abs_test_source = os.path.abspath(self.GetTestFileName())
         abs_include_dir = os.path.abspath(self.GetDirDto())
 
@@ -691,6 +686,7 @@ esac
             f.write(run)
         os.chmod(name,0o777)
 
+        print('Building {self.language} test environment...')
         run_test(self.GetDirTestEnv(),'build')
 
         self.test_environment_ready = True
