@@ -39,29 +39,11 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
         help    = 'DTO schema.'
     )
 
-    # parser.add_argument(
-    #     '--write-tests',
-    #     action  = 'store_true',
-    #     help    = 'Create automatic tests.'
-    # )
-
-    # parser.add_argument(
-    #     '--run-tests',
-    #     type    = bool,
-    #     action  = 'store_true',
-    #     help    = 'Run automatic tests.'
-    # )
-
-#     parser.add_argument(
-#         '--create-test-environment',
-#          action='store_true',
-#          help    = '''
-# Create a test environemnt in the directory of --test.
-# For each language in --languages the scrupt will create
-# a subdirectoy (e.g. 'output/cpp', 'output/python', 'output/typescript')
-# where the tests can be run.
-# '''
-#     )
+    parser.add_argument(
+        '--run-tests',
+        action  = 'store_true',
+        help    = 'Run automatic tests.'
+    )
 
     args = parser.parse_args()
 
@@ -82,29 +64,34 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
 
     languages = args.languages.split(',')
 
-    if 1:
-        for lang in languages:
+    options = {
+        'outdir':f'{args.output}',
+        'schema_version':user_module.schema_version()
+    }
 
-            lang_dir_run_tests   = f'{args.output}/{name_dto_run_tests}/{lang}'
-            lang_dir_dto         = f'{lang_dir_run_tests}/../../{name_dto}/{lang}'
-            lang_dir_tests       = f'{lang_dir_run_tests}/../../{name_dto_tests}/{lang}'
+    code = {}
+    for lang in languages:
+        if lang=='cpp':
+            code[lang] = CodeCpp(options)
+        elif lang=='python':
+            code[lang] = CodePython(options)
+        elif lang=='typescript':
+            code[lang] = CodeTypescript(options)
+        else:
+            raise NotImplementedError(f'process() has not support for "{lang}" language')
+        code[lang].Process(
+            objs,
+        )
 
-            os.makedirs(lang_dir_run_tests,exist_ok=True)
-            os.makedirs(lang_dir_dto,exist_ok=True)
-            os.makedirs(lang_dir_tests,exist_ok=True)
-
-            func_name = f'create_test_env_{lang}'
-            func = globals().get(func_name)
-            if not func:
-                raise Exception(f'Not found: {func_name}')
-            func(lang_dir_run_tests,lang_dir_dto,lang_dir_tests)
-
-            write_objs(lang_dir_dto,lang_dir_tests,lang,objs,user_module.schema_version())
-
-    for lang1 in languages:
-        for lang2 in languages:
-            print(f'Testing: {lang1} {lang2}')
-            run_round_trip_tests(lang1,lang2,objs,f'{args.output}/{name_dto_run_tests}')
+    if args.run_tests:
+        for lang1 in languages:
+            if not code[lang1].test_environment_ready:
+                print(f'Language "{lang1}" has no run test environment')
+                continue
+            for lang2 in languages:
+                if not code[lang1].test_environment_ready:
+                    continue
+                code[lang1].RunTests(code[lang2],objs)
 
 if __name__ == '__main__':
     main()

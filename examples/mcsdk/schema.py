@@ -1139,16 +1139,30 @@ if __name__ == '__main__':
     languages = ['python','cpp','typescript']
     objs = schema()
 
-    for language in languages:
-        write_objs(
-            'output/dto',
-            'output/dto_test',
-            language,
+    options = {
+        'outdir':'output',
+        'schema_version':schema_version()
+    }
+
+    code = {}
+    for lang in languages:
+        if lang=='cpp':
+            code[lang] = CodeCpp(options)
+        elif lang=='python':
+            code[lang] = CodePython(options)
+        elif lang=='typescript':
+            code[lang] = CodeTypescript(options)
+        else:
+            raise NotImplementedError(f'process() has not support for "{lang}" language')
+        code[lang].Process(
             objs,
-            schema_version()
         )
 
     for lang1 in languages:
+        if not code[lang1].test_environment_ready:
+            print(f'Language "{lang1}" has no run test environment')
+            continue
         for lang2 in languages:
-            print(f'Testing: {lang1} {lang2}')
-            run_round_trip_tests(lang1,lang2,objs,'output')
+            if not code[lang1].test_environment_ready:
+                continue
+            code[lang1].RunTests(code[lang2],objs)

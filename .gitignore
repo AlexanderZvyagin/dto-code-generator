@@ -1,6 +1,5 @@
 **/node_modules
 **/__pycache__
-**/dto_run_tests
 build
 *.egg-info
 .vscode
