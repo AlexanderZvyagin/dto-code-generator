@@ -71,17 +71,8 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
 
     code = {}
     for lang in languages:
-        if lang=='cpp':
-            code[lang] = CodeCpp(options)
-        elif lang=='python':
-            code[lang] = CodePython(options)
-        elif lang=='typescript':
-            code[lang] = CodeTypescript(options)
-        else:
-            raise NotImplementedError(f'process() has not support for "{lang}" language')
-        code[lang].Process(
-            objs,
-        )
+        code[lang] = supported_languages[lang] (options)
+        code[lang].Process(objs)
 
     if args.run_tests:
         for lang1 in languages:

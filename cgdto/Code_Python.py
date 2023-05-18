@@ -533,3 +533,5 @@ esac
         os.chmod(name,0o777)
         
         self.test_environment_ready = True
+
+register(CodePython)

@@ -75,7 +75,7 @@ class Code:
                 continue
             if not obj.gen_test:
                 continue
-            print(f'  -> [{self.language}] {obj.name}')
+            print(f'  Testing [{self.language}] {obj.name}')
             struct_name = obj.name
             outdir1 = self.GetDirTestEnv()
             outdir2 = self.GetDirTestEnv()

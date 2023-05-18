@@ -690,3 +690,5 @@ esac
         run_test(self.GetDirTestEnv(),'build')
 
         self.test_environment_ready = True
+
+register(CodeCpp)
