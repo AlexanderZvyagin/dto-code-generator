@@ -6,10 +6,6 @@ from collections import namedtuple
 
 __version__ = (0,5,1)
 
-name_dto             = 'dto'
-name_dto_tests       = 'dto_tests'
-name_dto_run_tests   = 'dto_run_tests'
-
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
 

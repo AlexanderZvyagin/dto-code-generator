@@ -263,7 +263,7 @@ using json = nlohmann::json;
         return 
 
     def GetTestFileName (self):
-        return f'{self.GetDirTest()}/{name_dto_tests}.{self.extension}'
+        return f'{self.GetDirTest()}/{self.name_test}.{self.extension}'
 
     def GeneratorTest (self, objs):
 
@@ -686,7 +686,7 @@ esac
             f.write(run)
         os.chmod(name,0o777)
 
-        print('Building {self.language} test environment...')
+        print(f'Building "{self.language}" test environment...')
         run_test(self.GetDirTestEnv(),'build')
 
         self.test_environment_ready = True

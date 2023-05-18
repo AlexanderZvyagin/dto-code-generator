@@ -634,7 +634,7 @@ main();
             f.write(run)
         os.chmod(name,0o777)
 
-        print('Building {self.language} test environment...')
+        print(f'Building "{self.language}" test environment...')
         run_test(self.GetDirTestEnv(),'build')
 
         self.test_environment_ready = True
