@@ -62,7 +62,7 @@ public:
     std::string json (void) const {
         return Linear1DInterpolation_to_json_string(*this);
     }
-};
+}; // Linear1DInterpolation
 inline
 void to_json(json &j, const Linear1DInterpolation &obj) try {
     j = json::object();

@@ -50,7 +50,7 @@ public:
     std::string json (void) const {
         return ZeroCouponBond_to_json_string(*this);
     }
-};
+}; // ZeroCouponBond
 inline
 void to_json(json &j, const ZeroCouponBond &obj) try {
     j = json::object();

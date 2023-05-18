@@ -62,7 +62,7 @@ public:
     std::string json (void) const {
         return Parameter_to_json_string(*this);
     }
-};
+}; // Parameter
 inline
 void to_json(json &j, const Parameter &obj) try {
     j = json::object();

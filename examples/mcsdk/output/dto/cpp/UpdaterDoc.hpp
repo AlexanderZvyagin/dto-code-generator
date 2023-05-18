@@ -74,7 +74,7 @@ public:
     std::string json (void) const {
         return UpdaterDoc_to_json_string(*this);
     }
-};
+}; // UpdaterDoc
 inline
 void to_json(json &j, const UpdaterDoc &obj) try {
     j = json::object();

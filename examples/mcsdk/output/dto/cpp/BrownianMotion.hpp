@@ -51,7 +51,7 @@ public:
     std::string json (void) const {
         return BrownianMotion_to_json_string(*this);
     }
-};
+}; // BrownianMotion
 inline
 void to_json(json &j, const BrownianMotion &obj) try {
     j = json::object();

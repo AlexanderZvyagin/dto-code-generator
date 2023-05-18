@@ -124,7 +124,7 @@ public:
     std::string json (void) const {
         return Model_to_json_string(*this);
     }
-};
+}; // Model
 inline
 void to_json(json &j, const Model &obj) try {
     j = json::object();

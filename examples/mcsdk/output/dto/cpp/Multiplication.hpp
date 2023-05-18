@@ -50,7 +50,7 @@ public:
     std::string json (void) const {
         return Multiplication_to_json_string(*this);
     }
-};
+}; // Multiplication
 inline
 void to_json(json &j, const Multiplication &obj) try {
     j = json::object();

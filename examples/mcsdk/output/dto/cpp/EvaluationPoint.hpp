@@ -115,7 +115,7 @@ public:
     std::string json (void) const {
         return EvaluationPoint_to_json_string(*this);
     }
-};
+}; // EvaluationPoint
 inline
 void to_json(json &j, const EvaluationPoint &obj) try {
     j = json::object();

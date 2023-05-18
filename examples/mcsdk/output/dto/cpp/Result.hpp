@@ -94,7 +94,7 @@ public:
     std::string json (void) const {
         return Result_to_json_string(*this);
     }
-};
+}; // Result
 inline
 void to_json(json &j, const Result &obj) try {
     j = json::object();

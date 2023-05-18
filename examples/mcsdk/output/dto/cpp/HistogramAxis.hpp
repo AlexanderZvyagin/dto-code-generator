@@ -62,7 +62,7 @@ public:
     std::string json (void) const {
         return HistogramAxis_to_json_string(*this);
     }
-};
+}; // HistogramAxis
 inline
 void to_json(json &j, const HistogramAxis &obj) try {
     j = json::object();

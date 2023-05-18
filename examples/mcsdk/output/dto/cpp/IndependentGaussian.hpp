@@ -49,7 +49,7 @@ public:
     std::string json (void) const {
         return IndependentGaussian_to_json_string(*this);
     }
-};
+}; // IndependentGaussian
 inline
 void to_json(json &j, const IndependentGaussian &obj) try {
     j = json::object();

@@ -53,7 +53,7 @@ public:
     std::string json (void) const {
         return Option_to_json_string(*this);
     }
-};
+}; // Option
 inline
 void to_json(json &j, const Option &obj) try {
     j = json::object();

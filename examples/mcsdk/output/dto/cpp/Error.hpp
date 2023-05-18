@@ -62,7 +62,7 @@ public:
     std::string json (void) const {
         return Error_to_json_string(*this);
     }
-};
+}; // Error
 inline
 void to_json(json &j, const Error &obj) try {
     j = json::object();

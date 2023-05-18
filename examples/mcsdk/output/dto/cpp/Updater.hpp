@@ -101,7 +101,7 @@ public:
     std::string json (void) const {
         return Updater_to_json_string(*this);
     }
-};
+}; // Updater
 inline
 void to_json(json &j, const Updater &obj) try {
     j = json::object();

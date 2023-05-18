@@ -51,7 +51,7 @@ public:
     std::string json (void) const {
         return CorrelatedGaussian_to_json_string(*this);
     }
-};
+}; // CorrelatedGaussian
 inline
 void to_json(json &j, const CorrelatedGaussian &obj) try {
     j = json::object();

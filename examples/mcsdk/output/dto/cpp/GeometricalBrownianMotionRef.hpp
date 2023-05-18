@@ -51,7 +51,7 @@ public:
     std::string json (void) const {
         return GeometricalBrownianMotionRef_to_json_string(*this);
     }
-};
+}; // GeometricalBrownianMotionRef
 inline
 void to_json(json &j, const GeometricalBrownianMotionRef &obj) try {
     j = json::object();

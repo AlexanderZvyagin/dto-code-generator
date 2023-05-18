@@ -58,7 +58,7 @@ public:
     std::string json (void) const {
         return Barrier_to_json_string(*this);
     }
-};
+}; // Barrier
 inline
 void to_json(json &j, const Barrier &obj) try {
     j = json::object();
