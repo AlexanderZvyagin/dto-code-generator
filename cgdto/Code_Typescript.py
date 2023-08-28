@@ -146,7 +146,7 @@ function string_equal (a:string, b:string) : boolean {
         yield ''
 
         for func in obj.methods:
-            if func.code and func.code.get('typescript','') is None: continue
+            if func.code and func.code.get('typescript') is None: continue
             for line in self.GeneratorFunction(func,obj):
                 yield f'{indent}{line}'
             yield ''

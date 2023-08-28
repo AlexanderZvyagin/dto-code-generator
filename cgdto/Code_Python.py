@@ -67,6 +67,7 @@ class CodePython (Code):
                 yield f'# {line}'
 
         code = f'''
+from __future__ import annotations
 from copy import deepcopy
 import math
 from math import nan
@@ -129,7 +130,7 @@ def float_equal(a:float|None, b:float|None) -> bool:
                 yield f'{indent}{attr.name} : {self.TypeToString(attr)} = {self.ValueToString(attr.defval)}'
 
         for func in obj.methods:
-            if func.code and func.code.get('python','') is None: continue
+            if func.code and func.code.get('python') is None: continue
             for line in self.GeneratorFunction(func,obj):
                 yield f'{indent}{line}'
             yield ''
@@ -389,6 +390,7 @@ def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name
 '''.split('\n'))
 
         test_template = '''
+from __future__ import annotations
 import sys, random, uuid
 from dto import *
 
