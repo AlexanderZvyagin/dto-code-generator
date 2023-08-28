@@ -1,10 +1,11 @@
 # This file can be (and should be) imported
 # by all language-specific implementations.
 
+from __future__ import annotations
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,5,1)
+__version__ = (0,5,2)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
