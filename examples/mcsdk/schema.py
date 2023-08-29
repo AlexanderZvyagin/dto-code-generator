@@ -1322,9 +1322,10 @@ def EvaluationResults_from_response(r,model=None):
     ))
     objs.append(obj)
 
-    obj = Include({
-        'python': 'include.py'
-    })
+    objs.append(Include({
+        'python'    : ['include.py'],
+        'typescript': ['include.ts']
+    }))
 
     return objs
 
