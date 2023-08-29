@@ -465,7 +465,9 @@ def random_optional_list_HistogramAxis (min:int = 0, max:int = 3) -> list[Histog
 def random_Histogram ():
     return Histogram (
         random_HistogramAxis(),
-        random_optional_HistogramAxis()
+        random_optional_HistogramAxis(),
+        random_optional_int(),
+        random_optional_list_float()
 
     )
 
@@ -493,7 +495,7 @@ def random_EvaluationPoint ():
         random_float(),
         random_optional_float(),
         random_optional_float(),
-        random_list_Histogram()
+        random_optional_list_Histogram()
 
     )
 
@@ -549,9 +551,9 @@ def random_Model ():
         random_int(),
         random_list_Updater(),
         random_list_EvaluationPoint(),
-        random_int(),
-        random_float(),
-        random_int()
+        random_optional_int(),
+        random_optional_float(),
+        random_optional_int()
 
     )
 
@@ -630,6 +632,110 @@ def random_optional_list_EvaluationResults (min:int = 0, max:int = 3) -> list[Ev
     if yes_no():
         return None
     return random_list_EvaluationResults(min,max)
+
+
+def random_Sum ():
+    return Sum (
+        random_list_float(),
+        random_list_int(),
+        random_string()
+
+    )
+
+
+def random_optional_Sum () -> Sum|None:
+    if yes_no():
+        return None
+    return random_Sum()
+
+
+def random_list_Sum (min:int = 0, max:int = 3) -> list[Sum]:
+    size = random.randint(min,max)
+    return [random_Sum() for i in range(size)]
+
+
+def random_optional_list_Sum (min:int = 0, max:int = 3) -> list[Sum]|None:
+    if yes_no():
+        return None
+    return random_list_Sum(min,max)
+
+
+def random_SumAtPoints ():
+    return SumAtPoints (
+        random_int(),
+        random_list_float(),
+        random_string()
+
+    )
+
+
+def random_optional_SumAtPoints () -> SumAtPoints|None:
+    if yes_no():
+        return None
+    return random_SumAtPoints()
+
+
+def random_list_SumAtPoints (min:int = 0, max:int = 3) -> list[SumAtPoints]:
+    size = random.randint(min,max)
+    return [random_SumAtPoints() for i in range(size)]
+
+
+def random_optional_list_SumAtPoints (min:int = 0, max:int = 3) -> list[SumAtPoints]|None:
+    if yes_no():
+        return None
+    return random_list_SumAtPoints(min,max)
+
+
+def random_SumOnIntervals ():
+    return SumOnIntervals (
+        random_int(),
+        random_list_float(),
+        random_string()
+
+    )
+
+
+def random_optional_SumOnIntervals () -> SumOnIntervals|None:
+    if yes_no():
+        return None
+    return random_SumOnIntervals()
+
+
+def random_list_SumOnIntervals (min:int = 0, max:int = 3) -> list[SumOnIntervals]:
+    size = random.randint(min,max)
+    return [random_SumOnIntervals() for i in range(size)]
+
+
+def random_optional_list_SumOnIntervals (min:int = 0, max:int = 3) -> list[SumOnIntervals]|None:
+    if yes_no():
+        return None
+    return random_list_SumOnIntervals(min,max)
+
+
+def random_AverageInInterval ():
+    return AverageInInterval (
+        random_int(),
+        random_list_float(),
+        random_string()
+
+    )
+
+
+def random_optional_AverageInInterval () -> AverageInInterval|None:
+    if yes_no():
+        return None
+    return random_AverageInInterval()
+
+
+def random_list_AverageInInterval (min:int = 0, max:int = 3) -> list[AverageInInterval]:
+    size = random.randint(min,max)
+    return [random_AverageInInterval() for i in range(size)]
+
+
+def random_optional_list_AverageInInterval (min:int = 0, max:int = 3) -> list[AverageInInterval]|None:
+    if yes_no():
+        return None
+    return random_list_AverageInInterval(min,max)
 
 
 def test_round_trip_python(command, struct_name, file1_name, file2_name):
@@ -828,6 +934,42 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert isinstance(obj2,EvaluationResults)
             assert obj1==obj2
 
+
+        elif struct_name=='Sum':
+            obj1 = random_Sum()
+            open(file1_name,'w').write(Sum_to_json_string(obj1))
+            obj2 = Sum_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,Sum)
+            assert isinstance(obj2,Sum)
+            assert obj1==obj2
+
+
+        elif struct_name=='SumAtPoints':
+            obj1 = random_SumAtPoints()
+            open(file1_name,'w').write(SumAtPoints_to_json_string(obj1))
+            obj2 = SumAtPoints_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,SumAtPoints)
+            assert isinstance(obj2,SumAtPoints)
+            assert obj1==obj2
+
+
+        elif struct_name=='SumOnIntervals':
+            obj1 = random_SumOnIntervals()
+            open(file1_name,'w').write(SumOnIntervals_to_json_string(obj1))
+            obj2 = SumOnIntervals_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,SumOnIntervals)
+            assert isinstance(obj2,SumOnIntervals)
+            assert obj1==obj2
+
+
+        elif struct_name=='AverageInInterval':
+            obj1 = random_AverageInInterval()
+            open(file1_name,'w').write(AverageInInterval_to_json_string(obj1))
+            obj2 = AverageInInterval_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,AverageInInterval)
+            assert isinstance(obj2,AverageInInterval)
+            assert obj1==obj2
+
         else:
             raise Exception(f'Operation "{command}" does not supported struct {struct_name}')
     elif command=='convert':
@@ -937,6 +1079,26 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='EvaluationResults':
             obj = EvaluationResults_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(EvaluationResults_to_json_string(obj))
+
+
+        elif struct_name=='Sum':
+            obj = Sum_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(Sum_to_json_string(obj))
+
+
+        elif struct_name=='SumAtPoints':
+            obj = SumAtPoints_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(SumAtPoints_to_json_string(obj))
+
+
+        elif struct_name=='SumOnIntervals':
+            obj = SumOnIntervals_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(SumOnIntervals_to_json_string(obj))
+
+
+        elif struct_name=='AverageInInterval':
+            obj = AverageInInterval_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(AverageInInterval_to_json_string(obj))
 
         else:
             raise Exception(f'Operation "{command}" does not supported struct {struct_name}')
@@ -1067,6 +1229,30 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='EvaluationResults':
             obj1 = EvaluationResults_from_json_string(open(file1_name).read())
             obj2 = EvaluationResults_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='Sum':
+            obj1 = Sum_from_json_string(open(file1_name).read())
+            obj2 = Sum_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='SumAtPoints':
+            obj1 = SumAtPoints_from_json_string(open(file1_name).read())
+            obj2 = SumAtPoints_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='SumOnIntervals':
+            obj1 = SumOnIntervals_from_json_string(open(file1_name).read())
+            obj2 = SumOnIntervals_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='AverageInInterval':
+            obj1 = AverageInInterval_from_json_string(open(file1_name).read())
+            obj2 = AverageInInterval_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
         else:

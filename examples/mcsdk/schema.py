@@ -4,7 +4,7 @@ from cgdto import *
 from math import nan
 
 def schema_version () -> str:
-    return 'MonteCarlo SDK version (0.1.4)'
+    return 'MonteCarlo SDK version (0.2.0)'
 
 def schema ():
 
@@ -239,7 +239,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
         ])]
     ))
     objs.append(obj)
-    
+
     obj = Struct('CorrelatedGaussian',Updater)
     obj.methods.append(Function (
         obj.name,
@@ -413,7 +413,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('title'),
         ])]
     ))
-    
+
     objs.append(obj)
 
     obj = Struct('Linear1DInterpolation',Updater,gen_test=False)
@@ -508,16 +508,22 @@ this.args = [...[xmin,xmax],...y];
     Histogram = obj
     obj.AddAttribute(Variable('x',HistogramAxis))
     obj.AddAttribute(Variable('y',HistogramAxis,optional=True))
+    obj.AddAttribute(Variable('evaluation_point','int',optional=True))
+    obj.AddAttribute(Variable('bins','float',list=True,optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
             Variable('x',HistogramAxis,Variable('HistogramAxis()',HistogramAxis)),
             Variable('y',HistogramAxis,None,optional=True),
+            Variable('evaluation_point','int',None,optional=True),
+            Variable('bins','float',None,optional=True,list=True)
         ],
         mapping = [
             ('x',[Variable('x')]),
-            ('y',[Variable('y')])
+            ('y',[Variable('y')]),
+            ('evaluation_point',[Variable('evaluation_point')]),
+            ('bins',[Variable('bins')]),
         ]
     ))
     objs.append(obj)
@@ -538,7 +544,7 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     obj.AddAttribute(Variable('time','float'))
     obj.AddAttribute(Variable('value','float',optional=True))
     obj.AddAttribute(Variable('error','float',optional=True))
-    obj.AddAttribute(Variable('histograms',Histogram,list=True))
+    obj.AddAttribute(Variable('histograms',Histogram,list=True,optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -547,7 +553,7 @@ void from_json(const json &j, std::vector<Histogram> &u) {
             Variable('time','float',nan),
             Variable('value','float',None,optional=True),
             Variable('error','float',None,optional=True),
-            Variable('histograms',Histogram,[],list=True),
+            Variable('histograms',Histogram,None,optional=True,list=True),
         ],
         mapping = [
             ('state',[Variable('state')]),
@@ -652,21 +658,40 @@ return this.error;
         code = {
             'python':
 '''
+if getattr(self,'histograms',None) is None:
+    self.histograms = []
 self.histograms.append(histogram)
 return self
 ''',
             'cpp':
 '''
-histograms.push_back(histogram);
+if( not histograms.has_value() )
+    histograms = std::vector<Histogram> ();
+histograms.value().push_back(histogram);
 return *this;
 ''',
             'typescript':
 '''
+if(this.histograms === undefined)
+    this.histograms = [];
 this.histograms.push(histogram);
 return this;
 ''',
         }
     ))
+
+#     obj.methods.append(Function (
+#         '__gt__',
+#         'boolean',
+#         args = [Variable('other',EvaluationPoint)],
+#         code = {
+#             'python':
+# '''
+# return self.time > other.time
+# ''',
+#         }
+#     ))
+
     objs.append(obj)
 
     obj = Struct ('Parameter')
@@ -699,9 +724,9 @@ return this;
     obj.AddAttribute(Variable('NumPaths','int'))
     obj.AddAttribute(Variable('updaters',Updater,list=True))
     obj.AddAttribute(Variable('evaluations',EvaluationPoint,list=True))
-    obj.AddAttribute(Variable('RandomSeed','int'))
-    obj.AddAttribute(Variable('RunTimeoutSeconds','float'))
-    obj.AddAttribute(Variable('MemoryLimitKB','int'))
+    obj.AddAttribute(Variable('RandomSeed','int',optional=True))
+    obj.AddAttribute(Variable('RunTimeoutSeconds','float',optional=True))
+    obj.AddAttribute(Variable('MemoryLimitKB','int',optional=True))
     obj.AddAttribute(Variable('titles','dict[int,string]',skip_dto=True))
     obj.methods.append(Function (
         obj.name,
@@ -712,9 +737,9 @@ return this;
             Variable('NumPaths','int',0),
             Variable('updaters',Updater,[],list=True),
             Variable('evaluations',EvaluationPoint,[],list=True),
-            Variable('RandomSeed','int',-1),
-            Variable('RunTimeoutSeconds','float',1),
-            Variable('MemoryLimitKB','int',1),
+            Variable('RandomSeed','int',None,optional=True),
+            Variable('RunTimeoutSeconds','float',None,optional=True),
+            Variable('MemoryLimitKB','int',None,optional=True),
         ],
         mapping = [
             ('TimeStart',[Variable('TimeStart')]),
@@ -824,6 +849,20 @@ return updater;
 ''',
         }
     ))
+
+#     obj.methods.append(Function (
+#         'AddEvaluationPoint',
+#         'int',
+#         args = [Variable('point',EvaluationPoint)],
+#         code = {
+#             'python':
+# '''
+# s = set(self.evaluations)
+# s.add(point)
+# self.evaluations = list(s)
+# '''
+#         }
+#     ))
 
     objs.append(obj)
 
@@ -1132,6 +1171,161 @@ def EvaluationResults_from_response(r,model=None):
 #         }
 #     ))
 
+#     obj = Struct('SwapFixedLeg',Updater)
+#     obj.methods.append(Function (
+#         obj.name,
+#         'constructor',
+#         args = [
+#             Variable('ref'      ,'int'   ,defval=-88),
+#             Variable('notional' ,'float' ,defval=1),
+#             Variable('t'        ,'float' ,defval=[],list=True),
+#             Variable('title'  ,'string',defval=''),
+#         ],
+#         mapping = [(obj.base.name,[
+#             'SwapFixedLeg',
+#             [Variable('ref')],
+#             [],
+#             0, # start
+#             Variable('title'),
+#         ])],
+#         code = {
+#             'cpp' : '''
+# args.value() = std::vector<float>();
+# args.value().reserve(3+t.size());
+# args.value().push_back(notional);
+# args.value().push_back(t.size());
+# for(auto item: t)
+#     args.value().push_back(item);
+# args.value().push_back(0); // internal buffer
+# ''',
+#             'python' : '''
+# self.args = [notional,len(t)] + t + [0]
+# ''',
+#             'typescript' : '''
+# this.args = [notional,t.length,...t,0];
+# ''',
+#         }
+#     ))
+#     objs.append(obj)
+
+#     obj = Struct('FixedLeg',Updater)
+#     obj.methods.append(Function (
+#         obj.name,
+#         'constructor',
+#         args = [
+#             Variable('notional' , 'int'    , defval=-88),
+#             Variable('discount' , 'int'    , defval=-88),
+#             Variable('t'        , 'float'  , defval=[], list=True),
+#             Variable('title'    , 'string' , defval=''),
+#         ],
+#         mapping = [(obj.base.name,[
+#             'FixedLeg',
+#             [Variable('notional'), Variable('discount')],
+#             [],
+#             0, # start
+#             Variable('title'),
+#         ])],
+#         code = {
+#             'cpp' : '''
+# args.value() = std::vector<float>();
+# args.value().reserve(1+t.size());
+# args.value().push_back(t.size());
+# for(auto item: t)
+#     args.value().push_back(item);
+# ''',
+#             'python' : '''
+# self.args = [len(t)] + t
+# ''',
+#             'typescript' : '''
+# this.args = [t.length,...t];
+# ''',
+#         }
+#     ))
+#     objs.append(obj)
+
+    obj = Struct('Sum',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('weights'  , 'float'  , defval=[], list=True),
+            Variable('states'   , 'int'    , defval=[], list=True),
+            Variable('title'    , 'string' , defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'Sum',
+            Variable('states'),
+            Variable('weights'),
+            0, # start
+            Variable('title'),
+        ])],
+    ))
+    objs.append(obj)
+
+
+    obj = Struct('SumAtPoints',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('underlying' , 'int'    , defval=-88),
+            Variable('t'          , 'float'  , defval=[], list=True),
+            Variable('title'      , 'string' , defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'SumAtPoints',
+            [Variable('underlying')],
+            Variable('t'),
+            0, # start
+            Variable('title'),
+        ])],
+    ))
+    objs.append(obj)
+
+
+    obj = Struct('SumOnIntervals',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('notional' , 'int'    , defval=-88),
+            Variable('t'        , 'float'  , defval=[], list=True),
+            Variable('title'    , 'string' , defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'SumOnIntervals',
+            [Variable('notional')],
+            Variable('t'),
+            0, # start
+            Variable('title'),
+        ])],
+    ))
+    objs.append(obj)
+
+
+    obj = Struct('AverageInInterval',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('underlying' , 'int'    , defval=-88),
+            Variable('t'          , 'float'  , defval=[], list=True),
+            Variable('title'      , 'string' , defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'AverageInInterval',
+            [Variable('underlying')],
+            Variable('t'),
+            0, # start
+            Variable('title'),
+        ])],
+    ))
+    objs.append(obj)
+
+    obj = Include({
+        'python': 'include.py'
+    })
+
     return objs
 
 if __name__ == '__main__':
@@ -1139,30 +1333,16 @@ if __name__ == '__main__':
     languages = ['python','cpp','typescript']
     objs = schema()
 
-    options = {
-        'outdir':'output',
-        'schema_version':schema_version()
-    }
-
-    code = {}
-    for lang in languages:
-        if lang=='cpp':
-            code[lang] = CodeCpp(options)
-        elif lang=='python':
-            code[lang] = CodePython(options)
-        elif lang=='typescript':
-            code[lang] = CodeTypescript(options)
-        else:
-            raise NotImplementedError(f'process() has not support for "{lang}" language')
-        code[lang].Process(
+    for language in languages:
+        write_objs(
+            'output/dto',
+            'output/dto_test',
+            language,
             objs,
+            schema_version()
         )
 
     for lang1 in languages:
-        if not code[lang1].test_environment_ready:
-            print(f'Language "{lang1}" has no run test environment')
-            continue
         for lang2 in languages:
-            if not code[lang1].test_environment_ready:
-                continue
-            code[lang1].RunTests(code[lang2],objs)
+            print(f'Testing: {lang1} {lang2}')
+            run_round_trip_tests(lang1,lang2,objs,'output')

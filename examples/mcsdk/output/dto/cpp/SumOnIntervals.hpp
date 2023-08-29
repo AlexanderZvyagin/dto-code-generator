@@ -20,60 +20,60 @@ using json = nlohmann::json;
 
 #include "Updater.hpp"
 namespace dto {
-class Multiplication;
-std::string Multiplication_to_json_string(const Multiplication &obj);
-class Multiplication: public Updater {
+class SumOnIntervals;
+std::string SumOnIntervals_to_json_string(const SumOnIntervals &obj);
+class SumOnIntervals: public Updater {
 public:
 
 
     
-    Multiplication (
-        std::vector<int> refs = {},
-        float factor = 1,
+    SumOnIntervals (
+        int notional = -88,
+        std::vector<float> t = {},
         std::string title = ""
     )
     : Updater (
-        "Multiplication",
-        refs,
-        {factor},
+        "SumOnIntervals",
+        {notional},
+        t,
         0,
         title
     )
     {
     }
 
-    bool operator == (const Multiplication &other) const {
+    bool operator == (const SumOnIntervals &other) const {
         if (Updater::operator != (other)) return false;
         return true;
     }
-    bool operator != (const Multiplication &other) const {return not(*this==other);}
+    bool operator != (const SumOnIntervals &other) const {return not(*this==other);}
     std::string json (void) const {
-        return Multiplication_to_json_string(*this);
+        return SumOnIntervals_to_json_string(*this);
     }
-}; // Multiplication
+}; // SumOnIntervals
 inline
-void to_json(json &j, const Multiplication &obj) try {
+void to_json(json &j, const SumOnIntervals &obj) try {
     j = json::object();
     to_json(j,static_cast<const Updater &>(obj));
 } catch (const std::exception &e) {
-    std::throw_with_nested(std::runtime_error("void to_json(json &j, const Multiplication &obj) exception"));
+    std::throw_with_nested(std::runtime_error("void to_json(json &j, const SumOnIntervals &obj) exception"));
 }
 
 inline
-std::string Multiplication_to_json_string(const Multiplication &obj) {
+std::string SumOnIntervals_to_json_string(const SumOnIntervals &obj) {
     json j;
     to_json(j,obj);
     return j.dump();
 }
 inline
-void from_json(const json &j, Multiplication &obj) try {
+void from_json(const json &j, SumOnIntervals &obj) try {
     from_json(j,static_cast<Updater &>(obj));
 } catch (const std::exception &e) {
-    std::throw_with_nested(std::runtime_error("void from_json(const json &j, Multiplication &obj) exception"));
+    std::throw_with_nested(std::runtime_error("void from_json(const json &j, SumOnIntervals &obj) exception"));
 }
 inline
-Multiplication Multiplication_from_json(const json &j) {
-    Multiplication obj;
+SumOnIntervals SumOnIntervals_from_json(const json &j) {
+    SumOnIntervals obj;
     from_json(j,obj);
     return obj;
 }
