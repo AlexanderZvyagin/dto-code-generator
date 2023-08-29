@@ -51,8 +51,6 @@ class Code:
         for path,file in files.items():
             file.close()
 
-        self.CreateTestEnv (objs)
-
     def GeneratorFiles (self, objs):
         for item in self.GeneratorDto (objs):
             yield item
