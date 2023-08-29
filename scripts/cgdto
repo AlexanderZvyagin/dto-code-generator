@@ -73,6 +73,8 @@ Command line interface (CLI) for generation of data transfer objects (DTOs).
     for lang in languages:
         code[lang] = supported_languages[lang] (options)
         code[lang].Process(objs)
+        if args.run_tests:
+            code[lang].CreateTestEnv(objs)
 
     if args.run_tests:
         for lang1 in languages:
