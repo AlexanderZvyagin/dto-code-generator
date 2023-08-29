@@ -5,7 +5,7 @@ from __future__ import annotations
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,6,0)
+__version__ = (0,6,1)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
@@ -131,6 +131,11 @@ class Function:
 
     def __repr__ (self):
         return f"Function('{self.name}','{self.type}',{self.args})"
+
+class Include:
+
+    def __init__ (self,files: dict[str,list[str]]):
+        self.files = files
 
 def get_code (body):
     if body is None:

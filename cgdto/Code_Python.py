@@ -109,6 +109,18 @@ def float_equal(a:float|None, b:float|None) -> bool:
                 for line in obj.code.get(self.language,[]):
                     yield line
                 yield ''
+            elif isinstance(obj,Include):
+                separation_line = '#'*32
+                for file in obj.files.get(self.language,[]):
+                    yield separation_line
+                    yield f'# The start of "{file}"'
+                    yield separation_line
+                    for line in open(file).readlines():
+                        yield line.rstrip('\n')
+                    yield separation_line
+                    yield f'# The end of "{file}"'
+                    yield separation_line
+                yield ''
             else:
                 print(f'Cannot handle {type(obj)}')
 
