@@ -633,7 +633,8 @@ main();
         build)
             npm install --save-dev typescript
             npm install --save-dev @types/node
-            ./node_modules/.bin/tsc --lib es2022 {self.name_test}.{self.extension}
+            npm install --save-dev node-fetch@2.6.6
+            ./node_modules/.bin/tsc {self.name_test}.{self.extension}
             ;;
         *)
             node {self.name_test}.js $@
