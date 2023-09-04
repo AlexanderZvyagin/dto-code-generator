@@ -5,7 +5,7 @@ from __future__ import annotations
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,6,2)
+__version__ = (0,6,3)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
@@ -79,21 +79,26 @@ class Struct:
         base = None,
         gen_test: bool = True
     ):
-        self.name        : str             = name
-        self.attributes  : list [Variable] = []
-        self.methods     : list [Function] = []
-        self.base        : Struct|None     = base
-        self.gen_test    : bool            = gen_test
-        self.dependencies: set[Struct]     = {base} if base else set()
+        self.name         : str             = name
+        self.attributes   : list [Variable] = []
+        self.methods      : list [Function] = []
+        self.base         : Struct|None     = base
+        self.gen_test     : bool            = gen_test
+        self.dependencies : list[Struct]    = [base] if base else []
 
     def __repr__ (self):
         return f"Struct('{self.name}',base={self.base}) #attributes={len(self.attributes)} #methods={len(self.methods)}"
+
+    def AddDependency (self, dep:Struct):
+        assert isinstance(dep,Struct)
+        if not dep in self.dependencies:
+            self.dependencies.append(dep)
 
     def AddAttribute (self,attr):
         assert isinstance(attr,Variable)
         self.attributes.append(attr)
         if isinstance(attr.type,Struct) and attr.type.name!=self.name:
-            self.dependencies.add(attr.type)
+            self.AddDependency(attr.type)
 
     def GetAllAttributes (self):
         attrs = []
