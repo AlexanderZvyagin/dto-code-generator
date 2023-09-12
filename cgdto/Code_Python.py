@@ -67,6 +67,7 @@ class CodePython (Code):
                 yield f'# {line}'
 
         code = f'''
+from __future__ import annotations
 from copy import deepcopy
 import math
 from math import nan
@@ -401,6 +402,7 @@ def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name
 '''.split('\n'))
 
         test_template = '''
+from __future__ import annotations
 import sys, random, uuid
 from dto import *
 
