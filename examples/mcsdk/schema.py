@@ -4,7 +4,7 @@ from cgdto import *
 from math import nan
 
 def schema_version () -> str:
-    return 'MonteCarlo SDK version (0.2.0)'
+    return 'MonteCarlo SDK version (0.2.1)'
 
 def schema ():
 
@@ -36,9 +36,12 @@ def schema ():
 
 
     obj = Struct('UpdaterDoc')
-    obj.AddAttribute(Variable('name','string'))
-    obj.AddAttribute(Variable('title','string'))
-    obj.AddAttribute(Variable('doc_md','string'))
+    obj.AddAttribute(Variable('name','string',doc='''
+The parameter 'name' is a single world which uniquely identifies how a MC state will be updated.
+E.g. GeometricalBrownianMotion.
+'''))
+    obj.AddAttribute(Variable('title','string',doc='Short description (single line) what the updater is doing.'))
+    obj.AddAttribute(Variable('doc_md','string',doc='Long multiline description of the updater using Markdown format.'))
     obj.AddAttribute(Variable('start','string'))
     obj.AddAttribute(Variable('nargs_min','int'))
     obj.AddAttribute(Variable('nrefs_min','int'))
@@ -64,7 +67,9 @@ def schema ():
     ))
     objs.append(obj)
 
-    obj = Struct('UpdaterDto')
+    obj = Struct('UpdaterDto',doc='''
+UpdaterDto is used to pass parameters to update a state.
+''')
     objs.append(obj)
     UpdaterDto = obj
     obj.AddAttribute(Variable('name','string'))
@@ -75,10 +80,10 @@ def schema ():
         obj.name,
         'constructor',
         args = [
-            Variable('name', 'string', ''),
-            Variable(name='refs', type='int', defval=None, list=True, optional=True),
-            Variable('args', 'float', defval=None, list=True, optional=True),
-            Variable('start', 'float', defval=None, optional=True)
+            Variable('name', 'string', '',doc='Unique name of the updater, e.g. BrownianMotion'),
+            Variable(name='refs', type='int', defval=None, list=True, optional=True,doc='List of states which an updater requires.'),
+            Variable('args', 'float', defval=None, list=True, optional=True,doc='List of arguments.'),
+            Variable('start', 'float', defval=None, optional=True,doc='State starting value, e.g. start=3 will start a BM process from value 3.')
         ],
         mapping = [
             ('name',[Variable('name')]),
@@ -680,18 +685,6 @@ return this;
         }
     ))
 
-#     obj.methods.append(Function (
-#         '__gt__',
-#         'boolean',
-#         args = [Variable('other',EvaluationPoint)],
-#         code = {
-#             'python':
-# '''
-# return self.time > other.time
-# ''',
-#         }
-#     ))
-
     objs.append(obj)
 
     obj = Struct ('Parameter')
@@ -850,20 +843,6 @@ return updater;
         }
     ))
 
-#     obj.methods.append(Function (
-#         'AddEvaluationPoint',
-#         'int',
-#         args = [Variable('point',EvaluationPoint)],
-#         code = {
-#             'python':
-# '''
-# s = set(self.evaluations)
-# s.add(point)
-# self.evaluations = list(s)
-# '''
-#         }
-#     ))
-
     objs.append(obj)
 
     obj = Struct('Result')
@@ -914,6 +893,7 @@ return this.mean;
         'GetMeanError',
         'float',
         const = True,
+        doc = 'The function computes an error estimate of the mean value.',
         code = {
             'python':
 '''
@@ -1154,95 +1134,6 @@ def EvaluationResults_from_response(r,model=None):
         }
     }))
 
-#     obj.methods.append(Function (
-#         'random_Linear1DInterpolation',
-#         Variable('',Linear1DInterpolation,list=True),
-#         args = [],
-#         code = {
-#             'cpp' : '''
-# return Linear1DInterpolation (
-#     random_int(),
-#     random_float(),
-#     random_float(),
-#     random_list_float(2,5),
-#     random_string()
-# );
-# '''
-#         }
-#     ))
-
-#     obj = Struct('SwapFixedLeg',Updater)
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('ref'      ,'int'   ,defval=-88),
-#             Variable('notional' ,'float' ,defval=1),
-#             Variable('t'        ,'float' ,defval=[],list=True),
-#             Variable('title'  ,'string',defval=''),
-#         ],
-#         mapping = [(obj.base.name,[
-#             'SwapFixedLeg',
-#             [Variable('ref')],
-#             [],
-#             0, # start
-#             Variable('title'),
-#         ])],
-#         code = {
-#             'cpp' : '''
-# args.value() = std::vector<float>();
-# args.value().reserve(3+t.size());
-# args.value().push_back(notional);
-# args.value().push_back(t.size());
-# for(auto item: t)
-#     args.value().push_back(item);
-# args.value().push_back(0); // internal buffer
-# ''',
-#             'python' : '''
-# self.args = [notional,len(t)] + t + [0]
-# ''',
-#             'typescript' : '''
-# this.args = [notional,t.length,...t,0];
-# ''',
-#         }
-#     ))
-#     objs.append(obj)
-
-#     obj = Struct('FixedLeg',Updater)
-#     obj.methods.append(Function (
-#         obj.name,
-#         'constructor',
-#         args = [
-#             Variable('notional' , 'int'    , defval=-88),
-#             Variable('discount' , 'int'    , defval=-88),
-#             Variable('t'        , 'float'  , defval=[], list=True),
-#             Variable('title'    , 'string' , defval=''),
-#         ],
-#         mapping = [(obj.base.name,[
-#             'FixedLeg',
-#             [Variable('notional'), Variable('discount')],
-#             [],
-#             0, # start
-#             Variable('title'),
-#         ])],
-#         code = {
-#             'cpp' : '''
-# args.value() = std::vector<float>();
-# args.value().reserve(1+t.size());
-# args.value().push_back(t.size());
-# for(auto item: t)
-#     args.value().push_back(item);
-# ''',
-#             'python' : '''
-# self.args = [len(t)] + t
-# ''',
-#             'typescript' : '''
-# this.args = [t.length,...t];
-# ''',
-#         }
-#     ))
-#     objs.append(obj)
-
     obj = Struct('Sum',Updater)
     obj.methods.append(Function (
         obj.name,
@@ -1319,6 +1210,30 @@ def EvaluationResults_from_response(r,model=None):
             0, # start
             Variable('title'),
         ])],
+    ))
+    objs.append(obj)
+
+    obj = Struct('CashFlows',Updater,doc='''
+CashFlows a set of CashFlows at time points Ti.
+''')
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('underlying' , 'int'    , defval=-88),
+            Variable('t'          , 'float'  , defval=[], list=True),
+            Variable('title'      , 'string' , defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'CashFlows',
+            [Variable('underlying')],
+            Variable('t'),
+            0, # start
+            Variable('title'),
+        ])],
+        doc = '''
+CashFlows constructor
+'''
     ))
     objs.append(obj)
 

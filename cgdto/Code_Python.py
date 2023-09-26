@@ -125,6 +125,12 @@ def float_equal(a:float|None, b:float|None) -> bool:
             else:
                 print(f'Cannot handle {type(obj)}')
 
+    def GenerateDocString(self, doc):
+        yield f"{indent}'''"
+        for line in doc.splitlines():
+            yield line
+        yield "'''"
+
     def GeneratorStruct (self, obj:Struct):
 
         yield f'# Forward declaration'
@@ -135,6 +141,12 @@ def float_equal(a:float|None, b:float|None) -> bool:
         else:
             yield f'class {obj.name}:'
         yield ''
+
+        if obj.doc:
+            yield ''
+            for line in self.GenerateDocString(obj.doc):
+                yield line
+            yield ''
 
         for attr in obj.attributes:
             if attr.static:
@@ -194,6 +206,12 @@ def float_equal(a:float|None, b:float|None) -> bool:
                 yield f'{indent}{a.name}{default},'
             yield '):'
 
+            if func.doc:
+                yield ''
+                for line in self.GenerateDocString(func.doc):
+                    yield line
+                yield ''
+
         for line in get_code(func.code.get('python')):
             yield f'{indent}{line}'
 
@@ -217,6 +235,12 @@ def float_equal(a:float|None, b:float|None) -> bool:
             yield f'{indent}{arg.name}:{self.TypeToString(arg)}{defval}{"," if i+1<len(ctor.args) else ""}'
         yield f'):'
 
+        if ctor.doc:
+            yield ''
+            for line in self.GenerateDocString(ctor.doc):
+                yield line
+            yield ''
+
         for i,(name,mapping) in enumerate(ctor.mapping):
             if base.base and name==base.base.name:
                 yield f'{indent}super().__init__('
@@ -233,6 +257,11 @@ def float_equal(a:float|None, b:float|None) -> bool:
                     if a.name == name:
                         attr = a
                 assert attr is not None
+                if attr.doc:
+                    for line in attr.doc.splitlines():
+                        line = line.strip()
+                        if line:
+                            yield f'{indent*1}#: {line}'
                 if isinstance(attr.type,Struct) and isinstance(arg,Variable):
                     yield f'{indent*1}self.{attr.name} : {self.TypeToString(attr)} = deepcopy({self.ValueToString(arg)})'
                 else:

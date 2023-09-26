@@ -5,7 +5,7 @@ from __future__ import annotations
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,6,4)
+__version__ = (0,7,0)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
@@ -37,7 +37,8 @@ class Variable:
         list     = False,
         optional = False,
         skip_dto = False,
-        static   = False
+        static   = False,
+        doc:str|list[str] = ''
     ):
         self.name     = name
         self.type     = type
@@ -46,6 +47,7 @@ class Variable:
         self.optional = optional
         self.skip_dto = skip_dto
         self.static   = static
+        self.doc      = doc
 
     def TypeName (self) -> str:
         if isinstance(self.type,Struct):
@@ -77,13 +79,15 @@ class Struct:
         self,
         name:str,
         base = None,
-        gen_test: bool = True
+        gen_test: bool = True,
+        doc: str = ''
     ):
         self.name         : str             = name
         self.attributes   : list [Variable] = []
         self.methods      : list [Function] = []
         self.base         : Struct|None     = base
         self.gen_test     : bool            = gen_test
+        self.doc          : str             = doc
         self.dependencies : list[Struct]    = [base] if base else []
 
     def __repr__ (self):
@@ -116,23 +120,25 @@ class Function:
 
     def __init__ (
         self,
-        name: str,
-        type: str,
-        args = [],
-        code: dict[str,list[str]] = {},
-        mapping = [],
-        const: bool=False
+        name    : str,
+        type    : str,
+        args    : list[Variable]                = [],
+        code    : dict[str,list[str]]           = {},
+        mapping : tuple [str,list[Variable]]    = [],
+        const   : bool                          = False,
+        doc     : str                           = ''
     ):
         '''code: dictionary of language:str=>list[str]
 
         mapping: it is an array of (key,value) pairs
         '''
-        self.name        : str = name
-        self.type        : str = type
-        self.args        : list[Variable] = args
-        self.code        : dict[str, list[str]] = code
-        self.mapping     : tuple [str,list[Variable]] = mapping
-        self.const       : bool = const
+        self.name        : str                          = name
+        self.type        : str                          = type
+        self.args        : list[Variable]               = args
+        self.code        : dict[str, list[str]]         = code
+        self.mapping     : tuple [str,list[Variable]]   = mapping
+        self.const       : bool                         = const
+        self.doc         : str                          = doc
 
     def __repr__ (self):
         return f"Function('{self.name}','{self.type}',{self.args})"
