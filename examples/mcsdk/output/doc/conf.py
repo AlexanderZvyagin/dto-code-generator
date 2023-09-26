@@ -12,8 +12,7 @@
 #
 import os
 import sys
-# sys.path.insert(0, os.path.abspath('../../../dto/python/'))
-sys.path.insert(0, os.path.abspath('/home/zvyagin/Projects/dto-code-generator/examples/mcsdk/output/dto/python/'))
+sys.path.insert(0, os.path.abspath('../output/dto/python/'))
 
 # -- Project information -----------------------------------------------------
 
