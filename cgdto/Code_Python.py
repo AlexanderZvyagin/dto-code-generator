@@ -154,10 +154,10 @@ def float_equal(a:float|None, b:float|None) -> bool:
                 yield f'{indent}{attr.name} : {self.TypeToString(attr)} = {self.ValueToString(attr.defval)}'
 
         for func in obj.methods:
-            if func.code and func.code.get('python','') is None: continue
-            for line in self.GeneratorFunction(func,obj):
-                yield f'{indent}{line}'
-            yield ''
+            if func.type=='constructor' or func.code.get(self.language):
+                for line in self.GeneratorFunction(func,obj):
+                    yield f'{indent}{line}'
+                yield ''
 
         yield f'{indent*1}def __eq__ (self, other):'
         if obj.base:

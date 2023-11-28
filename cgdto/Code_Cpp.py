@@ -122,10 +122,10 @@ using json = nlohmann::json;
         yield ''
 
         for func in obj.methods:
-            if func.code and func.code.get(self.language,None) is None: continue
-            for line in self.GeneratorFunction(func,obj):
-                yield f'{indent}{line}'
-            yield ''
+            if func.type=='constructor' or func.code.get(self.language):
+                for line in self.GeneratorFunction(func,obj):
+                    yield f'{indent}{line}'
+                yield ''
 
         for line in self.GeneratorStructCompare(obj):
             yield line

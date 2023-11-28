@@ -117,7 +117,7 @@ function string_equal (a:string, b:string) : boolean {
                     yield line
                 yield ''
             elif isinstance(obj,Function):
-                for line in self.GeneratorFunction(obj):
+                for line in self.GeneratorFunction(objs):
                     yield line
                 yield ''
             elif isinstance(obj,CodeBlock):
@@ -158,10 +158,10 @@ function string_equal (a:string, b:string) : boolean {
         yield ''
 
         for func in obj.methods:
-            if func.code and func.code.get(self.language,None) is None: continue
-            for line in self.GeneratorFunction(func,obj):
-                yield f'{indent}{line}'
-            yield ''
+            if func.type=='constructor' or func.code.get(self.language):
+                for line in self.GeneratorFunction(func,obj):
+                    yield f'{indent}{line}'
+                yield ''
 
         yield f'{indent*1}json (): string {{'
         yield f'{indent*2}return {obj.name}_to_json_string(this);'
