@@ -5,7 +5,7 @@ from __future__ import annotations
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,7,1)
+__version__ = (0,7,2)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'

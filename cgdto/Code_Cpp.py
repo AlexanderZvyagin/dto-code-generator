@@ -51,7 +51,7 @@ class CodeCpp (Code):
                 return str(arg)
         else:
             return str(arg)
-        
+
     def GeneratorDto (self, objs):
         ext_hpp = self.header_extension
 
@@ -260,7 +260,7 @@ using json = nlohmann::json;
         yield f'{indent}from_json(j,obj);'
         yield f'{indent}return obj;'
         yield f'}}'
-        return 
+        return
 
     def GetTestFileName (self):
         return f'{self.GetDirTest()}/{self.name_test}.{self.extension}'
@@ -667,7 +667,7 @@ case "$1" in
             mkdir nlohmann
             (cd nlohmann; wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp)
         fi
-        meson build
+        meson setup build
         cd build
         ninja
         ;;
