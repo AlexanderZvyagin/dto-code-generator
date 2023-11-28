@@ -4,7 +4,7 @@ from cgdto import *
 from math import nan
 
 def schema_version () -> str:
-    return 'MonteCarlo SDK version (0.2.1)'
+    return 'MonteCarlo SDK version (0.5.0)'
 
 def schema ():
 
@@ -75,15 +75,15 @@ UpdaterDto is used to pass parameters to update a state.
     obj.AddAttribute(Variable('name','string'))
     obj.AddAttribute(Variable('refs','int', list=True, optional=True))
     obj.AddAttribute(Variable('args','float', list=True, optional=True))
-    obj.AddAttribute(Variable('start','float',optional=True))
+    obj.AddAttribute(Variable('start','float',list=True, optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
             Variable('name', 'string', '',doc='Unique name of the updater, e.g. BrownianMotion'),
-            Variable(name='refs', type='int', defval=None, list=True, optional=True,doc='List of states which an updater requires.'),
-            Variable('args', 'float', defval=None, list=True, optional=True,doc='List of arguments.'),
-            Variable('start', 'float', defval=None, optional=True,doc='State starting value, e.g. start=3 will start a BM process from value 3.')
+            Variable(name='refs', type='int', defval=None, list=True, optional=True, doc='List of states which an updater requires.'),
+            Variable('args', 'float', defval=None, list=True, optional=True, doc='List of arguments.'),
+            Variable('start', 'float', defval=None, list=True, optional=True, doc='State starting value, e.g. start=3 will start a BM process from value 3.')
         ],
         mapping = [
             ('name',[Variable('name')]),
@@ -96,7 +96,6 @@ UpdaterDto is used to pass parameters to update a state.
     obj = Struct('Updater',UpdaterDto)
     objs.append(obj)
     Updater = obj
-    obj.AddAttribute(Variable('_equation','int',skip_dto=True))
     obj.AddAttribute(Variable('_state','int',skip_dto=True))
     obj.AddAttribute(Variable('title','string',skip_dto=True))
     obj.methods.append(Function (
@@ -106,7 +105,7 @@ UpdaterDto is used to pass parameters to update a state.
             Variable('name','string',''),
             Variable('refs','int',[],list=True),
             Variable('args','float',[],list=True),
-            Variable('start','float',None,optional=True),
+            Variable('start','float',[],list=True),
             Variable('title','string',''),
         ],
         mapping = [
@@ -116,7 +115,6 @@ UpdaterDto is used to pass parameters to update a state.
                 Variable('args'),
                 Variable('start'),
             ]),
-            ('_equation',[-88]),
             ('_state',[-88]),
             ('title',[Variable('title')]),
         ]
@@ -147,72 +145,21 @@ return self._state
     ))
 
     obj.methods.append(Function (
-        'GetEquationNumber',
-        'int',
-        code = {
-            'typescript':
-'''
-if(this._equation<0)
-    throw new Error(`Updater ${this.name} has no _equation.`);
-return this._equation;
-''',
-            'cpp':
-'''
-if(_equation<0)
-    throw std::runtime_error("An updater has no _equation.");
-return _equation;
-''',
-            'python':
-'''
-if self._equation<0:
-    raise Exception(f'Updater {self.name} has no _equation.')
-return self._equation
-'''
-        }
-    ))
-
-    obj.methods.append(Function (
-        'HasState',
-        'boolean',
-        const = True,
-        code = {
-            'python':
-'''
-return self.start is not None
-''',
-            'cpp':
-'''
-return start.has_value();
-''',
-            'typescript':
-'''
-return this.start !== undefined;
-'''
-        }
-    ))
-
-    obj.methods.append(Function (
         'GetStart',
-        'float',
+        Variable(None,'float', list=True),
         const = True,
         code = {
             'python':
 '''
-if self.start is None:
-    raise ValueError()
-return self.start
+return []   if self.start is None else   self.start
 ''',
             'cpp':
 '''
-if( not start.has_value() )
-    throw std::invalid_argument("start");
-return start.value();
+return start.value_or(std::vector<float>{});
 ''',
             'typescript':
 '''
-if( this.start === undefined )
-    throw new Error("start");
-return this.start;
+return this.start || [];
 '''
         }
     ))
@@ -239,7 +186,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             'IndependentGaussian',
             Variable('refs'),
             [],
-            None,
+            [],
             Variable('title'),
         ])]
     ))
@@ -259,7 +206,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             'CorrelatedGaussian',
             [Variable('state1'),Variable('state2')],
             [Variable('correlation')],
-            None,
+            [],
             Variable('title'),
         ])]
     ))
@@ -279,7 +226,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             'BrownianMotion',
             [], # refs
             [Variable('drift'),Variable('diffusion')], # args
-            Variable('start'),
+            [Variable('start')],
             Variable('title'),
         ])]
     ))
@@ -299,7 +246,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             'BrownianMotion',
             [Variable('drift'),Variable('diffusion')], # refs
             [], # args
-            Variable('start'),
+            [Variable('start')],
             Variable('title'),
         ])]
     ))
@@ -319,7 +266,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             'GeometricalBrownianMotion',
             [], # refs
             [Variable('drift'),Variable('diffusion')], # args
-            Variable('start'),
+            [Variable('start')],
             Variable('title'),
         ])]
     ))
@@ -339,7 +286,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             'GeometricalBrownianMotion',
             [Variable('drift'),Variable('diffusion')], # refs
             [], # args
-            Variable('start'),
+            [Variable('start')],
             Variable('title'),
         ])]
     ))
@@ -358,7 +305,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             'ZeroCouponBond',
             [Variable('underlying')], # refs
             [], # args
-            Variable('start'),
+            [Variable('start')],
             Variable('title'),
         ])]
     ))
@@ -380,7 +327,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             'Option',
             [Variable('underlying')], # refs
             [Variable('strike'),Variable('call_put')], # args
-            0, # start
+            [], # start
             Variable('title'),
         ])]
     ))
@@ -414,12 +361,33 @@ void from_json(const json &j, std::vector<Updater> &u) {
                 Variable('direction'),
                 Variable('action')
             ],
-            Variable('start'),
+            [Variable('start')],
             Variable('title'),
         ])]
     ))
 
     objs.append(obj)
+
+
+    obj = Struct('Polynom',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('ref'     ,'int',defval=-1),
+            Variable('args'    ,'float',defval=[],list=True),
+            Variable('title'   ,'string',defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'Polynom',
+            [Variable('ref')],
+            Variable('args'),
+            [], # start
+            Variable('title'),
+        ])]
+    ))
+    objs.append(obj)
+
 
     obj = Struct('Linear1DInterpolation',Updater,gen_test=False)
     obj.methods.append(Function (
@@ -435,8 +403,8 @@ void from_json(const json &j, std::vector<Updater> &u) {
         mapping = [(obj.base.name,[
             'Linear1DInterpolation',
             [Variable('ref')],
-            [],
-            0, # start
+            [], # args
+            [], # start
             Variable('title'),
         ])],
         code = {
@@ -478,7 +446,28 @@ this.args = [...[xmin,xmax],...y];
             'Multiplication',
             Variable('refs'),
             [Variable('factor')],
-            0, # start
+            [], # start
+            Variable('title'),
+        ])]
+    ))
+    objs.append(obj)
+
+
+    obj = Struct('Division',Updater)
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('numerator'     ,'int',defval=-88),
+            Variable('denominator'   ,'int',defval=-88),
+            Variable('eps'           ,'float',defval=0),
+            Variable('title'         ,'string',defval=''),
+        ],
+        mapping = [(obj.base.name,[
+            'Division',
+            [Variable('numerator'),Variable('denominator')],
+            [Variable('eps')],
+            [], # start
             Variable('title'),
         ])]
     ))
@@ -495,38 +484,38 @@ this.args = [...[xmin,xmax],...y];
         obj.name,
         'constructor',
         args = [
-            Variable('_state','int',-88),
-            Variable('_nbins','int',-88),
-            Variable('_min'  ,'float',-88), # FIXME: cannot use math.nan for the moment
-            Variable('_max'  ,'float',-88), # FIXME: cannot use math.nan for the moment
+            Variable('state','int',-88),
+            Variable('nbins','int',-88),
+            Variable('min'  ,'float',-88), # FIXME: cannot use math.nan for the moment
+            Variable('max'  ,'float',-88), # FIXME: cannot use math.nan for the moment
         ],
         mapping = [
-            ('state',[Variable('_state')]),
-            ('nbins',[Variable('_nbins')]),
-            ('min',[Variable('_min')]),
-            ('max',[Variable('_max')]),
+            ('state',[Variable('state')]),
+            ('nbins',[Variable('nbins')]),
+            ('min',[Variable('min')]),
+            ('max',[Variable('max')]),
         ]
     ))
     objs.append(obj)
 
     obj = Struct('Histogram')
     Histogram = obj
-    obj.AddAttribute(Variable('x',HistogramAxis))
-    obj.AddAttribute(Variable('y',HistogramAxis,optional=True))
+    obj.AddAttribute(Variable('ax',HistogramAxis))
+    obj.AddAttribute(Variable('ay',HistogramAxis,optional=True))
     obj.AddAttribute(Variable('evaluation_point','int',optional=True))
     obj.AddAttribute(Variable('bins','float',list=True,optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('x',HistogramAxis,Variable('HistogramAxis()',HistogramAxis)),
-            Variable('y',HistogramAxis,None,optional=True),
+            Variable('ax',HistogramAxis,Variable('HistogramAxis()',HistogramAxis)),
+            Variable('ay',HistogramAxis,None,optional=True),
             Variable('evaluation_point','int',None,optional=True),
             Variable('bins','float',None,optional=True,list=True)
         ],
         mapping = [
-            ('x',[Variable('x')]),
-            ('y',[Variable('y')]),
+            ('ax',[Variable('ax')]),
+            ('ay',[Variable('ay')]),
             ('evaluation_point',[Variable('evaluation_point')]),
             ('bins',[Variable('bins')]),
         ]
@@ -545,47 +534,19 @@ void from_json(const json &j, std::vector<Histogram> &u) {
 
     obj = Struct ('EvaluationPoint')
     EvaluationPoint = obj
-    obj.AddAttribute(Variable('state','int'))
     obj.AddAttribute(Variable('time','float'))
-    obj.AddAttribute(Variable('value','float',optional=True))
-    obj.AddAttribute(Variable('error','float',optional=True))
     obj.AddAttribute(Variable('histograms',Histogram,list=True,optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('state','int',-88),
             Variable('time','float',nan),
-            Variable('value','float',None,optional=True),
-            Variable('error','float',None,optional=True),
             Variable('histograms',Histogram,None,optional=True,list=True),
         ],
         mapping = [
-            ('state',[Variable('state')]),
             ('time',[Variable('time')]),
-            ('value',[Variable('value')]),
-            ('error',[Variable('error')]),
             ('histograms',[Variable('histograms')]),
         ]
-    ))
-    obj.methods.append(Function (
-        'GetState',
-        'int',
-        const = True,
-        code = {
-            'python':
-'''
-return self.state
-''',
-            'cpp':
-'''
-return state;
-''',
-            'typescript':
-'''
-return this.state;
-''',
-        }
     ))
     obj.methods.append(Function (
         'GetTime',
@@ -603,56 +564,6 @@ return time;
             'typescript':
 '''
 return this.time;
-''',
-        }
-    ))
-    obj.methods.append(Function (
-        'GetValue',
-        'float',
-        const = True,
-        code = {
-            'python':
-'''
-if self.value is None:
-    raise ValueError()
-return self.value
-''',
-            'cpp':
-'''
-if( not value.has_value() )
-    throw std::invalid_argument("value");
-return value.value();
-''',
-            'typescript':
-'''
-if( this.value === undefined )
-    throw new Error("value");
-return this.value;
-''',
-        }
-    ))
-    obj.methods.append(Function (
-        'GetError',
-        'float',
-        const = True,
-        code = {
-            'python':
-'''
-if self.error is None:
-    raise ValueError()
-return self.error
-''',
-            'cpp':
-'''
-if( not error.has_value() )
-    throw std::invalid_argument("error");
-return error.value();
-''',
-            'typescript':
-'''
-if( this.error === undefined )
-    throw new Error("error");
-return this.error;
 ''',
         }
     ))
@@ -685,29 +596,6 @@ return this;
         }
     ))
 
-    objs.append(obj)
-
-    obj = Struct ('Parameter')
-    obj.AddAttribute(Variable('value','float'))
-    obj.AddAttribute(Variable('step','float'))
-    obj.AddAttribute(Variable('min','float'))
-    obj.AddAttribute(Variable('max','float'))
-    obj.methods.append(Function (
-        obj.name,
-        'constructor',
-        args = [
-            Variable('value','float',nan),
-            Variable('step','float',nan),
-            Variable('min','float',nan),
-            Variable('max','float',nan),
-        ],
-        mapping = [
-            ('value',[Variable('value')]),
-            ('step',[Variable('step')]),
-            ('min',[Variable('min')]),
-            ('max',[Variable('max')]),
-        ]
-    ))
     objs.append(obj)
 
     obj = Struct ('Model')
@@ -787,20 +675,15 @@ return updaters.Count();
         code = {
             'python':
 '''
-return len([u for u in self.updaters if u.HasState()])
+return len(self.updaters)
 ''',
             'cpp':
 '''
-int n {0};
-for(const auto &u: updaters)
-    n += u.HasState();
-return n;
+return updaters.size();
 ''',
             'typescript':
 '''
-return this.updaters.filter(
-    u => u.HasState()
-).length;
+return this.updaters.length;
 '''
         }
     ))
@@ -813,31 +696,23 @@ return this.updaters.filter(
             'python':
 '''
 self.updaters.append(updater)
-updater._equation = self.GetNumberOfUpdaters()-1
-if updater.HasState():
-    updater._state = self.GetNumberOfStates()-1
-    self.titles[updater._state] = updater.title
+updater._state = self.GetNumberOfStates()-1
+self.titles[updater._state] = updater.title
 return updater
 ''',
             'cpp':
 '''
 updaters.push_back(updater);
 auto &u = updaters.back();
-u._equation = GetNumberOfUpdaters()-1;
-if(u.HasState()){
-    u._state = GetNumberOfStates()-1;
-    titles[u._state] = u.title;
-}
+u._state = GetNumberOfStates()-1;
+titles[u._state] = u.title;
 return u;
 ''',
             'typescript':
 '''
 this.updaters.push(updater);
-updater._equation = this.GetNumberOfUpdaters()-1;
-if(updater.HasState()){
-    updater._state = this.GetNumberOfStates()-1;
-    this.titles[updater._state] = updater.title;
-}
+updater._state = this.GetNumberOfStates()-1;
+this.titles[updater._state] = updater.title;
 return updater;
 ''',
         }
@@ -957,6 +832,7 @@ return this.skewness;
     EvaluationResults = obj
     EvaluationResults.AddDependency(Result)
     obj.AddAttribute(Variable('names','string',list=True))
+    obj.AddAttribute(Variable('nstates','int',list=True))
     obj.AddAttribute(Variable('npaths','int',list=True))
     obj.AddAttribute(Variable('mean','float',list=True))
     obj.AddAttribute(Variable('stddev','float',list=True))
@@ -970,6 +846,7 @@ return this.skewness;
         'constructor',
         args = [
             Variable('names','string',[],list=True),
+            Variable('nstates','int',[],list=True),
             Variable('npaths','int',[],list=True),
             Variable('mean','float',[],list=True),
             Variable('stddev','float',[],list=True),
@@ -981,6 +858,7 @@ return this.skewness;
         ],
         mapping = [
             ('names',[Variable('names')]),
+            ('nstates',[Variable('nstates')]),
             ('npaths',[Variable('npaths')]),
             ('mean',[Variable('mean')]),
             ('stddev',[Variable('stddev')]),
@@ -1089,6 +967,7 @@ return new Result(this.npaths[n],this.mean[n],this.stddev[n],this.skewness[n]);
         }
     ))
 
+    # FIXME: nstates
     obj.methods.append(Function (
         'df',
         'any',
@@ -1099,6 +978,8 @@ return new Result(this.npaths[n],this.mean[n],this.stddev[n],this.skewness[n]);
 data = []
 for j in range(self.GetNumberOfEvaluations()):
     for i in range(self.GetNumberOfStates()):
+        if not self.nstates[i]:
+            continue
         n = self.Index(i,j)
         item = {
             'name': self.names[i],
@@ -1108,7 +989,7 @@ for j in range(self.GetNumberOfEvaluations()):
             'step': self.time_steps[j],
             'npaths': self.npaths[n],
             'mean':self.mean[n],
-            'mean_error': None if self.stddev[n] is None else self.stddev[n]/math.sqrt(self.npaths[n]),
+            'mean_error': None if (self.stddev[n] is None or self.npaths[n]<=0) else self.stddev[n]/math.sqrt(self.npaths[n]),
             'stddev': self.stddev[n],
             'skewness': self.skewness[n]
         }
@@ -1147,93 +1028,28 @@ def EvaluationResults_from_response(r,model=None):
             'Sum',
             Variable('states'),
             Variable('weights'),
-            0, # start
+            [],
             Variable('title'),
         ])],
     ))
     objs.append(obj)
 
-
-    obj = Struct('SumAtPoints',Updater)
+    obj = Struct('SumOfFutureValues',Updater)
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('underlying' , 'int'    , defval=-88),
-            Variable('t'          , 'float'  , defval=[], list=True),
-            Variable('title'      , 'string' , defval=''),
+            Variable('state' , 'int'    , defval=-88),
+            Variable('t'     , 'float'  , defval=[], list=True),
+            Variable('title' , 'string' , defval=''),
         ],
         mapping = [(obj.base.name,[
-            'SumAtPoints',
-            [Variable('underlying')],
+            'SumOfFutureValues',
+            [Variable('state')],
             Variable('t'),
-            0, # start
+            [],
             Variable('title'),
         ])],
-    ))
-    objs.append(obj)
-
-
-    obj = Struct('SumOnIntervals',Updater)
-    obj.methods.append(Function (
-        obj.name,
-        'constructor',
-        args = [
-            Variable('notional' , 'int'    , defval=-88),
-            Variable('t'        , 'float'  , defval=[], list=True),
-            Variable('title'    , 'string' , defval=''),
-        ],
-        mapping = [(obj.base.name,[
-            'SumOnIntervals',
-            [Variable('notional')],
-            Variable('t'),
-            0, # start
-            Variable('title'),
-        ])],
-    ))
-    objs.append(obj)
-
-
-    obj = Struct('AverageInInterval',Updater)
-    obj.methods.append(Function (
-        obj.name,
-        'constructor',
-        args = [
-            Variable('underlying' , 'int'    , defval=-88),
-            Variable('t'          , 'float'  , defval=[], list=True),
-            Variable('title'      , 'string' , defval=''),
-        ],
-        mapping = [(obj.base.name,[
-            'AverageInInterval',
-            [Variable('underlying')],
-            Variable('t'),
-            0, # start
-            Variable('title'),
-        ])],
-    ))
-    objs.append(obj)
-
-    obj = Struct('CashFlows',Updater,doc='''
-CashFlows a set of CashFlows at time points Ti.
-''')
-    obj.methods.append(Function (
-        obj.name,
-        'constructor',
-        args = [
-            Variable('underlying' , 'int'    , defval=-88),
-            Variable('t'          , 'float'  , defval=[], list=True),
-            Variable('title'      , 'string' , defval=''),
-        ],
-        mapping = [(obj.base.name,[
-            'CashFlows',
-            [Variable('underlying')],
-            Variable('t'),
-            0, # start
-            Variable('title'),
-        ])],
-        doc = '''
-CashFlows constructor
-'''
     ))
     objs.append(obj)
 
