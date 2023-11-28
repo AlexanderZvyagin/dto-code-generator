@@ -122,7 +122,7 @@ using json = nlohmann::json;
         yield ''
 
         for func in obj.methods:
-            if func.code and func.code.get('cpp','') is None: continue
+            if func.code and func.code.get(self.language,None) is None: continue
             for line in self.GeneratorFunction(func,obj):
                 yield f'{indent}{line}'
             yield ''
