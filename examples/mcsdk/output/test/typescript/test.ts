@@ -20,19 +20,17 @@ import {
     ZeroCouponBond,
     Option,
     Barrier,
+    Polynom,
     Multiplication,
+    Division,
     HistogramAxis,
     Histogram,
     EvaluationPoint,
-    Parameter,
     Model,
     Result,
     EvaluationResults,
     Sum,
-    SumAtPoints,
-    SumOnIntervals,
-    AverageInInterval,
-    CashFlows,
+    SumOfFutureValues,
 } from './dto'
 
 function random_int(min:number = -1000, max:number = 1000) : number {
@@ -179,7 +177,7 @@ function random_UpdaterDto () : UpdaterDto {
         random_string(),
         random_optional_list_int(),
         random_optional_list_float(),
-        random_optional_float()
+        random_optional_list_float()
 
     );
 }
@@ -213,7 +211,7 @@ function random_Updater () : Updater {
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_optional_float(),
+        random_list_float(),
         random_string()
 
     );
@@ -549,6 +547,39 @@ function random_optional_list_Barrier () : Barrier[]|undefined {
 }
 
 
+function random_Polynom () : Polynom {
+    return new Polynom (
+        random_int(),
+        random_list_float(),
+        random_string()
+
+    );
+}
+
+
+function random_optional_Polynom () : Polynom|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Polynom ();
+}
+
+
+function random_list_Polynom (min:number = 0, max:number = 3) : Polynom[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:Polynom[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_Polynom());
+    return list;
+}
+
+
+function random_optional_list_Polynom () : Polynom[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Polynom ();
+}
+
+
 function random_Multiplication () : Multiplication {
     return new Multiplication (
         random_list_int(),
@@ -579,6 +610,40 @@ function random_optional_list_Multiplication () : Multiplication[]|undefined {
     if(yes_no())
         return undefined;
     return random_list_Multiplication ();
+}
+
+
+function random_Division () : Division {
+    return new Division (
+        random_int(),
+        random_int(),
+        random_float(),
+        random_string()
+
+    );
+}
+
+
+function random_optional_Division () : Division|undefined {
+    if(yes_no())
+        return undefined;
+    return random_Division ();
+}
+
+
+function random_list_Division (min:number = 0, max:number = 3) : Division[] {
+    const size:number = Math.floor(min + Math.random()*(max-min));
+    const list:Division[] = [];
+    for(let i=0; i<size; i++)
+        list.push(random_Division());
+    return list;
+}
+
+
+function random_optional_list_Division () : Division[]|undefined {
+    if(yes_no())
+        return undefined;
+    return random_list_Division ();
 }
 
 
@@ -652,10 +717,7 @@ function random_optional_list_Histogram () : Histogram[]|undefined {
 
 function random_EvaluationPoint () : EvaluationPoint {
     return new EvaluationPoint (
-        random_int(),
         random_float(),
-        random_optional_float(),
-        random_optional_float(),
         random_optional_list_Histogram()
 
     );
@@ -682,40 +744,6 @@ function random_optional_list_EvaluationPoint () : EvaluationPoint[]|undefined {
     if(yes_no())
         return undefined;
     return random_list_EvaluationPoint ();
-}
-
-
-function random_Parameter () : Parameter {
-    return new Parameter (
-        random_float(),
-        random_float(),
-        random_float(),
-        random_float()
-
-    );
-}
-
-
-function random_optional_Parameter () : Parameter|undefined {
-    if(yes_no())
-        return undefined;
-    return random_Parameter ();
-}
-
-
-function random_list_Parameter (min:number = 0, max:number = 3) : Parameter[] {
-    const size:number = Math.floor(min + Math.random()*(max-min));
-    const list:Parameter[] = [];
-    for(let i=0; i<size; i++)
-        list.push(random_Parameter());
-    return list;
-}
-
-
-function random_optional_list_Parameter () : Parameter[]|undefined {
-    if(yes_no())
-        return undefined;
-    return random_list_Parameter ();
 }
 
 
@@ -795,6 +823,7 @@ function random_EvaluationResults () : EvaluationResults {
     return new EvaluationResults (
         random_list_string(),
         random_list_int(),
+        random_list_int(),
         random_list_float(),
         random_list_float(),
         random_list_float(),
@@ -863,8 +892,8 @@ function random_optional_list_Sum () : Sum[]|undefined {
 }
 
 
-function random_SumAtPoints () : SumAtPoints {
-    return new SumAtPoints (
+function random_SumOfFutureValues () : SumOfFutureValues {
+    return new SumOfFutureValues (
         random_int(),
         random_list_float(),
         random_string()
@@ -873,125 +902,26 @@ function random_SumAtPoints () : SumAtPoints {
 }
 
 
-function random_optional_SumAtPoints () : SumAtPoints|undefined {
+function random_optional_SumOfFutureValues () : SumOfFutureValues|undefined {
     if(yes_no())
         return undefined;
-    return random_SumAtPoints ();
+    return random_SumOfFutureValues ();
 }
 
 
-function random_list_SumAtPoints (min:number = 0, max:number = 3) : SumAtPoints[] {
+function random_list_SumOfFutureValues (min:number = 0, max:number = 3) : SumOfFutureValues[] {
     const size:number = Math.floor(min + Math.random()*(max-min));
-    const list:SumAtPoints[] = [];
+    const list:SumOfFutureValues[] = [];
     for(let i=0; i<size; i++)
-        list.push(random_SumAtPoints());
+        list.push(random_SumOfFutureValues());
     return list;
 }
 
 
-function random_optional_list_SumAtPoints () : SumAtPoints[]|undefined {
+function random_optional_list_SumOfFutureValues () : SumOfFutureValues[]|undefined {
     if(yes_no())
         return undefined;
-    return random_list_SumAtPoints ();
-}
-
-
-function random_SumOnIntervals () : SumOnIntervals {
-    return new SumOnIntervals (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    );
-}
-
-
-function random_optional_SumOnIntervals () : SumOnIntervals|undefined {
-    if(yes_no())
-        return undefined;
-    return random_SumOnIntervals ();
-}
-
-
-function random_list_SumOnIntervals (min:number = 0, max:number = 3) : SumOnIntervals[] {
-    const size:number = Math.floor(min + Math.random()*(max-min));
-    const list:SumOnIntervals[] = [];
-    for(let i=0; i<size; i++)
-        list.push(random_SumOnIntervals());
-    return list;
-}
-
-
-function random_optional_list_SumOnIntervals () : SumOnIntervals[]|undefined {
-    if(yes_no())
-        return undefined;
-    return random_list_SumOnIntervals ();
-}
-
-
-function random_AverageInInterval () : AverageInInterval {
-    return new AverageInInterval (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    );
-}
-
-
-function random_optional_AverageInInterval () : AverageInInterval|undefined {
-    if(yes_no())
-        return undefined;
-    return random_AverageInInterval ();
-}
-
-
-function random_list_AverageInInterval (min:number = 0, max:number = 3) : AverageInInterval[] {
-    const size:number = Math.floor(min + Math.random()*(max-min));
-    const list:AverageInInterval[] = [];
-    for(let i=0; i<size; i++)
-        list.push(random_AverageInInterval());
-    return list;
-}
-
-
-function random_optional_list_AverageInInterval () : AverageInInterval[]|undefined {
-    if(yes_no())
-        return undefined;
-    return random_list_AverageInInterval ();
-}
-
-
-function random_CashFlows () : CashFlows {
-    return new CashFlows (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    );
-}
-
-
-function random_optional_CashFlows () : CashFlows|undefined {
-    if(yes_no())
-        return undefined;
-    return random_CashFlows ();
-}
-
-
-function random_list_CashFlows (min:number = 0, max:number = 3) : CashFlows[] {
-    const size:number = Math.floor(min + Math.random()*(max-min));
-    const list:CashFlows[] = [];
-    for(let i=0; i<size; i++)
-        list.push(random_CashFlows());
-    return list;
-}
-
-
-function random_optional_list_CashFlows () : CashFlows[]|undefined {
-    if(yes_no())
-        return undefined;
-    return random_list_CashFlows ();
+    return random_list_SumOfFutureValues ();
 }
 
 
@@ -1154,6 +1084,18 @@ function create (struct_name:string, file_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
+    } else if (struct_name === 'Polynom') {
+        const obj1: Polynom = random_Polynom();
+        const j: object = {};
+        dto.Polynom_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: Polynom = new Polynom();
+        dto.Polynom_from_json(j,obj2);
+        if(!dto.Polynom_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
     } else if (struct_name === 'Multiplication') {
         const obj1: Multiplication = random_Multiplication();
         const j: object = {};
@@ -1163,6 +1105,18 @@ function create (struct_name:string, file_name:string){
         const obj2: Multiplication = new Multiplication();
         dto.Multiplication_from_json(j,obj2);
         if(!dto.Multiplication_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'Division') {
+        const obj1: Division = random_Division();
+        const j: object = {};
+        dto.Division_to_json(j,obj1);
+
+        fs.writeFileSync (file_name, JSON.stringify (j));
+        const obj2: Division = new Division();
+        dto.Division_from_json(j,obj2);
+        if(!dto.Division_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
 
@@ -1199,18 +1153,6 @@ function create (struct_name:string, file_name:string){
         const obj2: EvaluationPoint = new EvaluationPoint();
         dto.EvaluationPoint_from_json(j,obj2);
         if(!dto.EvaluationPoint_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
-    } else if (struct_name === 'Parameter') {
-        const obj1: Parameter = random_Parameter();
-        const j: object = {};
-        dto.Parameter_to_json(j,obj1);
-
-        fs.writeFileSync (file_name, JSON.stringify (j));
-        const obj2: Parameter = new Parameter();
-        dto.Parameter_from_json(j,obj2);
-        if(!dto.Parameter_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
 
@@ -1262,51 +1204,15 @@ function create (struct_name:string, file_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
-    } else if (struct_name === 'SumAtPoints') {
-        const obj1: SumAtPoints = random_SumAtPoints();
+    } else if (struct_name === 'SumOfFutureValues') {
+        const obj1: SumOfFutureValues = random_SumOfFutureValues();
         const j: object = {};
-        dto.SumAtPoints_to_json(j,obj1);
+        dto.SumOfFutureValues_to_json(j,obj1);
 
         fs.writeFileSync (file_name, JSON.stringify (j));
-        const obj2: SumAtPoints = new SumAtPoints();
-        dto.SumAtPoints_from_json(j,obj2);
-        if(!dto.SumAtPoints_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
-    } else if (struct_name === 'SumOnIntervals') {
-        const obj1: SumOnIntervals = random_SumOnIntervals();
-        const j: object = {};
-        dto.SumOnIntervals_to_json(j,obj1);
-
-        fs.writeFileSync (file_name, JSON.stringify (j));
-        const obj2: SumOnIntervals = new SumOnIntervals();
-        dto.SumOnIntervals_from_json(j,obj2);
-        if(!dto.SumOnIntervals_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
-    } else if (struct_name === 'AverageInInterval') {
-        const obj1: AverageInInterval = random_AverageInInterval();
-        const j: object = {};
-        dto.AverageInInterval_to_json(j,obj1);
-
-        fs.writeFileSync (file_name, JSON.stringify (j));
-        const obj2: AverageInInterval = new AverageInInterval();
-        dto.AverageInInterval_from_json(j,obj2);
-        if(!dto.AverageInInterval_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
-    } else if (struct_name === 'CashFlows') {
-        const obj1: CashFlows = random_CashFlows();
-        const j: object = {};
-        dto.CashFlows_to_json(j,obj1);
-
-        fs.writeFileSync (file_name, JSON.stringify (j));
-        const obj2: CashFlows = new CashFlows();
-        dto.CashFlows_from_json(j,obj2);
-        if(!dto.CashFlows_equal(obj1,obj2))
+        const obj2: SumOfFutureValues = new SumOfFutureValues();
+        dto.SumOfFutureValues_from_json(j,obj2);
+        if(!dto.SumOfFutureValues_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
     } else
@@ -1394,9 +1300,21 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
+    } else if (struct_name === 'Polynom') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: Polynom = dto.Polynom_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
     } else if (struct_name === 'Multiplication') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: Multiplication = dto.Multiplication_fromJSON_string(jstr);
+        fs.writeFileSync(file2_name, JSON.stringify(obj));
+
+
+    } else if (struct_name === 'Division') {
+        const jstr: string = fs.readFileSync(file1_name,'utf-8');
+        const obj: Division = dto.Division_fromJSON_string(jstr);
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
@@ -1415,12 +1333,6 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
     } else if (struct_name === 'EvaluationPoint') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
         const obj: EvaluationPoint = dto.EvaluationPoint_fromJSON_string(jstr);
-        fs.writeFileSync(file2_name, JSON.stringify(obj));
-
-
-    } else if (struct_name === 'Parameter') {
-        const jstr: string = fs.readFileSync(file1_name,'utf-8');
-        const obj: Parameter = dto.Parameter_fromJSON_string(jstr);
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
@@ -1448,27 +1360,9 @@ function convert (struct_name:string, file1_name:string, file2_name:string){
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
 
-    } else if (struct_name === 'SumAtPoints') {
+    } else if (struct_name === 'SumOfFutureValues') {
         const jstr: string = fs.readFileSync(file1_name,'utf-8');
-        const obj: SumAtPoints = dto.SumAtPoints_fromJSON_string(jstr);
-        fs.writeFileSync(file2_name, JSON.stringify(obj));
-
-
-    } else if (struct_name === 'SumOnIntervals') {
-        const jstr: string = fs.readFileSync(file1_name,'utf-8');
-        const obj: SumOnIntervals = dto.SumOnIntervals_fromJSON_string(jstr);
-        fs.writeFileSync(file2_name, JSON.stringify(obj));
-
-
-    } else if (struct_name === 'AverageInInterval') {
-        const jstr: string = fs.readFileSync(file1_name,'utf-8');
-        const obj: AverageInInterval = dto.AverageInInterval_fromJSON_string(jstr);
-        fs.writeFileSync(file2_name, JSON.stringify(obj));
-
-
-    } else if (struct_name === 'CashFlows') {
-        const jstr: string = fs.readFileSync(file1_name,'utf-8');
-        const obj: CashFlows = dto.CashFlows_fromJSON_string(jstr);
+        const obj: SumOfFutureValues = dto.SumOfFutureValues_fromJSON_string(jstr);
         fs.writeFileSync(file2_name, JSON.stringify(obj));
 
     } else
@@ -1595,12 +1489,30 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
+    } else if (struct_name === 'Polynom') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: Polynom = dto.Polynom_fromJSON_string(jstr1);
+        const obj2: Polynom = dto.Polynom_fromJSON_string(jstr2);
+        if(!dto.Polynom_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
     } else if (struct_name === 'Multiplication') {
         const jstr1: string = fs.readFileSync(file1_name,'utf-8');
         const jstr2: string = fs.readFileSync(file2_name,'utf-8');
         const obj1: Multiplication = dto.Multiplication_fromJSON_string(jstr1);
         const obj2: Multiplication = dto.Multiplication_fromJSON_string(jstr2);
         if(!dto.Multiplication_equal(obj1,obj2))
+            throw new Error(`${struct_name} objects are not equal.`);
+
+
+    } else if (struct_name === 'Division') {
+        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
+        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
+        const obj1: Division = dto.Division_fromJSON_string(jstr1);
+        const obj2: Division = dto.Division_fromJSON_string(jstr2);
+        if(!dto.Division_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
 
@@ -1628,15 +1540,6 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
         const obj1: EvaluationPoint = dto.EvaluationPoint_fromJSON_string(jstr1);
         const obj2: EvaluationPoint = dto.EvaluationPoint_fromJSON_string(jstr2);
         if(!dto.EvaluationPoint_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
-    } else if (struct_name === 'Parameter') {
-        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
-        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
-        const obj1: Parameter = dto.Parameter_fromJSON_string(jstr1);
-        const obj2: Parameter = dto.Parameter_fromJSON_string(jstr2);
-        if(!dto.Parameter_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
 
@@ -1676,39 +1579,12 @@ function compare (struct_name:string, file1_name:string, file2_name:string){
             throw new Error(`${struct_name} objects are not equal.`);
 
 
-    } else if (struct_name === 'SumAtPoints') {
+    } else if (struct_name === 'SumOfFutureValues') {
         const jstr1: string = fs.readFileSync(file1_name,'utf-8');
         const jstr2: string = fs.readFileSync(file2_name,'utf-8');
-        const obj1: SumAtPoints = dto.SumAtPoints_fromJSON_string(jstr1);
-        const obj2: SumAtPoints = dto.SumAtPoints_fromJSON_string(jstr2);
-        if(!dto.SumAtPoints_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
-    } else if (struct_name === 'SumOnIntervals') {
-        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
-        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
-        const obj1: SumOnIntervals = dto.SumOnIntervals_fromJSON_string(jstr1);
-        const obj2: SumOnIntervals = dto.SumOnIntervals_fromJSON_string(jstr2);
-        if(!dto.SumOnIntervals_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
-    } else if (struct_name === 'AverageInInterval') {
-        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
-        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
-        const obj1: AverageInInterval = dto.AverageInInterval_fromJSON_string(jstr1);
-        const obj2: AverageInInterval = dto.AverageInInterval_fromJSON_string(jstr2);
-        if(!dto.AverageInInterval_equal(obj1,obj2))
-            throw new Error(`${struct_name} objects are not equal.`);
-
-
-    } else if (struct_name === 'CashFlows') {
-        const jstr1: string = fs.readFileSync(file1_name,'utf-8');
-        const jstr2: string = fs.readFileSync(file2_name,'utf-8');
-        const obj1: CashFlows = dto.CashFlows_fromJSON_string(jstr1);
-        const obj2: CashFlows = dto.CashFlows_fromJSON_string(jstr2);
-        if(!dto.CashFlows_equal(obj1,obj2))
+        const obj1: SumOfFutureValues = dto.SumOfFutureValues_fromJSON_string(jstr1);
+        const obj2: SumOfFutureValues = dto.SumOfFutureValues_fromJSON_string(jstr2);
+        if(!dto.SumOfFutureValues_equal(obj1,obj2))
             throw new Error(`${struct_name} objects are not equal.`);
 
     } else

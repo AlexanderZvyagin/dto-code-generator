@@ -19,19 +19,17 @@
 #include "ZeroCouponBond.hpp"
 #include "Option.hpp"
 #include "Barrier.hpp"
+#include "Polynom.hpp"
 #include "Multiplication.hpp"
+#include "Division.hpp"
 #include "HistogramAxis.hpp"
 #include "Histogram.hpp"
 #include "EvaluationPoint.hpp"
-#include "Parameter.hpp"
 #include "Model.hpp"
 #include "Result.hpp"
 #include "EvaluationResults.hpp"
 #include "Sum.hpp"
-#include "SumAtPoints.hpp"
-#include "SumOnIntervals.hpp"
-#include "AverageInInterval.hpp"
-#include "CashFlows.hpp"
+#include "SumOfFutureValues.hpp"
 
 namespace fs = std::filesystem;
 
@@ -280,7 +278,7 @@ UpdaterDto random_UpdaterDto (void) {
         random_string(),
         random_optional_list_int(),
         random_optional_list_float(),
-        random_optional_float()
+        random_optional_list_float()
 
     );
 }
@@ -321,7 +319,7 @@ Updater random_Updater (void) {
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_optional_float(),
+        random_list_float(),
         random_string()
 
     );
@@ -719,6 +717,46 @@ std::optional<std::vector<Barrier>> random_optional_list_Barrier (int min, int m
     return random_list_Barrier (min,max);
 }
 
+// Forward declarations for Polynom
+class Polynom;
+Polynom random_Polynom (void);
+std::optional<Polynom> random_optional_Polynom (void);
+std::vector<Polynom> random_list_Polynom (int min=0, int max=3);
+std::optional<std::vector<Polynom>> random_optional_list_Polynom (int min=0, int max=3);
+
+
+Polynom random_Polynom (void) {
+    return Polynom (
+        random_int(),
+        random_list_float(),
+        random_string()
+
+    );
+}
+
+
+std::optional<Polynom> random_optional_Polynom (void) {
+    if(yes_no())
+        return {};
+    return random_Polynom ();
+}
+
+
+std::vector<Polynom> random_list_Polynom (int min, int max) {
+    const auto size = random_int(min,max);
+    std::vector<Polynom> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_Polynom());
+    return list;
+}
+
+
+std::optional<std::vector<Polynom>> random_optional_list_Polynom (int min, int max) {
+    if(yes_no())
+        return {};
+    return random_list_Polynom (min,max);
+}
+
 // Forward declarations for Multiplication
 class Multiplication;
 Multiplication random_Multiplication (void);
@@ -757,6 +795,47 @@ std::optional<std::vector<Multiplication>> random_optional_list_Multiplication (
     if(yes_no())
         return {};
     return random_list_Multiplication (min,max);
+}
+
+// Forward declarations for Division
+class Division;
+Division random_Division (void);
+std::optional<Division> random_optional_Division (void);
+std::vector<Division> random_list_Division (int min=0, int max=3);
+std::optional<std::vector<Division>> random_optional_list_Division (int min=0, int max=3);
+
+
+Division random_Division (void) {
+    return Division (
+        random_int(),
+        random_int(),
+        random_float(),
+        random_string()
+
+    );
+}
+
+
+std::optional<Division> random_optional_Division (void) {
+    if(yes_no())
+        return {};
+    return random_Division ();
+}
+
+
+std::vector<Division> random_list_Division (int min, int max) {
+    const auto size = random_int(min,max);
+    std::vector<Division> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_Division());
+    return list;
+}
+
+
+std::optional<std::vector<Division>> random_optional_list_Division (int min, int max) {
+    if(yes_no())
+        return {};
+    return random_list_Division (min,max);
 }
 
 // Forward declarations for HistogramAxis
@@ -851,10 +930,7 @@ std::optional<std::vector<EvaluationPoint>> random_optional_list_EvaluationPoint
 
 EvaluationPoint random_EvaluationPoint (void) {
     return EvaluationPoint (
-        random_int(),
         random_float(),
-        random_optional_float(),
-        random_optional_float(),
         random_optional_list_Histogram()
 
     );
@@ -881,47 +957,6 @@ std::optional<std::vector<EvaluationPoint>> random_optional_list_EvaluationPoint
     if(yes_no())
         return {};
     return random_list_EvaluationPoint (min,max);
-}
-
-// Forward declarations for Parameter
-class Parameter;
-Parameter random_Parameter (void);
-std::optional<Parameter> random_optional_Parameter (void);
-std::vector<Parameter> random_list_Parameter (int min=0, int max=3);
-std::optional<std::vector<Parameter>> random_optional_list_Parameter (int min=0, int max=3);
-
-
-Parameter random_Parameter (void) {
-    return Parameter (
-        random_float(),
-        random_float(),
-        random_float(),
-        random_float()
-
-    );
-}
-
-
-std::optional<Parameter> random_optional_Parameter (void) {
-    if(yes_no())
-        return {};
-    return random_Parameter ();
-}
-
-
-std::vector<Parameter> random_list_Parameter (int min, int max) {
-    const auto size = random_int(min,max);
-    std::vector<Parameter> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_Parameter());
-    return list;
-}
-
-
-std::optional<std::vector<Parameter>> random_optional_list_Parameter (int min, int max) {
-    if(yes_no())
-        return {};
-    return random_list_Parameter (min,max);
 }
 
 // Forward declarations for Model
@@ -1022,6 +1057,7 @@ EvaluationResults random_EvaluationResults (void) {
     return EvaluationResults (
         random_list_string(),
         random_list_int(),
+        random_list_int(),
         random_list_float(),
         random_list_float(),
         random_list_float(),
@@ -1096,16 +1132,16 @@ std::optional<std::vector<Sum>> random_optional_list_Sum (int min, int max) {
     return random_list_Sum (min,max);
 }
 
-// Forward declarations for SumAtPoints
-class SumAtPoints;
-SumAtPoints random_SumAtPoints (void);
-std::optional<SumAtPoints> random_optional_SumAtPoints (void);
-std::vector<SumAtPoints> random_list_SumAtPoints (int min=0, int max=3);
-std::optional<std::vector<SumAtPoints>> random_optional_list_SumAtPoints (int min=0, int max=3);
+// Forward declarations for SumOfFutureValues
+class SumOfFutureValues;
+SumOfFutureValues random_SumOfFutureValues (void);
+std::optional<SumOfFutureValues> random_optional_SumOfFutureValues (void);
+std::vector<SumOfFutureValues> random_list_SumOfFutureValues (int min=0, int max=3);
+std::optional<std::vector<SumOfFutureValues>> random_optional_list_SumOfFutureValues (int min=0, int max=3);
 
 
-SumAtPoints random_SumAtPoints (void) {
-    return SumAtPoints (
+SumOfFutureValues random_SumOfFutureValues (void) {
+    return SumOfFutureValues (
         random_int(),
         random_list_float(),
         random_string()
@@ -1114,146 +1150,26 @@ SumAtPoints random_SumAtPoints (void) {
 }
 
 
-std::optional<SumAtPoints> random_optional_SumAtPoints (void) {
+std::optional<SumOfFutureValues> random_optional_SumOfFutureValues (void) {
     if(yes_no())
         return {};
-    return random_SumAtPoints ();
+    return random_SumOfFutureValues ();
 }
 
 
-std::vector<SumAtPoints> random_list_SumAtPoints (int min, int max) {
+std::vector<SumOfFutureValues> random_list_SumOfFutureValues (int min, int max) {
     const auto size = random_int(min,max);
-    std::vector<SumAtPoints> list;
+    std::vector<SumOfFutureValues> list;
     for(int i=0; i<size; i++)
-        list.push_back(random_SumAtPoints());
+        list.push_back(random_SumOfFutureValues());
     return list;
 }
 
 
-std::optional<std::vector<SumAtPoints>> random_optional_list_SumAtPoints (int min, int max) {
+std::optional<std::vector<SumOfFutureValues>> random_optional_list_SumOfFutureValues (int min, int max) {
     if(yes_no())
         return {};
-    return random_list_SumAtPoints (min,max);
-}
-
-// Forward declarations for SumOnIntervals
-class SumOnIntervals;
-SumOnIntervals random_SumOnIntervals (void);
-std::optional<SumOnIntervals> random_optional_SumOnIntervals (void);
-std::vector<SumOnIntervals> random_list_SumOnIntervals (int min=0, int max=3);
-std::optional<std::vector<SumOnIntervals>> random_optional_list_SumOnIntervals (int min=0, int max=3);
-
-
-SumOnIntervals random_SumOnIntervals (void) {
-    return SumOnIntervals (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    );
-}
-
-
-std::optional<SumOnIntervals> random_optional_SumOnIntervals (void) {
-    if(yes_no())
-        return {};
-    return random_SumOnIntervals ();
-}
-
-
-std::vector<SumOnIntervals> random_list_SumOnIntervals (int min, int max) {
-    const auto size = random_int(min,max);
-    std::vector<SumOnIntervals> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_SumOnIntervals());
-    return list;
-}
-
-
-std::optional<std::vector<SumOnIntervals>> random_optional_list_SumOnIntervals (int min, int max) {
-    if(yes_no())
-        return {};
-    return random_list_SumOnIntervals (min,max);
-}
-
-// Forward declarations for AverageInInterval
-class AverageInInterval;
-AverageInInterval random_AverageInInterval (void);
-std::optional<AverageInInterval> random_optional_AverageInInterval (void);
-std::vector<AverageInInterval> random_list_AverageInInterval (int min=0, int max=3);
-std::optional<std::vector<AverageInInterval>> random_optional_list_AverageInInterval (int min=0, int max=3);
-
-
-AverageInInterval random_AverageInInterval (void) {
-    return AverageInInterval (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    );
-}
-
-
-std::optional<AverageInInterval> random_optional_AverageInInterval (void) {
-    if(yes_no())
-        return {};
-    return random_AverageInInterval ();
-}
-
-
-std::vector<AverageInInterval> random_list_AverageInInterval (int min, int max) {
-    const auto size = random_int(min,max);
-    std::vector<AverageInInterval> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_AverageInInterval());
-    return list;
-}
-
-
-std::optional<std::vector<AverageInInterval>> random_optional_list_AverageInInterval (int min, int max) {
-    if(yes_no())
-        return {};
-    return random_list_AverageInInterval (min,max);
-}
-
-// Forward declarations for CashFlows
-class CashFlows;
-CashFlows random_CashFlows (void);
-std::optional<CashFlows> random_optional_CashFlows (void);
-std::vector<CashFlows> random_list_CashFlows (int min=0, int max=3);
-std::optional<std::vector<CashFlows>> random_optional_list_CashFlows (int min=0, int max=3);
-
-
-CashFlows random_CashFlows (void) {
-    return CashFlows (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    );
-}
-
-
-std::optional<CashFlows> random_optional_CashFlows (void) {
-    if(yes_no())
-        return {};
-    return random_CashFlows ();
-}
-
-
-std::vector<CashFlows> random_list_CashFlows (int min, int max) {
-    const auto size = random_int(min,max);
-    std::vector<CashFlows> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_CashFlows());
-    return list;
-}
-
-
-std::optional<std::vector<CashFlows>> random_optional_list_CashFlows (int min, int max) {
-    if(yes_no())
-        return {};
-    return random_list_CashFlows (min,max);
+    return random_list_SumOfFutureValues (min,max);
 }
 
 
@@ -1445,11 +1361,37 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
+        } else if (struct_name == "Polynom") {
+            auto obj1 = dto::random_Polynom();
+            std::ofstream(file1_path) << dto::Polynom_to_json_string(obj1);
+            auto obj2 =
+                dto::Polynom_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
         } else if (struct_name == "Multiplication") {
             auto obj1 = dto::random_Multiplication();
             std::ofstream(file1_path) << dto::Multiplication_to_json_string(obj1);
             auto obj2 =
                 dto::Multiplication_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "Division") {
+            auto obj1 = dto::random_Division();
+            std::ofstream(file1_path) << dto::Division_to_json_string(obj1);
+            auto obj2 =
+                dto::Division_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1489,19 +1431,6 @@ int main (int argc, const char **argv) try {
             std::ofstream(file1_path) << dto::EvaluationPoint_to_json_string(obj1);
             auto obj2 =
                 dto::EvaluationPoint_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "Parameter") {
-            auto obj1 = dto::random_Parameter();
-            std::ofstream(file1_path) << dto::Parameter_to_json_string(obj1);
-            auto obj2 =
-                dto::Parameter_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1562,50 +1491,11 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
-        } else if (struct_name == "SumAtPoints") {
-            auto obj1 = dto::random_SumAtPoints();
-            std::ofstream(file1_path) << dto::SumAtPoints_to_json_string(obj1);
+        } else if (struct_name == "SumOfFutureValues") {
+            auto obj1 = dto::random_SumOfFutureValues();
+            std::ofstream(file1_path) << dto::SumOfFutureValues_to_json_string(obj1);
             auto obj2 =
-                dto::SumAtPoints_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "SumOnIntervals") {
-            auto obj1 = dto::random_SumOnIntervals();
-            std::ofstream(file1_path) << dto::SumOnIntervals_to_json_string(obj1);
-            auto obj2 =
-                dto::SumOnIntervals_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "AverageInInterval") {
-            auto obj1 = dto::random_AverageInInterval();
-            std::ofstream(file1_path) << dto::AverageInInterval_to_json_string(obj1);
-            auto obj2 =
-                dto::AverageInInterval_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "CashFlows") {
-            auto obj1 = dto::random_CashFlows();
-            std::ofstream(file1_path) << dto::CashFlows_to_json_string(obj1);
-            auto obj2 =
-                dto::CashFlows_from_json (
+                dto::SumOfFutureValues_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1792,6 +1682,19 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
 
+        } else if (struct_name == "Polynom") {
+            auto obj =
+                dto::Polynom_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << Polynom_to_json_string(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
         } else if (struct_name == "Multiplication") {
             auto obj =
                 dto::Multiplication_from_json (
@@ -1801,6 +1704,19 @@ int main (int argc, const char **argv) try {
             )));
             std::ofstream out (file2_path);
             out << Multiplication_to_json_string(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "Division") {
+            auto obj =
+                dto::Division_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << Division_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1840,19 +1756,6 @@ int main (int argc, const char **argv) try {
             )));
             std::ofstream out (file2_path);
             out << EvaluationPoint_to_json_string(obj);
-            if(!out)
-                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
-
-
-        } else if (struct_name == "Parameter") {
-            auto obj =
-                dto::Parameter_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            std::ofstream out (file2_path);
-            out << Parameter_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1909,54 +1812,15 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
 
-        } else if (struct_name == "SumAtPoints") {
+        } else if (struct_name == "SumOfFutureValues") {
             auto obj =
-                dto::SumAtPoints_from_json (
+                dto::SumOfFutureValues_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             std::ofstream out (file2_path);
-            out << SumAtPoints_to_json_string(obj);
-            if(!out)
-                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
-
-
-        } else if (struct_name == "SumOnIntervals") {
-            auto obj =
-                dto::SumOnIntervals_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            std::ofstream out (file2_path);
-            out << SumOnIntervals_to_json_string(obj);
-            if(!out)
-                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
-
-
-        } else if (struct_name == "AverageInInterval") {
-            auto obj =
-                dto::AverageInInterval_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            std::ofstream out (file2_path);
-            out << AverageInInterval_to_json_string(obj);
-            if(!out)
-                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
-
-
-        } else if (struct_name == "CashFlows") {
-            auto obj =
-                dto::CashFlows_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            std::ofstream out (file2_path);
-            out << CashFlows_to_json_string(obj);
+            out << SumOfFutureValues_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -2189,6 +2053,23 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
+        } else if (struct_name == "Polynom") {
+            auto obj1 =
+                dto::Polynom_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                dto::Polynom_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
         } else if (struct_name == "Multiplication") {
             auto obj1 =
                 dto::Multiplication_from_json (
@@ -2198,6 +2079,23 @@ int main (int argc, const char **argv) try {
             )));
             auto obj2 =
                 dto::Multiplication_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "Division") {
+            auto obj1 =
+                dto::Division_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                dto::Division_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -2249,23 +2147,6 @@ int main (int argc, const char **argv) try {
             )));
             auto obj2 =
                 dto::EvaluationPoint_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file2_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "Parameter") {
-            auto obj1 =
-                dto::Parameter_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            auto obj2 =
-                dto::Parameter_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -2342,66 +2223,15 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
-        } else if (struct_name == "SumAtPoints") {
+        } else if (struct_name == "SumOfFutureValues") {
             auto obj1 =
-                dto::SumAtPoints_from_json (
+                dto::SumOfFutureValues_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                dto::SumAtPoints_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file2_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "SumOnIntervals") {
-            auto obj1 =
-                dto::SumOnIntervals_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            auto obj2 =
-                dto::SumOnIntervals_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file2_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "AverageInInterval") {
-            auto obj1 =
-                dto::AverageInInterval_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            auto obj2 =
-                dto::AverageInInterval_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file2_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "CashFlows") {
-            auto obj1 =
-                dto::CashFlows_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            auto obj2 =
-                dto::CashFlows_from_json (
+                dto::SumOfFutureValues_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path

@@ -117,7 +117,7 @@ def random_UpdaterDto ():
         random_string(),
         random_optional_list_int(),
         random_optional_list_float(),
-        random_optional_float()
+        random_optional_list_float()
 
     )
 
@@ -144,7 +144,7 @@ def random_Updater ():
         random_string(),
         random_list_int(),
         random_list_float(),
-        random_optional_float(),
+        random_list_float(),
         random_string()
 
     )
@@ -410,6 +410,32 @@ def random_optional_list_Barrier (min:int = 0, max:int = 3) -> list[Barrier]|Non
     return random_list_Barrier(min,max)
 
 
+def random_Polynom ():
+    return Polynom (
+        random_int(),
+        random_list_float(),
+        random_string()
+
+    )
+
+
+def random_optional_Polynom () -> Polynom|None:
+    if yes_no():
+        return None
+    return random_Polynom()
+
+
+def random_list_Polynom (min:int = 0, max:int = 3) -> list[Polynom]:
+    size = random.randint(min,max)
+    return [random_Polynom() for i in range(size)]
+
+
+def random_optional_list_Polynom (min:int = 0, max:int = 3) -> list[Polynom]|None:
+    if yes_no():
+        return None
+    return random_list_Polynom(min,max)
+
+
 def random_Multiplication ():
     return Multiplication (
         random_list_int(),
@@ -434,6 +460,33 @@ def random_optional_list_Multiplication (min:int = 0, max:int = 3) -> list[Multi
     if yes_no():
         return None
     return random_list_Multiplication(min,max)
+
+
+def random_Division ():
+    return Division (
+        random_int(),
+        random_int(),
+        random_float(),
+        random_string()
+
+    )
+
+
+def random_optional_Division () -> Division|None:
+    if yes_no():
+        return None
+    return random_Division()
+
+
+def random_list_Division (min:int = 0, max:int = 3) -> list[Division]:
+    size = random.randint(min,max)
+    return [random_Division() for i in range(size)]
+
+
+def random_optional_list_Division (min:int = 0, max:int = 3) -> list[Division]|None:
+    if yes_no():
+        return None
+    return random_list_Division(min,max)
 
 
 def random_HistogramAxis ():
@@ -492,10 +545,7 @@ def random_optional_list_Histogram (min:int = 0, max:int = 3) -> list[Histogram]
 
 def random_EvaluationPoint ():
     return EvaluationPoint (
-        random_int(),
         random_float(),
-        random_optional_float(),
-        random_optional_float(),
         random_optional_list_Histogram()
 
     )
@@ -516,33 +566,6 @@ def random_optional_list_EvaluationPoint (min:int = 0, max:int = 3) -> list[Eval
     if yes_no():
         return None
     return random_list_EvaluationPoint(min,max)
-
-
-def random_Parameter ():
-    return Parameter (
-        random_float(),
-        random_float(),
-        random_float(),
-        random_float()
-
-    )
-
-
-def random_optional_Parameter () -> Parameter|None:
-    if yes_no():
-        return None
-    return random_Parameter()
-
-
-def random_list_Parameter (min:int = 0, max:int = 3) -> list[Parameter]:
-    size = random.randint(min,max)
-    return [random_Parameter() for i in range(size)]
-
-
-def random_optional_list_Parameter (min:int = 0, max:int = 3) -> list[Parameter]|None:
-    if yes_no():
-        return None
-    return random_list_Parameter(min,max)
 
 
 def random_Model ():
@@ -607,6 +630,7 @@ def random_EvaluationResults ():
     return EvaluationResults (
         random_list_string(),
         random_list_int(),
+        random_list_int(),
         random_list_float(),
         random_list_float(),
         random_list_float(),
@@ -661,8 +685,8 @@ def random_optional_list_Sum (min:int = 0, max:int = 3) -> list[Sum]|None:
     return random_list_Sum(min,max)
 
 
-def random_SumAtPoints ():
-    return SumAtPoints (
+def random_SumOfFutureValues ():
+    return SumOfFutureValues (
         random_int(),
         random_list_float(),
         random_string()
@@ -670,99 +694,21 @@ def random_SumAtPoints ():
     )
 
 
-def random_optional_SumAtPoints () -> SumAtPoints|None:
+def random_optional_SumOfFutureValues () -> SumOfFutureValues|None:
     if yes_no():
         return None
-    return random_SumAtPoints()
+    return random_SumOfFutureValues()
 
 
-def random_list_SumAtPoints (min:int = 0, max:int = 3) -> list[SumAtPoints]:
+def random_list_SumOfFutureValues (min:int = 0, max:int = 3) -> list[SumOfFutureValues]:
     size = random.randint(min,max)
-    return [random_SumAtPoints() for i in range(size)]
+    return [random_SumOfFutureValues() for i in range(size)]
 
 
-def random_optional_list_SumAtPoints (min:int = 0, max:int = 3) -> list[SumAtPoints]|None:
+def random_optional_list_SumOfFutureValues (min:int = 0, max:int = 3) -> list[SumOfFutureValues]|None:
     if yes_no():
         return None
-    return random_list_SumAtPoints(min,max)
-
-
-def random_SumOnIntervals ():
-    return SumOnIntervals (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    )
-
-
-def random_optional_SumOnIntervals () -> SumOnIntervals|None:
-    if yes_no():
-        return None
-    return random_SumOnIntervals()
-
-
-def random_list_SumOnIntervals (min:int = 0, max:int = 3) -> list[SumOnIntervals]:
-    size = random.randint(min,max)
-    return [random_SumOnIntervals() for i in range(size)]
-
-
-def random_optional_list_SumOnIntervals (min:int = 0, max:int = 3) -> list[SumOnIntervals]|None:
-    if yes_no():
-        return None
-    return random_list_SumOnIntervals(min,max)
-
-
-def random_AverageInInterval ():
-    return AverageInInterval (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    )
-
-
-def random_optional_AverageInInterval () -> AverageInInterval|None:
-    if yes_no():
-        return None
-    return random_AverageInInterval()
-
-
-def random_list_AverageInInterval (min:int = 0, max:int = 3) -> list[AverageInInterval]:
-    size = random.randint(min,max)
-    return [random_AverageInInterval() for i in range(size)]
-
-
-def random_optional_list_AverageInInterval (min:int = 0, max:int = 3) -> list[AverageInInterval]|None:
-    if yes_no():
-        return None
-    return random_list_AverageInInterval(min,max)
-
-
-def random_CashFlows ():
-    return CashFlows (
-        random_int(),
-        random_list_float(),
-        random_string()
-
-    )
-
-
-def random_optional_CashFlows () -> CashFlows|None:
-    if yes_no():
-        return None
-    return random_CashFlows()
-
-
-def random_list_CashFlows (min:int = 0, max:int = 3) -> list[CashFlows]:
-    size = random.randint(min,max)
-    return [random_CashFlows() for i in range(size)]
-
-
-def random_optional_list_CashFlows (min:int = 0, max:int = 3) -> list[CashFlows]|None:
-    if yes_no():
-        return None
-    return random_list_CashFlows(min,max)
+    return random_list_SumOfFutureValues(min,max)
 
 
 def test_round_trip_python(command, struct_name, file1_name, file2_name):
@@ -890,12 +836,30 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
+        elif struct_name=='Polynom':
+            obj1 = random_Polynom()
+            open(file1_name,'w').write(Polynom_to_json_string(obj1))
+            obj2 = Polynom_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,Polynom)
+            assert isinstance(obj2,Polynom)
+            assert obj1==obj2
+
+
         elif struct_name=='Multiplication':
             obj1 = random_Multiplication()
             open(file1_name,'w').write(Multiplication_to_json_string(obj1))
             obj2 = Multiplication_from_json_string(open(file1_name).read())
             assert isinstance(obj1,Multiplication)
             assert isinstance(obj2,Multiplication)
+            assert obj1==obj2
+
+
+        elif struct_name=='Division':
+            obj1 = random_Division()
+            open(file1_name,'w').write(Division_to_json_string(obj1))
+            obj2 = Division_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,Division)
+            assert isinstance(obj2,Division)
             assert obj1==obj2
 
 
@@ -923,15 +887,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             obj2 = EvaluationPoint_from_json_string(open(file1_name).read())
             assert isinstance(obj1,EvaluationPoint)
             assert isinstance(obj2,EvaluationPoint)
-            assert obj1==obj2
-
-
-        elif struct_name=='Parameter':
-            obj1 = random_Parameter()
-            open(file1_name,'w').write(Parameter_to_json_string(obj1))
-            obj2 = Parameter_from_json_string(open(file1_name).read())
-            assert isinstance(obj1,Parameter)
-            assert isinstance(obj2,Parameter)
             assert obj1==obj2
 
 
@@ -971,39 +926,12 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
-        elif struct_name=='SumAtPoints':
-            obj1 = random_SumAtPoints()
-            open(file1_name,'w').write(SumAtPoints_to_json_string(obj1))
-            obj2 = SumAtPoints_from_json_string(open(file1_name).read())
-            assert isinstance(obj1,SumAtPoints)
-            assert isinstance(obj2,SumAtPoints)
-            assert obj1==obj2
-
-
-        elif struct_name=='SumOnIntervals':
-            obj1 = random_SumOnIntervals()
-            open(file1_name,'w').write(SumOnIntervals_to_json_string(obj1))
-            obj2 = SumOnIntervals_from_json_string(open(file1_name).read())
-            assert isinstance(obj1,SumOnIntervals)
-            assert isinstance(obj2,SumOnIntervals)
-            assert obj1==obj2
-
-
-        elif struct_name=='AverageInInterval':
-            obj1 = random_AverageInInterval()
-            open(file1_name,'w').write(AverageInInterval_to_json_string(obj1))
-            obj2 = AverageInInterval_from_json_string(open(file1_name).read())
-            assert isinstance(obj1,AverageInInterval)
-            assert isinstance(obj2,AverageInInterval)
-            assert obj1==obj2
-
-
-        elif struct_name=='CashFlows':
-            obj1 = random_CashFlows()
-            open(file1_name,'w').write(CashFlows_to_json_string(obj1))
-            obj2 = CashFlows_from_json_string(open(file1_name).read())
-            assert isinstance(obj1,CashFlows)
-            assert isinstance(obj2,CashFlows)
+        elif struct_name=='SumOfFutureValues':
+            obj1 = random_SumOfFutureValues()
+            open(file1_name,'w').write(SumOfFutureValues_to_json_string(obj1))
+            obj2 = SumOfFutureValues_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,SumOfFutureValues)
+            assert isinstance(obj2,SumOfFutureValues)
             assert obj1==obj2
 
         else:
@@ -1077,9 +1005,19 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             open(file2_name,'w').write(Barrier_to_json_string(obj))
 
 
+        elif struct_name=='Polynom':
+            obj = Polynom_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(Polynom_to_json_string(obj))
+
+
         elif struct_name=='Multiplication':
             obj = Multiplication_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(Multiplication_to_json_string(obj))
+
+
+        elif struct_name=='Division':
+            obj = Division_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(Division_to_json_string(obj))
 
 
         elif struct_name=='HistogramAxis':
@@ -1095,11 +1033,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='EvaluationPoint':
             obj = EvaluationPoint_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(EvaluationPoint_to_json_string(obj))
-
-
-        elif struct_name=='Parameter':
-            obj = Parameter_from_json_string(open(file1_name).read())
-            open(file2_name,'w').write(Parameter_to_json_string(obj))
 
 
         elif struct_name=='Model':
@@ -1122,24 +1055,9 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             open(file2_name,'w').write(Sum_to_json_string(obj))
 
 
-        elif struct_name=='SumAtPoints':
-            obj = SumAtPoints_from_json_string(open(file1_name).read())
-            open(file2_name,'w').write(SumAtPoints_to_json_string(obj))
-
-
-        elif struct_name=='SumOnIntervals':
-            obj = SumOnIntervals_from_json_string(open(file1_name).read())
-            open(file2_name,'w').write(SumOnIntervals_to_json_string(obj))
-
-
-        elif struct_name=='AverageInInterval':
-            obj = AverageInInterval_from_json_string(open(file1_name).read())
-            open(file2_name,'w').write(AverageInInterval_to_json_string(obj))
-
-
-        elif struct_name=='CashFlows':
-            obj = CashFlows_from_json_string(open(file1_name).read())
-            open(file2_name,'w').write(CashFlows_to_json_string(obj))
+        elif struct_name=='SumOfFutureValues':
+            obj = SumOfFutureValues_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(SumOfFutureValues_to_json_string(obj))
 
         else:
             raise Exception(f'Operation "{command}" does not supported struct {struct_name}')
@@ -1225,9 +1143,21 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
+        elif struct_name=='Polynom':
+            obj1 = Polynom_from_json_string(open(file1_name).read())
+            obj2 = Polynom_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
         elif struct_name=='Multiplication':
             obj1 = Multiplication_from_json_string(open(file1_name).read())
             obj2 = Multiplication_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='Division':
+            obj1 = Division_from_json_string(open(file1_name).read())
+            obj2 = Division_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
 
@@ -1246,12 +1176,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='EvaluationPoint':
             obj1 = EvaluationPoint_from_json_string(open(file1_name).read())
             obj2 = EvaluationPoint_from_json_string(open(file2_name).read())
-            assert obj1==obj2
-
-
-        elif struct_name=='Parameter':
-            obj1 = Parameter_from_json_string(open(file1_name).read())
-            obj2 = Parameter_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
 
@@ -1279,27 +1203,9 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
-        elif struct_name=='SumAtPoints':
-            obj1 = SumAtPoints_from_json_string(open(file1_name).read())
-            obj2 = SumAtPoints_from_json_string(open(file2_name).read())
-            assert obj1==obj2
-
-
-        elif struct_name=='SumOnIntervals':
-            obj1 = SumOnIntervals_from_json_string(open(file1_name).read())
-            obj2 = SumOnIntervals_from_json_string(open(file2_name).read())
-            assert obj1==obj2
-
-
-        elif struct_name=='AverageInInterval':
-            obj1 = AverageInInterval_from_json_string(open(file1_name).read())
-            obj2 = AverageInInterval_from_json_string(open(file2_name).read())
-            assert obj1==obj2
-
-
-        elif struct_name=='CashFlows':
-            obj1 = CashFlows_from_json_string(open(file1_name).read())
-            obj2 = CashFlows_from_json_string(open(file2_name).read())
+        elif struct_name=='SumOfFutureValues':
+            obj1 = SumOfFutureValues_from_json_string(open(file1_name).read())
+            obj2 = SumOfFutureValues_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
         else:
