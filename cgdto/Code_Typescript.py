@@ -188,7 +188,7 @@ function string_equal (a:string, b:string) : boolean {
             for line in self.GeneratorConstructor(func,obj):
                 yield line
         else:
-            ftype = self.TypeToString(Variable('',func.type))+' '
+            ftype = self.TypeToString(func.ReturnType()) + ' '
 
             yield f'{func.name} ('
 

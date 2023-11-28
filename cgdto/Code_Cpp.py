@@ -152,7 +152,7 @@ using json = nlohmann::json;
             for item in self.GeneratorConstructor(func,base):
                 yield item
         else:
-            ftype = self.TypeToString(Variable('',func.type))+' '
+            ftype = self.TypeToString(func.ReturnType()) + ' '
             if func.type==base and not func.const:
                 ftype += '& '
 

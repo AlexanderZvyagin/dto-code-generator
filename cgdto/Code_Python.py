@@ -182,15 +182,11 @@ def float_equal(a:float|None, b:float|None) -> bool:
             yield line
         for line in self.GeneratorStructToJsonString(obj):
             yield line
-        # code.extend(Struct_from_json_string_python(self))
-        # code.extend(Struct_to_json_string_python(self))
 
         for line in self.GeneratorStructFromJson(obj):
             yield line
         for line in self.GeneratorStructToJson(obj):
             yield line
-        # code.extend(Struct_from_json_python(self))
-        # code.extend(Struct_to_json_python(self))
 
     def GeneratorFunction (self, func:Function, base:Struct=None):
         if base and func.name==base.name:
@@ -204,7 +200,7 @@ def float_equal(a:float|None, b:float|None) -> bool:
             for i,a in enumerate(func.args):
                 default = '' if a.defval is None else f' = {self.ValueToString(a.defval)}'
                 yield f'{indent}{a.name}{default},'
-            yield '):'
+            yield f') -> {self.TypeToString(func.ReturnType())} :'
 
             if func.doc:
                 yield ''

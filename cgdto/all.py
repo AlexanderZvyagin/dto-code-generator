@@ -5,7 +5,7 @@ from __future__ import annotations
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,7,0)
+__version__ = (0,7,1)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
@@ -139,6 +139,14 @@ class Function:
         self.mapping     : tuple [str,list[Variable]]   = mapping
         self.const       : bool                         = const
         self.doc         : str                          = doc
+
+    def ReturnType (self) -> Variable:
+        if type(self.type)==Struct:
+            return Variable('',self.type.name)
+        elif type(self.type)==str:
+            return Variable('',self.type)
+        else:
+            return self.type
 
     def __repr__ (self):
         return f"Function('{self.name}','{self.type}',{self.args})"
