@@ -23,7 +23,7 @@ class Converter:
 
 class B1:
     def __init__ (self,x:int=0):
-        self.version = Version('B',1)
+        # self.version = Version('B',1)
         self.x = x
 
 class B2:
@@ -111,9 +111,14 @@ class Mapping:
 
         return shortest_chain(chains_list)
 
-    def Convert (self, obj, version_to:int):
+    def Convert (self, obj, version_to:int, version_from=None, name=None):
 
-        converters_chain = self.FindConverter(obj.version.name,obj.version.id,version_to)
+        if name is None:
+            name = obj.version.name
+        if version_from is None:
+            version_from = obj.version.id
+
+        converters_chain = self.FindConverter(name,version_from,version_to)
         log.debug(f'{converters_chain}')
         if converters_chain is not None:
             log.debug(f'converters_chain length is {len(converters_chain)}')
@@ -132,9 +137,9 @@ def test_B1_to_B4_conversion_with_mapping():
 
     b1 = B1(111)
 
-    b4 = m.Convert(b1,4)
+    b4 = m.Convert(b1,name='B',version_from=1,version_to=4)
 
-    assert b1.version == Version('B',1)
+    # assert b1.version == Version('B',1)
     assert b4.version == Version('B',4)
     assert b4.x == b1.x
     assert b4.y == 0
@@ -148,8 +153,8 @@ def test_B1_to_B1_conversion_with_mapping():
     m.converters.append(Converter ('B',2,3,convert_B2_to_B3))
     m.converters.append(Converter ('B',3,4,convert_B3_to_B4))
 
-    b1 = B1(111)
+    b2 = B2(222)
 
-    b1_ = m.Convert(b1,1)
+    b2_ = m.Convert(b2,2)
 
-    assert id(b1) == id(b1_)
+    assert id(b2) == id(b2_)
