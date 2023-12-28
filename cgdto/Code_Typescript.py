@@ -147,13 +147,10 @@ function string_equal (a:string, b:string) : boolean {
         yield f''
 
         for attr in obj.attributes:
-            if attr.static:
-                assert attr.defval is not None
-                yield f'{indent}static {attr.name} : {self.TypeToString(attr)} = {self.ValueToString(attr.defval)};'
-
-        for a in obj.attributes:
-            if a.static: continue
-            yield f'{indent}{a.name} : {self.TypeToString(a)};'
+            default_value = ''
+            if attr.defval is not None:
+                default_value = f' = {self.ValueToString(attr.defval)}'
+            yield f'{indent}{attr.name} : {self.TypeToString(attr)}{default_value};'
 
         yield ''
 

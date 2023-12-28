@@ -4,7 +4,7 @@ from cgdto import *
 from math import nan
 
 def schema_version () -> str:
-    return 'MonteCarlo SDK version (0.5.0)'
+    return 'MonteCarlo SDK version (0.6.4-dev-versioning)'
 
 def schema ():
 
@@ -36,6 +36,7 @@ def schema ():
 
 
     obj = Struct('UpdaterDoc')
+    obj.AddAttribute(Variable('version','int',defval=1))
     obj.AddAttribute(Variable('name','string',doc='''
 The parameter 'name' is a single world which uniquely identifies how a MC state will be updated.
 E.g. GeometricalBrownianMotion.
@@ -97,6 +98,7 @@ UpdaterDto is used to pass parameters to update a state.
     objs.append(obj)
     Updater = obj
     obj.AddAttribute(Variable('_state','int',skip_dto=True))
+    obj.AddAttribute(Variable('_nstates','int',skip_dto=True))
     obj.AddAttribute(Variable('title','string',skip_dto=True))
     obj.methods.append(Function (
         obj.name,
@@ -106,6 +108,7 @@ UpdaterDto is used to pass parameters to update a state.
             Variable('refs','int',[],list=True),
             Variable('args','float',[],list=True),
             Variable('start','float',[],list=True),
+            Variable('nstates','int',1),
             Variable('title','string',''),
         ],
         mapping = [
@@ -116,9 +119,31 @@ UpdaterDto is used to pass parameters to update a state.
                 Variable('start'),
             ]),
             ('_state',[-88]),
+            ('_nstates',[Variable('nstates')]),
             ('title',[Variable('title')]),
         ]
     ))
+
+    obj.methods.append(Function (
+        '__repr__',
+        'string',
+        const = True,
+        code = {
+            'python':
+'''
+if self._nstates==0:
+    state='None'
+elif self._nstates==1:
+    state=f'{self._state}'
+else:
+    states=f'[{self._state}...{self._state+self._nstates-1}]'
+refs = str(self.refs)
+args = str(self.args)
+return f'{self.name} nstates={self._nstates} state={self._state} refs={self.refs} args={self.args} start={self.start}'
+'''
+        }
+    ))
+    
     obj.methods.append(Function (
         'GetStateNumber',
         'int',
@@ -187,6 +212,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             Variable('refs'),
             [],
             [],
+            0,
             Variable('title'),
         ])]
     ))
@@ -207,6 +233,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [Variable('state1'),Variable('state2')],
             [Variable('correlation')],
             [],
+            0,
             Variable('title'),
         ])]
     ))
@@ -227,6 +254,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [], # refs
             [Variable('drift'),Variable('diffusion')], # args
             [Variable('start')],
+            1,
             Variable('title'),
         ])]
     ))
@@ -247,6 +275,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [Variable('drift'),Variable('diffusion')], # refs
             [], # args
             [Variable('start')],
+            1,
             Variable('title'),
         ])]
     ))
@@ -267,6 +296,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [], # refs
             [Variable('drift'),Variable('diffusion')], # args
             [Variable('start')],
+            1,
             Variable('title'),
         ])]
     ))
@@ -287,6 +317,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [Variable('drift'),Variable('diffusion')], # refs
             [], # args
             [Variable('start')],
+            1,
             Variable('title'),
         ])]
     ))
@@ -306,14 +337,15 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [Variable('underlying')], # refs
             [], # args
             [Variable('start')],
+            1,
             Variable('title'),
         ])]
     ))
     objs.append(obj)
 
     obj = Struct('Option',Updater)
-    obj.AddAttribute(Variable('Call','int',defval=0, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('Put' ,'int',defval=1, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('Call','int',defval=0, skip_dto=True))
+    obj.AddAttribute(Variable('Put' ,'int',defval=1, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -328,16 +360,17 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [Variable('underlying')], # refs
             [Variable('strike'),Variable('call_put')], # args
             [], # start
+            1,
             Variable('title'),
         ])]
     ))
     objs.append(obj)
 
     obj = Struct('Barrier',Updater)
-    obj.AddAttribute(Variable('DirectionUp','int',defval=1, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('DirectionDown','int',defval=-1, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('DirectionAny','int',defval=0, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('ActionSet','int',defval=0, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionUp','int',defval=1, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionDown','int',defval=-1, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionAny','int',defval=0, skip_dto=True))
+    obj.AddAttribute(Variable('ActionSet','int',defval=0, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -362,6 +395,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
                 Variable('action')
             ],
             [Variable('start')],
+            1,
             Variable('title'),
         ])]
     ))
@@ -383,6 +417,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [Variable('ref')],
             Variable('args'),
             [], # start
+            1,
             Variable('title'),
         ])]
     ))
@@ -405,6 +440,7 @@ void from_json(const json &j, std::vector<Updater> &u) {
             [Variable('ref')],
             [], # args
             [], # start
+            1,
             Variable('title'),
         ])],
         code = {
@@ -447,6 +483,7 @@ this.args = [...[xmin,xmax],...y];
             Variable('refs'),
             [Variable('factor')],
             [], # start
+            1,
             Variable('title'),
         ])]
     ))
@@ -468,6 +505,7 @@ this.args = [...[xmin,xmax],...y];
             [Variable('numerator'),Variable('denominator')],
             [Variable('eps')],
             [], # start
+            1,
             Variable('title'),
         ])]
     ))
@@ -609,6 +647,7 @@ return this;
     obj.AddAttribute(Variable('RunTimeoutSeconds','float',optional=True))
     obj.AddAttribute(Variable('MemoryLimitKB','int',optional=True))
     obj.AddAttribute(Variable('titles','dict[int,string]',skip_dto=True))
+    obj.AddAttribute(Variable('_nstates','int',skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -621,16 +660,18 @@ return this;
             Variable('RandomSeed','int',None,optional=True),
             Variable('RunTimeoutSeconds','float',None,optional=True),
             Variable('MemoryLimitKB','int',None,optional=True),
+            Variable('nstates','int',0),
         ],
         mapping = [
-            ('TimeStart',[Variable('TimeStart')]),
-            ('TimeSteps',[Variable('TimeSteps')]),
-            ('NumPaths',[Variable('NumPaths')]),
-            ('updaters',[Variable('updaters')]),
-            ('evaluations',[Variable('evaluations')]),
-            ('RandomSeed',[Variable('RandomSeed')]),
+            ('TimeStart'        ,[Variable('TimeStart')]),
+            ('TimeSteps'        ,[Variable('TimeSteps')]),
+            ('NumPaths'         ,[Variable('NumPaths')]),
+            ('updaters'         ,[Variable('updaters')]),
+            ('evaluations'      ,[Variable('evaluations')]),
+            ('RandomSeed'       ,[Variable('RandomSeed')]),
             ('RunTimeoutSeconds',[Variable('RunTimeoutSeconds')]),
-            ('MemoryLimitKB',[Variable('MemoryLimitKB')]),
+            ('MemoryLimitKB'    ,[Variable('MemoryLimitKB')]),
+            ('_nstates'         ,[Variable('nstates')]),
         ],
         code = {
             'python':
@@ -640,6 +681,18 @@ self.titles = {}
             'typescript':
 '''
 this.titles = {};
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        '__repr__',
+        'string',
+        const = True,
+        code = {
+            'python':
+'''
+return f'TimeStart={self.TimeStart} TimeSteps={self.TimeSteps} NumPaths={self.NumPaths} updaters={len(self.updaters)}'
 '''
         }
     ))
@@ -675,15 +728,15 @@ return updaters.Count();
         code = {
             'python':
 '''
-return len(self.updaters)
+return self._nstates
 ''',
             'cpp':
 '''
-return updaters.size();
+return _nstates;
 ''',
             'typescript':
 '''
-return this.updaters.length;
+return this._nstates;
 '''
         }
     ))
@@ -695,8 +748,9 @@ return this.updaters.length;
         code = {
             'python':
 '''
+updater._state = self._nstates
+self._nstates += updater._nstates
 self.updaters.append(updater)
-updater._state = self.GetNumberOfStates()-1
 self.titles[updater._state] = updater.title
 return updater
 ''',
@@ -704,14 +758,16 @@ return updater
 '''
 updaters.push_back(updater);
 auto &u = updaters.back();
-u._state = GetNumberOfStates()-1;
+u._state = _nstates;
+_nstates += updater._nstates;
 titles[u._state] = u.title;
 return u;
 ''',
             'typescript':
 '''
+updater._state = this._nstates;
+this._nstates += updater._nstates;
 this.updaters.push(updater);
-updater._state = this.GetNumberOfStates()-1;
 this.titles[updater._state] = updater.title;
 return updater;
 ''',
@@ -832,7 +888,6 @@ return this.skewness;
     EvaluationResults = obj
     EvaluationResults.AddDependency(Result)
     obj.AddAttribute(Variable('names','string',list=True))
-    obj.AddAttribute(Variable('nstates','int',list=True))
     obj.AddAttribute(Variable('npaths','int',list=True))
     obj.AddAttribute(Variable('mean','float',list=True))
     obj.AddAttribute(Variable('stddev','float',list=True))
@@ -846,7 +901,6 @@ return this.skewness;
         'constructor',
         args = [
             Variable('names','string',[],list=True),
-            Variable('nstates','int',[],list=True),
             Variable('npaths','int',[],list=True),
             Variable('mean','float',[],list=True),
             Variable('stddev','float',[],list=True),
@@ -858,7 +912,6 @@ return this.skewness;
         ],
         mapping = [
             ('names',[Variable('names')]),
-            ('nstates',[Variable('nstates')]),
             ('npaths',[Variable('npaths')]),
             ('mean',[Variable('mean')]),
             ('stddev',[Variable('stddev')]),
@@ -967,7 +1020,6 @@ return new Result(this.npaths[n],this.mean[n],this.stddev[n],this.skewness[n]);
         }
     ))
 
-    # FIXME: nstates
     obj.methods.append(Function (
         'df',
         'any',
@@ -978,13 +1030,12 @@ return new Result(this.npaths[n],this.mean[n],this.stddev[n],this.skewness[n]);
 data = []
 for j in range(self.GetNumberOfEvaluations()):
     for i in range(self.GetNumberOfStates()):
-        if not self.nstates[i]:
-            continue
         n = self.Index(i,j)
         item = {
             'name': self.names[i],
             'title': '',
             'state': i,
+            'point': j,
             'time': self.time_points[j],
             'step': self.time_steps[j],
             'npaths': self.npaths[n],
@@ -1029,6 +1080,7 @@ def EvaluationResults_from_response(r,model=None):
             Variable('states'),
             Variable('weights'),
             [],
+            1,
             Variable('title'),
         ])],
     ))
@@ -1048,6 +1100,7 @@ def EvaluationResults_from_response(r,model=None):
             [Variable('state')],
             Variable('t'),
             [],
+            1,
             Variable('title'),
         ])],
     ))
