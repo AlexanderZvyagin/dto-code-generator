@@ -111,13 +111,10 @@ using json = nlohmann::json;
         yield f''
 
         for attr in obj.attributes:
-            if attr.static:
-                assert attr.defval is not None
-                yield f'{indent}const {self.TypeToString(attr)} {attr.name} = {self.ValueToString(attr.defval)};'
-
-        for a in obj.attributes:
-            if a.static: continue
-            yield f'{indent}{self.TypeToString(a)} {a.name};'
+            default_value = ''
+            if attr.defval is not None:
+                default_value = f' {{{self.ValueToString(attr.defval)}}}'
+            yield f'{indent}{self.TypeToString(attr)} {attr.name}{default_value};'
 
         yield ''
 
