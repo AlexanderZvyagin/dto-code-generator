@@ -148,16 +148,6 @@ def float_equal(a:float|None, b:float|None) -> bool:
                 yield line
             yield ''
 
-        # for attr in obj.attributes:
-        #     # if attr.static:
-        #     #     assert attr.defval is not None
-        #     #     yield f'{indent}{attr.name} : {self.TypeToString(attr)} = {self.ValueToString(attr.defval)}'
-        #     default_value = ''
-        #     if attr.defval is not None:
-        #         default_value = f' {{{self.ValueToString(attr.defval)}}}'
-        #     # yield f'{indent}{self.TypeToString(attr)} {attr.name}{default_value};'
-        #     yield f'{indent}{attr.name} : {self.TypeToString(attr)} = {self.ValueToString(attr.defval)}'
-
         for func in obj.methods:
             if func.type=='constructor' or func.code.get(self.language):
                 for line in self.GeneratorFunction(func,obj):
