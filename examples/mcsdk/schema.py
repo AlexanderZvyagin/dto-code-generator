@@ -312,8 +312,8 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('Option',Updater)
-    obj.AddAttribute(Variable('Call','int',defval=0, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('Put' ,'int',defval=1, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('Call','int',defval=0, skip_dto=True))
+    obj.AddAttribute(Variable('Put' ,'int',defval=1, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -334,10 +334,10 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('Barrier',Updater)
-    obj.AddAttribute(Variable('DirectionUp','int',defval=1, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('DirectionDown','int',defval=-1, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('DirectionAny','int',defval=0, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('ActionSet','int',defval=0, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionUp','int',defval=1, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionDown','int',defval=-1, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionAny','int',defval=0, skip_dto=True))
+    obj.AddAttribute(Variable('ActionSet','int',defval=0, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
