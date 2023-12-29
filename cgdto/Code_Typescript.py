@@ -6,6 +6,14 @@ class CodeTypescript (Code):
     def __init__ (self, options={}):
         super().__init__('typescript','ts',options)
 
+    def Skip (self, obj):
+        if isinstance(obj,Struct):
+            if not obj.namespace:
+                return False
+            return obj.namespace_ignore
+        else:
+            return False
+
     def TypeToString (self, var:Variable) -> str:
 
         m = {
@@ -106,12 +114,16 @@ function string_equal (a:string, b:string) : boolean {
     def GeneratorSingleDtoFileSuffix (self, objs):
         yield 'export {'
         for obj in objs:
+            if self.Skip(obj):
+                continue
             if isinstance(obj,Struct) or isinstance(obj,Function):
                 yield f'{indent}{obj.name},'
         yield '}'
 
     def GeneratorSingleDtoFileBody (self, objs):
         for obj in objs:
+            if self.Skip(obj):
+                continue
             if isinstance(obj,Struct):
                 for line in self.GeneratorStruct(obj):
                     yield line
@@ -373,6 +385,8 @@ function string_equal (a:string, b:string) : boolean {
         code_compare = []
 
         for obj in objs:
+            if self.Skip(obj):
+                continue
             if not isinstance(obj,Struct):
                 continue
             if not obj.gen_test:
