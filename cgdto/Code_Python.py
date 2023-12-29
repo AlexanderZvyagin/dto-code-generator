@@ -6,6 +6,14 @@ class CodePython (Code):
     def __init__ (self, options={}):
         super().__init__('python','py',options)
 
+    def Skip (self, obj):
+        if isinstance(obj,Struct):
+            if not obj.namespace:
+                return False
+            return obj.namespace_ignore
+        else:
+            return False
+
     def TypeToString (self, var:Variable) -> str:
 
         m = {
@@ -98,6 +106,8 @@ def float_equal(a:float|None, b:float|None) -> bool:
 
     def GeneratorSingleDtoFileBody (self, objs):
         for obj in objs:
+            if self.Skip(obj):
+                continue
             if isinstance(obj,Struct):
                 for line in self.GeneratorStruct(obj):
                     yield line
@@ -350,6 +360,8 @@ def float_equal(a:float|None, b:float|None) -> bool:
         code_compare = []
 
         for obj in objs:
+            if self.Skip(obj):
+                continue
             if not isinstance(obj,Struct):
                 continue
             if not obj.gen_test:

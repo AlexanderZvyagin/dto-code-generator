@@ -99,6 +99,9 @@ using json = nlohmann::json;
 
         yield f'namespace {self.namespace} {{'
 
+        if obj.namespace:
+            yield f'namespace {obj.namespace} {{'
+
         # Start with the forward declarations
         yield f'class {obj.name};'
         yield f'std::string {obj.name}_to_json_string(const {obj.name} &obj);'
@@ -141,6 +144,9 @@ using json = nlohmann::json;
             yield line
         for line in self.GeneratorStructFromJsonString(obj):
             yield line
+
+        if obj.namespace:
+            yield f'}} // namespace {obj.namespace}'
 
         yield f'}} // namespace {self.namespace}'
 
@@ -298,6 +304,8 @@ using json = nlohmann::json;
                 ending = '' if (i+1)==len(ctors[0].args) else ','
                 random_args += f'{indent*2}{random_arg}{ending}\n'
 
+            if obj.namespace:
+                code_construct_random.append(f'namespace {obj.namespace} {{')
             code_construct_random.append(f'// Forward declarations for {obj.name}')
             code_construct_random.append(f'class {obj.name};')
             code_construct_random.append(f'{obj.name} random_{obj.name} (void);')
@@ -340,12 +348,14 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
 }}
 '''.split('\n'))
 
+            namespace = lambda: f'{self.namespace}::{obj.namespace}' if obj.namespace else f'{self.namespace}'
+
             code_create.append(f'''
         }} else if (struct_name == "{obj.name}") {{
-            auto obj1 = {self.namespace}::random_{obj.name}();
-            std::ofstream(file1_path) << {self.namespace}::{obj.name}_to_json_string(obj1);
+            auto obj1 = {namespace()}::random_{obj.name}();
+            std::ofstream(file1_path) << {namespace()}::{obj.name}_to_json_string(obj1);
             auto obj2 =
-                {self.namespace}::{obj.name}_from_json (
+                {namespace()}::{obj.name}_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -357,7 +367,7 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
             code_convert.extend(f'''
         }} else if (struct_name == "{obj.name}") {{
             auto obj =
-                {self.namespace}::{obj.name}_from_json (
+                {namespace()}::{obj.name}_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -370,13 +380,13 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
             code_compare.extend(f'''
         }} else if (struct_name == "{obj.name}") {{
             auto obj1 =
-                {self.namespace}::{obj.name}_from_json (
+                {namespace()}::{obj.name}_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                {self.namespace}::{obj.name}_from_json (
+                {namespace()}::{obj.name}_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -384,6 +394,10 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
             if(obj1!=obj2)
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 '''.split('\n'))
+
+            if obj.namespace:
+                code_construct_random.append(f'}} // namespace {obj.namespace}')
+
 
         cpp_test_template = '''
 #include <random>
