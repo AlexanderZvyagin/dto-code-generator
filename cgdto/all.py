@@ -77,6 +77,8 @@ class Struct:
         self,
         name:str,
         base = None,
+        namespace: str = '',
+        namespace_ignore: bool = False,
         gen_test: bool = True,
         doc: str = ''
     ):
@@ -84,6 +86,8 @@ class Struct:
         self.attributes   : list [Variable] = []
         self.methods      : list [Function] = []
         self.base         : Struct|None     = base
+        self.namespace    : str             = namespace
+        self.namespace_ignore : bool        = namespace_ignore
         self.gen_test     : bool            = gen_test
         self.doc          : str             = doc
         self.dependencies : list[Struct]    = [base] if base else []
