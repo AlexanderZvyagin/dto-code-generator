@@ -8,9 +8,7 @@ class CodeTypescript (Code):
 
     def Skip (self, obj):
         if isinstance(obj,Struct):
-            if not obj.namespace:
-                return False
-            return obj.namespace_ignore
+            return not obj.default_version
         else:
             return False
 

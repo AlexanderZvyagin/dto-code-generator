@@ -148,6 +148,9 @@ using json = nlohmann::json;
         if obj.namespace:
             yield f'}} // namespace {obj.namespace}'
 
+        if obj.namespace and obj.default_version:
+            yield f'using {obj.namespace}::{obj.name};'
+
         yield f'}} // namespace {self.namespace}'
 
     def GeneratorFunction (self, func:Function, base:Struct=None):
@@ -397,7 +400,13 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
 
             if obj.namespace:
                 code_construct_random.append(f'}} // namespace {obj.namespace}')
-
+                if obj.default_version:
+                    code_construct_random.append(f'')
+                    code_construct_random.append(f'using {obj.namespace}::random_{obj.name};')
+                    code_construct_random.append(f'using {obj.namespace}::random_list_{obj.name};')
+                    code_construct_random.append(f'using {obj.namespace}::random_optional_{obj.name};')
+                    code_construct_random.append(f'using {obj.namespace}::random_optional_list_{obj.name};')
+                    code_construct_random.append(f'')
 
         cpp_test_template = '''
 #include <random>
