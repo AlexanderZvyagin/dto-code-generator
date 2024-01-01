@@ -5,7 +5,7 @@ from __future__ import annotations
 import os, subprocess, re
 from collections import namedtuple
 
-__version__ = (0,8,0)
+__version__ = (0,8,1)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
@@ -37,6 +37,7 @@ class Variable:
         list     = False,
         optional = False,
         skip_dto = False,
+        static   = False,
         doc:str|list[str] = ''
     ):
         self.name     = name
@@ -45,6 +46,7 @@ class Variable:
         self.list     = list
         self.optional = optional
         self.skip_dto = skip_dto
+        self.static   = static
         self.doc      = doc
 
     def TypeName (self) -> str:
