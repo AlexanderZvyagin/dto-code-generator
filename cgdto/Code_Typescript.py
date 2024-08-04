@@ -640,6 +640,7 @@ main();
 
     case "$1" in
         build)
+            npm init -y
             npm install --save-dev typescript
             npm install --save-dev @types/node
             npm install --save-dev node-fetch@2.6.6
