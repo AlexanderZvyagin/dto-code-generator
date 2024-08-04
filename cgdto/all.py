@@ -84,15 +84,15 @@ class Struct:
         gen_test: bool = True,
         doc: str = ''
     ):
-        self.name         : str             = name
-        self.attributes   : list [Variable] = []
-        self.methods      : list [Function] = []
-        self.base         : Struct|None     = base
-        self.namespace    : str             = namespace
-        self.default_version : bool         = default_version
-        self.gen_test     : bool            = gen_test
-        self.doc          : str             = doc
-        self.dependencies : list[Struct]    = [base] if base else []
+        self.name               : str               = name
+        self.attributes         : list [Variable]   = []
+        self.methods            : list [Function]   = []
+        self.base               : Struct|None       = base
+        self.namespace          : str               = namespace
+        self.default_version    : bool              = default_version
+        self.gen_test           : bool              = gen_test
+        self.doc                : str               = doc
+        self.dependencies       : list[Struct]      = [base] if base else []
 
     def __repr__ (self):
         return f"Struct('{self.name}',base={self.base}) #attributes={len(self.attributes)} #methods={len(self.methods)}"
