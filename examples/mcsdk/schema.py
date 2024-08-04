@@ -4,7 +4,300 @@ from cgdto import *
 from math import nan
 
 def schema_version () -> str:
-    return 'MonteCarlo SDK version (0.6.4-dev-versioning)'
+    return 'MonteCarlo SDK version (0.7.0)'
+
+def V0_Model (Updater,EvaluationPoint):
+    obj = Struct ('Model',namespace='V0',default_version=False)
+    Model = obj
+    obj.AddAttribute(Variable('TimeStart','float'))
+    obj.AddAttribute(Variable('TimeSteps','int'))
+    obj.AddAttribute(Variable('NumPaths','int'))
+    obj.AddAttribute(Variable('updaters',Updater,list=True))
+    obj.AddAttribute(Variable('evaluations',EvaluationPoint,list=True))
+    obj.AddAttribute(Variable('RandomSeed','int',optional=True))
+    obj.AddAttribute(Variable('RunTimeoutSeconds','float',optional=True))
+    obj.AddAttribute(Variable('MemoryLimitKB','int',optional=True))
+    obj.AddAttribute(Variable('titles','dict[int,string]',skip_dto=True))
+    obj.AddAttribute(Variable('_nstates','int',skip_dto=True))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('TimeStart','float',nan),
+            Variable('TimeSteps','int',0),
+            Variable('NumPaths','int',0),
+            Variable('updaters',Updater,[],list=True),
+            Variable('evaluations',EvaluationPoint,[],list=True),
+            Variable('RandomSeed','int',None,optional=True),
+            Variable('RunTimeoutSeconds','float',None,optional=True),
+            Variable('MemoryLimitKB','int',None,optional=True),
+            Variable('nstates','int',0),
+        ],
+        mapping = [
+            ('TimeStart'        ,[Variable('TimeStart')]),
+            ('TimeSteps'        ,[Variable('TimeSteps')]),
+            ('NumPaths'         ,[Variable('NumPaths')]),
+            ('updaters'         ,[Variable('updaters')]),
+            ('evaluations'      ,[Variable('evaluations')]),
+            ('RandomSeed'       ,[Variable('RandomSeed')]),
+            ('RunTimeoutSeconds',[Variable('RunTimeoutSeconds')]),
+            ('MemoryLimitKB'    ,[Variable('MemoryLimitKB')]),
+            ('_nstates'         ,[Variable('nstates')]),
+        ],
+        code = {
+            'python':
+'''
+self.titles = {}
+''',
+            'typescript':
+'''
+this.titles = {};
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        '__repr__',
+        'string',
+        const = True,
+        code = {
+            'python':
+'''
+return f'TimeStart={self.TimeStart} TimeSteps={self.TimeSteps} NumPaths={self.NumPaths} updaters={len(self.updaters)}'
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetNumberOfUpdaters',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return len(self.updaters)
+''',
+            'cpp':
+'''
+return updaters.size();
+''',
+            'typescript':
+'''
+return this.updaters.length;
+''',
+            'csharp':
+'''
+return updaters.Count();
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetNumberOfStates',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return self._nstates
+''',
+            'cpp':
+'''
+return _nstates;
+''',
+            'typescript':
+'''
+return this._nstates;
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'Add',
+        Updater,
+        args = [Variable('updater',Updater)],
+        code = {
+            'python':
+'''
+updater._state = self._nstates
+self._nstates += updater._nstates
+self.updaters.append(updater)
+self.titles[updater._state] = updater.title
+return updater
+''',
+            'cpp':
+'''
+updaters.push_back(updater);
+auto &u = updaters.back();
+u._state = _nstates;
+_nstates += updater._nstates;
+titles[u._state] = u.title;
+return u;
+''',
+            'typescript':
+'''
+updater._state = this._nstates;
+this._nstates += updater._nstates;
+this.updaters.push(updater);
+this.titles[updater._state] = updater.title;
+return updater;
+''',
+        }
+    ))
+
+    return obj
+    
+
+def V1_Model (Updater,EvaluationPoint):
+    version = 1
+    obj = Struct ('Model',namespace=f'V{version}',default_version=True)
+    Model = obj
+    obj.AddAttribute(Variable('version','string',defval=f'{obj.name}:{version}'))
+    obj.AddAttribute(Variable('TimeStart','float'))
+    obj.AddAttribute(Variable('TimeSteps','int'))
+    obj.AddAttribute(Variable('NumPaths','int'))
+    obj.AddAttribute(Variable('updaters',Updater,list=True))
+    obj.AddAttribute(Variable('evaluations',EvaluationPoint,list=True))
+    obj.AddAttribute(Variable('RandomSeed','int',optional=True))
+    obj.AddAttribute(Variable('RunTimeoutSeconds','float',optional=True))
+    obj.AddAttribute(Variable('titles','dict[int,string]',skip_dto=True))
+    obj.AddAttribute(Variable('_nstates','int',skip_dto=True))
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('TimeStart','float',nan),
+            Variable('TimeSteps','int',0),
+            Variable('NumPaths','int',0),
+            Variable('updaters',Updater,[],list=True),
+            Variable('evaluations',EvaluationPoint,[],list=True),
+            Variable('RandomSeed','int',None,optional=True),
+            Variable('RunTimeoutSeconds','float',None,optional=True),
+            Variable('nstates','int',0),
+        ],
+        mapping = [
+            ('TimeStart'        ,[Variable('TimeStart')]),
+            ('TimeSteps'        ,[Variable('TimeSteps')]),
+            ('NumPaths'         ,[Variable('NumPaths')]),
+            ('updaters'         ,[Variable('updaters')]),
+            ('evaluations'      ,[Variable('evaluations')]),
+            ('RandomSeed'       ,[Variable('RandomSeed')]),
+            ('RunTimeoutSeconds',[Variable('RunTimeoutSeconds')]),
+            ('_nstates'         ,[Variable('nstates')]),
+        ],
+        code = {
+            'python':
+'''
+self.titles = {}
+''',
+            'typescript':
+'''
+this.titles = {};
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        '__repr__',
+        'string',
+        const = True,
+        code = {
+            'python':
+'''
+return f'TimeStart={self.TimeStart} TimeSteps={self.TimeSteps} NumPaths={self.NumPaths} updaters={len(self.updaters)}'
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetNumberOfUpdaters',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return len(self.updaters)
+''',
+            'cpp':
+'''
+return updaters.size();
+''',
+            'typescript':
+'''
+return this.updaters.length;
+''',
+            'csharp':
+'''
+return updaters.Count();
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'GetNumberOfStates',
+        'int',
+        const = True,
+        code = {
+            'python':
+'''
+return self._nstates
+''',
+            'cpp':
+'''
+return _nstates;
+''',
+            'typescript':
+'''
+return this._nstates;
+'''
+        }
+    ))
+
+    obj.methods.append(Function (
+        'Add',
+        Updater,
+        args = [Variable('updater',Updater)],
+        code = {
+            'python':
+'''
+updater._state = self._nstates
+self._nstates += updater._nstates
+self.updaters.append(updater)
+self.titles[updater._state] = updater.title
+return updater
+''',
+            'cpp':
+'''
+updaters.push_back(updater);
+auto &u = updaters.back();
+u._state = _nstates;
+_nstates += updater._nstates;
+titles[u._state] = u.title;
+return u;
+''',
+            'typescript':
+'''
+updater._state = this._nstates;
+this._nstates += updater._nstates;
+this.updaters.push(updater);
+this.titles[updater._state] = updater.title;
+return updater;
+''',
+        }
+    ))
+
+    return obj
+
+def add(funcs=[],kargs=(),kwargs={}):
+    objs = []
+    default_obj = None
+    for func in funcs:
+        obj = func(*kargs,**kwargs)
+        objs.append(obj)
+        if obj.default_version:
+            assert default_obj is None
+            default_obj = obj
+    return objs, default_obj
 
 def schema ():
 
@@ -34,9 +327,7 @@ def schema ():
     ))
     objs.append(obj)
 
-
     obj = Struct('UpdaterDoc')
-    obj.AddAttribute(Variable('version','int',defval=1))
     obj.AddAttribute(Variable('name','string',doc='''
 The parameter 'name' is a single world which uniquely identifies how a MC state will be updated.
 E.g. GeometricalBrownianMotion.
@@ -199,46 +490,6 @@ void from_json(const json &j, std::vector<Updater> &u) {
         }
     }))
 
-    obj = Struct('IndependentGaussian',Updater)
-    obj.methods.append(Function (
-        obj.name,
-        'constructor',
-        args = [
-            Variable('refs','int'  ,defval=[], list=True),
-            Variable('title','string',''),
-        ],
-        mapping = [(obj.base.name,[
-            'IndependentGaussian',
-            Variable('refs'),
-            [],
-            [],
-            0,
-            Variable('title'),
-        ])]
-    ))
-    objs.append(obj)
-
-    obj = Struct('CorrelatedGaussian',Updater)
-    obj.methods.append(Function (
-        obj.name,
-        'constructor',
-        args = [
-            Variable('correlation','float'  ,nan),
-            Variable('state1','int'  ,-88),
-            Variable('state2','int'  ,-88),
-            Variable('title','string',''),
-        ],
-        mapping = [(obj.base.name,[
-            'CorrelatedGaussian',
-            [Variable('state1'),Variable('state2')],
-            [Variable('correlation')],
-            [],
-            0,
-            Variable('title'),
-        ])]
-    ))
-    objs.append(obj)
-
     obj = Struct('BrownianMotion',Updater)
     obj.methods.append(Function (
         obj.name,
@@ -344,8 +595,8 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('Option',Updater)
-    obj.AddAttribute(Variable('Call','int',defval=0, skip_dto=True))
-    obj.AddAttribute(Variable('Put' ,'int',defval=1, skip_dto=True))
+    obj.AddAttribute(Variable('Call','int',defval=0, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('Put' ,'int',defval=1, static=True, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -367,10 +618,10 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('Barrier',Updater)
-    obj.AddAttribute(Variable('DirectionUp','int',defval=1, skip_dto=True))
-    obj.AddAttribute(Variable('DirectionDown','int',defval=-1, skip_dto=True))
-    obj.AddAttribute(Variable('DirectionAny','int',defval=0, skip_dto=True))
-    obj.AddAttribute(Variable('ActionSet','int',defval=0, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionUp','int',defval=1, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionDown','int',defval=-1, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionAny','int',defval=0, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('ActionSet','int',defval=0, static=True, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -516,8 +767,9 @@ this.args = [...[xmin,xmax],...y];
     HistogramAxis = obj
     obj.AddAttribute(Variable('state','int'))
     obj.AddAttribute(Variable('nbins','int'))
-    obj.AddAttribute(Variable('min','float'))
-    obj.AddAttribute(Variable('max','float'))
+    obj.AddAttribute(Variable('min','float',optional=True))
+    obj.AddAttribute(Variable('max','float',optional=True))
+    obj.AddAttribute(Variable('title','string',optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
@@ -526,12 +778,14 @@ this.args = [...[xmin,xmax],...y];
             Variable('nbins','int',-88),
             Variable('min'  ,'float',-88), # FIXME: cannot use math.nan for the moment
             Variable('max'  ,'float',-88), # FIXME: cannot use math.nan for the moment
+            Variable('title'  ,'string',''), # FIXME: cannot use math.nan for the moment
         ],
         mapping = [
             ('state',[Variable('state')]),
             ('nbins',[Variable('nbins')]),
-            ('min',[Variable('min')]),
-            ('max',[Variable('max')]),
+            ('min',  [Variable('min'  )]),
+            ('max',  [Variable('max'  )]),
+            ('title',[Variable('title')]),
         ]
     ))
     objs.append(obj)
@@ -556,6 +810,83 @@ this.args = [...[xmin,xmax],...y];
             ('ay',[Variable('ay')]),
             ('evaluation_point',[Variable('evaluation_point')]),
             ('bins',[Variable('bins')]),
+        ]
+    ))
+    objs.append(obj)
+
+    objs.append(CodeBlock(code={
+        'cpp': {'''
+void from_json(const json &j, std::vector<Histogram> &u) {
+    for(auto v: j)
+        u.push_back(v);
+}
+'''
+        }
+    }))
+
+
+        # Type            =  0,
+        # Flags           =  1,
+        
+        # ExtractionPoint =  2,
+        # TimeStep        =  3,
+
+        # Xstate          =  4,
+        # Xbins           =  5,
+        # Xmin            =  6,
+        # Xmax            =  7,
+
+        # Ystate          =  8,
+        # Ybins           =  9,
+        # Ymin            = 10,
+        # Ymax            = 11,
+
+        # Zstate          = 12,
+        # Zbins           = 13,
+        # Zmin            = 14,
+        # Zmax            = 15,
+
+        # TitleBegin      = 16,
+        # TitleEnd        = 32,
+        # TitleMaxLength  = (TitleEnd-TitleBegin)*sizeof(float)-1, // c-style string! Remember about the trailing 0.
+
+        # DataStart       = TitleEnd
+
+
+
+    obj = Struct('Histogram2')
+    Histogram2 = obj
+    obj.AddAttribute(Variable('AxisX',HistogramAxis))
+    obj.AddAttribute(Variable('AxisY',HistogramAxis,optional=True))
+    obj.AddAttribute(Variable('AxisZ',HistogramAxis,optional=True))
+    obj.AddAttribute(Variable('Flags','int',optional=True))
+    obj.AddAttribute(Variable('EvaluationPoint','int',optional=True))
+    obj.AddAttribute(Variable('TimeStep','int',optional=True))
+    obj.AddAttribute(Variable('Title','string',optional=True))
+    obj.AddAttribute(Variable('Bins','float',list=True,optional=True))
+
+    obj.methods.append(Function (
+        obj.name,
+        'constructor',
+        args = [
+            Variable('AxisX',HistogramAxis,defval=Variable('HistogramAxis()',HistogramAxis)),
+            Variable('AxisY',HistogramAxis,optional=True),
+            Variable('AxisZ',HistogramAxis,optional=True),
+            Variable('Flags','int',optional=True),
+            Variable('EvaluationPoint','int',optional=True),
+            Variable('TimeStep','int',optional=True),
+            Variable('Title','string',optional=True),
+            Variable('Bins','float',optional=True,list=True),
+        ],
+        mapping = [
+            ('AxisX',[Variable('AxisX')]),
+            ('AxisY',[Variable('AxisY')]),
+            ('AxisZ',[Variable('AxisZ')]),
+            ('Flags',[Variable('Flags')]),
+            ('EvaluationPoint',[Variable('EvaluationPoint')]),
+            ('TimeStep',[Variable('TimeStep')]),
+            ('Title',[Variable('Title')]),
+            ('Bins',[Variable('Bins')]),
         ]
     ))
     objs.append(obj)
@@ -636,145 +967,9 @@ return this;
 
     objs.append(obj)
 
-    obj = Struct ('Model')
-    Model = obj
-    obj.AddAttribute(Variable('TimeStart','float'))
-    obj.AddAttribute(Variable('TimeSteps','int'))
-    obj.AddAttribute(Variable('NumPaths','int'))
-    obj.AddAttribute(Variable('updaters',Updater,list=True))
-    obj.AddAttribute(Variable('evaluations',EvaluationPoint,list=True))
-    obj.AddAttribute(Variable('RandomSeed','int',optional=True))
-    obj.AddAttribute(Variable('RunTimeoutSeconds','float',optional=True))
-    obj.AddAttribute(Variable('MemoryLimitKB','int',optional=True))
-    obj.AddAttribute(Variable('titles','dict[int,string]',skip_dto=True))
-    obj.AddAttribute(Variable('_nstates','int',skip_dto=True))
-    obj.methods.append(Function (
-        obj.name,
-        'constructor',
-        args = [
-            Variable('TimeStart','float',nan),
-            Variable('TimeSteps','int',0),
-            Variable('NumPaths','int',0),
-            Variable('updaters',Updater,[],list=True),
-            Variable('evaluations',EvaluationPoint,[],list=True),
-            Variable('RandomSeed','int',None,optional=True),
-            Variable('RunTimeoutSeconds','float',None,optional=True),
-            Variable('MemoryLimitKB','int',None,optional=True),
-            Variable('nstates','int',0),
-        ],
-        mapping = [
-            ('TimeStart'        ,[Variable('TimeStart')]),
-            ('TimeSteps'        ,[Variable('TimeSteps')]),
-            ('NumPaths'         ,[Variable('NumPaths')]),
-            ('updaters'         ,[Variable('updaters')]),
-            ('evaluations'      ,[Variable('evaluations')]),
-            ('RandomSeed'       ,[Variable('RandomSeed')]),
-            ('RunTimeoutSeconds',[Variable('RunTimeoutSeconds')]),
-            ('MemoryLimitKB'    ,[Variable('MemoryLimitKB')]),
-            ('_nstates'         ,[Variable('nstates')]),
-        ],
-        code = {
-            'python':
-'''
-self.titles = {}
-''',
-            'typescript':
-'''
-this.titles = {};
-'''
-        }
-    ))
-
-    obj.methods.append(Function (
-        '__repr__',
-        'string',
-        const = True,
-        code = {
-            'python':
-'''
-return f'TimeStart={self.TimeStart} TimeSteps={self.TimeSteps} NumPaths={self.NumPaths} updaters={len(self.updaters)}'
-'''
-        }
-    ))
-
-    obj.methods.append(Function (
-        'GetNumberOfUpdaters',
-        'int',
-        const = True,
-        code = {
-            'python':
-'''
-return len(self.updaters)
-''',
-            'cpp':
-'''
-return updaters.size();
-''',
-            'typescript':
-'''
-return this.updaters.length;
-''',
-            'csharp':
-'''
-return updaters.Count();
-'''
-        }
-    ))
-
-    obj.methods.append(Function (
-        'GetNumberOfStates',
-        'int',
-        const = True,
-        code = {
-            'python':
-'''
-return self._nstates
-''',
-            'cpp':
-'''
-return _nstates;
-''',
-            'typescript':
-'''
-return this._nstates;
-'''
-        }
-    ))
-
-    obj.methods.append(Function (
-        'Add',
-        Updater,
-        args = [Variable('updater',Updater)],
-        code = {
-            'python':
-'''
-updater._state = self._nstates
-self._nstates += updater._nstates
-self.updaters.append(updater)
-self.titles[updater._state] = updater.title
-return updater
-''',
-            'cpp':
-'''
-updaters.push_back(updater);
-auto &u = updaters.back();
-u._state = _nstates;
-_nstates += updater._nstates;
-titles[u._state] = u.title;
-return u;
-''',
-            'typescript':
-'''
-updater._state = this._nstates;
-this._nstates += updater._nstates;
-this.updaters.push(updater);
-this.titles[updater._state] = updater.title;
-return updater;
-''',
-        }
-    ))
-
-    objs.append(obj)
+    Model_versions, Model = add([V0_Model,V1_Model],kargs=(Updater,EvaluationPoint))
+    # Model_versions, Model = Model_schema(Updater,EvaluationPoint)
+    objs.extend(Model_versions)
 
     obj = Struct('Result')
     Result = obj
@@ -883,7 +1078,6 @@ return this.skewness;
 
     objs.append(obj)
 
-
     obj = Struct('EvaluationResults')
     EvaluationResults = obj
     EvaluationResults.AddDependency(Result)
@@ -895,6 +1089,7 @@ return this.skewness;
     obj.AddAttribute(Variable('time_points','float',list=True))
     obj.AddAttribute(Variable('time_steps','int',list=True))
     obj.AddAttribute(Variable('histograms',Histogram,list=True))
+    obj.AddAttribute(Variable('histograms2',Histogram2,list=True))
     obj.AddAttribute(Variable('model',Model,optional=True))
     obj.methods.append(Function (
         obj.name,
@@ -908,6 +1103,7 @@ return this.skewness;
             Variable('time_points','float',[],list=True),
             Variable('time_steps','int',[],list=True),
             Variable('histograms',Histogram,[],list=True),
+            Variable('histograms2',Histogram2,[],list=True),
             Variable('model',Model,None,optional=True),
         ],
         mapping = [
@@ -919,6 +1115,7 @@ return this.skewness;
             ('time_points',[Variable('time_points')]),
             ('time_steps',[Variable('time_steps')]),
             ('histograms',[Variable('histograms')]),
+            ('histograms2',[Variable('histograms2')]),
             ('model',[Variable('model')]),
         ]
     ))

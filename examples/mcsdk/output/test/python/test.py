@@ -168,58 +168,6 @@ def random_optional_list_Updater (min:int = 0, max:int = 3) -> list[Updater]|Non
     return random_list_Updater(min,max)
 
 
-def random_IndependentGaussian ():
-    return IndependentGaussian (
-        random_list_int(),
-        random_string()
-
-    )
-
-
-def random_optional_IndependentGaussian () -> IndependentGaussian|None:
-    if yes_no():
-        return None
-    return random_IndependentGaussian()
-
-
-def random_list_IndependentGaussian (min:int = 0, max:int = 3) -> list[IndependentGaussian]:
-    size = random.randint(min,max)
-    return [random_IndependentGaussian() for i in range(size)]
-
-
-def random_optional_list_IndependentGaussian (min:int = 0, max:int = 3) -> list[IndependentGaussian]|None:
-    if yes_no():
-        return None
-    return random_list_IndependentGaussian(min,max)
-
-
-def random_CorrelatedGaussian ():
-    return CorrelatedGaussian (
-        random_float(),
-        random_int(),
-        random_int(),
-        random_string()
-
-    )
-
-
-def random_optional_CorrelatedGaussian () -> CorrelatedGaussian|None:
-    if yes_no():
-        return None
-    return random_CorrelatedGaussian()
-
-
-def random_list_CorrelatedGaussian (min:int = 0, max:int = 3) -> list[CorrelatedGaussian]:
-    size = random.randint(min,max)
-    return [random_CorrelatedGaussian() for i in range(size)]
-
-
-def random_optional_list_CorrelatedGaussian (min:int = 0, max:int = 3) -> list[CorrelatedGaussian]|None:
-    if yes_no():
-        return None
-    return random_list_CorrelatedGaussian(min,max)
-
-
 def random_BrownianMotion ():
     return BrownianMotion (
         random_float(),
@@ -495,7 +443,8 @@ def random_HistogramAxis ():
         random_int(),
         random_int(),
         random_float(),
-        random_float()
+        random_float(),
+        random_string()
 
     )
 
@@ -544,6 +493,37 @@ def random_optional_list_Histogram (min:int = 0, max:int = 3) -> list[Histogram]
     return random_list_Histogram(min,max)
 
 
+def random_Histogram2 ():
+    return Histogram2 (
+        random_HistogramAxis(),
+        random_optional_HistogramAxis(),
+        random_optional_HistogramAxis(),
+        random_optional_int(),
+        random_optional_int(),
+        random_optional_int(),
+        random_optional_string(),
+        random_optional_list_float()
+
+    )
+
+
+def random_optional_Histogram2 () -> Histogram2|None:
+    if yes_no():
+        return None
+    return random_Histogram2()
+
+
+def random_list_Histogram2 (min:int = 0, max:int = 3) -> list[Histogram2]:
+    size = random.randint(min,max)
+    return [random_Histogram2() for i in range(size)]
+
+
+def random_optional_list_Histogram2 (min:int = 0, max:int = 3) -> list[Histogram2]|None:
+    if yes_no():
+        return None
+    return random_list_Histogram2(min,max)
+
+
 def random_EvaluationPoint ():
     return EvaluationPoint (
         random_float(),
@@ -578,7 +558,6 @@ def random_Model ():
         random_list_EvaluationPoint(),
         random_optional_int(),
         random_optional_float(),
-        random_optional_int(),
         random_int()
 
     )
@@ -638,6 +617,7 @@ def random_EvaluationResults ():
         random_list_float(),
         random_list_int(),
         random_list_Histogram(),
+        random_list_Histogram2(),
         random_optional_Model()
 
     )
@@ -756,24 +736,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
-        elif struct_name=='IndependentGaussian':
-            obj1 = random_IndependentGaussian()
-            open(file1_name,'w').write(IndependentGaussian_to_json_string(obj1))
-            obj2 = IndependentGaussian_from_json_string(open(file1_name).read())
-            assert isinstance(obj1,IndependentGaussian)
-            assert isinstance(obj2,IndependentGaussian)
-            assert obj1==obj2
-
-
-        elif struct_name=='CorrelatedGaussian':
-            obj1 = random_CorrelatedGaussian()
-            open(file1_name,'w').write(CorrelatedGaussian_to_json_string(obj1))
-            obj2 = CorrelatedGaussian_from_json_string(open(file1_name).read())
-            assert isinstance(obj1,CorrelatedGaussian)
-            assert isinstance(obj2,CorrelatedGaussian)
-            assert obj1==obj2
-
-
         elif struct_name=='BrownianMotion':
             obj1 = random_BrownianMotion()
             open(file1_name,'w').write(BrownianMotion_to_json_string(obj1))
@@ -882,6 +844,15 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             assert obj1==obj2
 
 
+        elif struct_name=='Histogram2':
+            obj1 = random_Histogram2()
+            open(file1_name,'w').write(Histogram2_to_json_string(obj1))
+            obj2 = Histogram2_from_json_string(open(file1_name).read())
+            assert isinstance(obj1,Histogram2)
+            assert isinstance(obj2,Histogram2)
+            assert obj1==obj2
+
+
         elif struct_name=='EvaluationPoint':
             obj1 = random_EvaluationPoint()
             open(file1_name,'w').write(EvaluationPoint_to_json_string(obj1))
@@ -961,16 +932,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             open(file2_name,'w').write(Updater_to_json_string(obj))
 
 
-        elif struct_name=='IndependentGaussian':
-            obj = IndependentGaussian_from_json_string(open(file1_name).read())
-            open(file2_name,'w').write(IndependentGaussian_to_json_string(obj))
-
-
-        elif struct_name=='CorrelatedGaussian':
-            obj = CorrelatedGaussian_from_json_string(open(file1_name).read())
-            open(file2_name,'w').write(CorrelatedGaussian_to_json_string(obj))
-
-
         elif struct_name=='BrownianMotion':
             obj = BrownianMotion_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(BrownianMotion_to_json_string(obj))
@@ -1031,6 +992,11 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
             open(file2_name,'w').write(Histogram_to_json_string(obj))
 
 
+        elif struct_name=='Histogram2':
+            obj = Histogram2_from_json_string(open(file1_name).read())
+            open(file2_name,'w').write(Histogram2_to_json_string(obj))
+
+
         elif struct_name=='EvaluationPoint':
             obj = EvaluationPoint_from_json_string(open(file1_name).read())
             open(file2_name,'w').write(EvaluationPoint_to_json_string(obj))
@@ -1087,18 +1053,6 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='Updater':
             obj1 = Updater_from_json_string(open(file1_name).read())
             obj2 = Updater_from_json_string(open(file2_name).read())
-            assert obj1==obj2
-
-
-        elif struct_name=='IndependentGaussian':
-            obj1 = IndependentGaussian_from_json_string(open(file1_name).read())
-            obj2 = IndependentGaussian_from_json_string(open(file2_name).read())
-            assert obj1==obj2
-
-
-        elif struct_name=='CorrelatedGaussian':
-            obj1 = CorrelatedGaussian_from_json_string(open(file1_name).read())
-            obj2 = CorrelatedGaussian_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
 
@@ -1171,6 +1125,12 @@ def test_round_trip_python(command, struct_name, file1_name, file2_name):
         elif struct_name=='Histogram':
             obj1 = Histogram_from_json_string(open(file1_name).read())
             obj2 = Histogram_from_json_string(open(file2_name).read())
+            assert obj1==obj2
+
+
+        elif struct_name=='Histogram2':
+            obj1 = Histogram2_from_json_string(open(file1_name).read())
+            obj2 = Histogram2_from_json_string(open(file2_name).read())
             assert obj1==obj2
 
 

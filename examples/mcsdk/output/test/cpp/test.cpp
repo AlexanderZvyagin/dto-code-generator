@@ -10,8 +10,6 @@
 #include "UpdaterDoc.hpp"
 #include "UpdaterDto.hpp"
 #include "Updater.hpp"
-#include "IndependentGaussian.hpp"
-#include "CorrelatedGaussian.hpp"
 #include "BrownianMotion.hpp"
 #include "BrownianMotionRef.hpp"
 #include "GeometricalBrownianMotion.hpp"
@@ -24,7 +22,9 @@
 #include "Division.hpp"
 #include "HistogramAxis.hpp"
 #include "Histogram.hpp"
+#include "Histogram2.hpp"
 #include "EvaluationPoint.hpp"
+#include "Model.hpp"
 #include "Model.hpp"
 #include "Result.hpp"
 #include "EvaluationResults.hpp"
@@ -347,86 +347,6 @@ std::optional<std::vector<Updater>> random_optional_list_Updater (int min, int m
     if(yes_no())
         return {};
     return random_list_Updater (min,max);
-}
-
-// Forward declarations for IndependentGaussian
-class IndependentGaussian;
-IndependentGaussian random_IndependentGaussian (void);
-std::optional<IndependentGaussian> random_optional_IndependentGaussian (void);
-std::vector<IndependentGaussian> random_list_IndependentGaussian (int min=0, int max=3);
-std::optional<std::vector<IndependentGaussian>> random_optional_list_IndependentGaussian (int min=0, int max=3);
-
-
-IndependentGaussian random_IndependentGaussian (void) {
-    return IndependentGaussian (
-        random_list_int(),
-        random_string()
-
-    );
-}
-
-
-std::optional<IndependentGaussian> random_optional_IndependentGaussian (void) {
-    if(yes_no())
-        return {};
-    return random_IndependentGaussian ();
-}
-
-
-std::vector<IndependentGaussian> random_list_IndependentGaussian (int min, int max) {
-    const auto size = random_int(min,max);
-    std::vector<IndependentGaussian> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_IndependentGaussian());
-    return list;
-}
-
-
-std::optional<std::vector<IndependentGaussian>> random_optional_list_IndependentGaussian (int min, int max) {
-    if(yes_no())
-        return {};
-    return random_list_IndependentGaussian (min,max);
-}
-
-// Forward declarations for CorrelatedGaussian
-class CorrelatedGaussian;
-CorrelatedGaussian random_CorrelatedGaussian (void);
-std::optional<CorrelatedGaussian> random_optional_CorrelatedGaussian (void);
-std::vector<CorrelatedGaussian> random_list_CorrelatedGaussian (int min=0, int max=3);
-std::optional<std::vector<CorrelatedGaussian>> random_optional_list_CorrelatedGaussian (int min=0, int max=3);
-
-
-CorrelatedGaussian random_CorrelatedGaussian (void) {
-    return CorrelatedGaussian (
-        random_float(),
-        random_int(),
-        random_int(),
-        random_string()
-
-    );
-}
-
-
-std::optional<CorrelatedGaussian> random_optional_CorrelatedGaussian (void) {
-    if(yes_no())
-        return {};
-    return random_CorrelatedGaussian ();
-}
-
-
-std::vector<CorrelatedGaussian> random_list_CorrelatedGaussian (int min, int max) {
-    const auto size = random_int(min,max);
-    std::vector<CorrelatedGaussian> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_CorrelatedGaussian());
-    return list;
-}
-
-
-std::optional<std::vector<CorrelatedGaussian>> random_optional_list_CorrelatedGaussian (int min, int max) {
-    if(yes_no())
-        return {};
-    return random_list_CorrelatedGaussian (min,max);
 }
 
 // Forward declarations for BrownianMotion
@@ -852,7 +772,8 @@ HistogramAxis random_HistogramAxis (void) {
         random_int(),
         random_int(),
         random_float(),
-        random_float()
+        random_float(),
+        random_string()
 
     );
 }
@@ -921,6 +842,51 @@ std::optional<std::vector<Histogram>> random_optional_list_Histogram (int min, i
     return random_list_Histogram (min,max);
 }
 
+// Forward declarations for Histogram2
+class Histogram2;
+Histogram2 random_Histogram2 (void);
+std::optional<Histogram2> random_optional_Histogram2 (void);
+std::vector<Histogram2> random_list_Histogram2 (int min=0, int max=3);
+std::optional<std::vector<Histogram2>> random_optional_list_Histogram2 (int min=0, int max=3);
+
+
+Histogram2 random_Histogram2 (void) {
+    return Histogram2 (
+        random_HistogramAxis(),
+        random_optional_HistogramAxis(),
+        random_optional_HistogramAxis(),
+        random_optional_int(),
+        random_optional_int(),
+        random_optional_int(),
+        random_optional_string(),
+        random_optional_list_float()
+
+    );
+}
+
+
+std::optional<Histogram2> random_optional_Histogram2 (void) {
+    if(yes_no())
+        return {};
+    return random_Histogram2 ();
+}
+
+
+std::vector<Histogram2> random_list_Histogram2 (int min, int max) {
+    const auto size = random_int(min,max);
+    std::vector<Histogram2> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_Histogram2());
+    return list;
+}
+
+
+std::optional<std::vector<Histogram2>> random_optional_list_Histogram2 (int min, int max) {
+    if(yes_no())
+        return {};
+    return random_list_Histogram2 (min,max);
+}
+
 // Forward declarations for EvaluationPoint
 class EvaluationPoint;
 EvaluationPoint random_EvaluationPoint (void);
@@ -960,6 +926,7 @@ std::optional<std::vector<EvaluationPoint>> random_optional_list_EvaluationPoint
     return random_list_EvaluationPoint (min,max);
 }
 
+namespace V0 {
 // Forward declarations for Model
 class Model;
 Model random_Model (void);
@@ -1005,6 +972,60 @@ std::optional<std::vector<Model>> random_optional_list_Model (int min, int max) 
         return {};
     return random_list_Model (min,max);
 }
+
+} // namespace V0
+namespace V1 {
+// Forward declarations for Model
+class Model;
+Model random_Model (void);
+std::optional<Model> random_optional_Model (void);
+std::vector<Model> random_list_Model (int min=0, int max=3);
+std::optional<std::vector<Model>> random_optional_list_Model (int min=0, int max=3);
+
+
+Model random_Model (void) {
+    return Model (
+        random_float(),
+        random_int(),
+        random_int(),
+        random_list_Updater(),
+        random_list_EvaluationPoint(),
+        random_optional_int(),
+        random_optional_float(),
+        random_int()
+
+    );
+}
+
+
+std::optional<Model> random_optional_Model (void) {
+    if(yes_no())
+        return {};
+    return random_Model ();
+}
+
+
+std::vector<Model> random_list_Model (int min, int max) {
+    const auto size = random_int(min,max);
+    std::vector<Model> list;
+    for(int i=0; i<size; i++)
+        list.push_back(random_Model());
+    return list;
+}
+
+
+std::optional<std::vector<Model>> random_optional_list_Model (int min, int max) {
+    if(yes_no())
+        return {};
+    return random_list_Model (min,max);
+}
+
+} // namespace V1
+
+using V1::random_Model;
+using V1::random_list_Model;
+using V1::random_optional_Model;
+using V1::random_optional_list_Model;
 
 // Forward declarations for Result
 class Result;
@@ -1065,6 +1086,7 @@ EvaluationResults random_EvaluationResults (void) {
         random_list_float(),
         random_list_int(),
         random_list_Histogram(),
+        random_list_Histogram2(),
         random_optional_Model()
 
     );
@@ -1245,32 +1267,6 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
-        } else if (struct_name == "IndependentGaussian") {
-            auto obj1 = dto::random_IndependentGaussian();
-            std::ofstream(file1_path) << dto::IndependentGaussian_to_json_string(obj1);
-            auto obj2 =
-                dto::IndependentGaussian_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "CorrelatedGaussian") {
-            auto obj1 = dto::random_CorrelatedGaussian();
-            std::ofstream(file1_path) << dto::CorrelatedGaussian_to_json_string(obj1);
-            auto obj2 =
-                dto::CorrelatedGaussian_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
         } else if (struct_name == "BrownianMotion") {
             auto obj1 = dto::random_BrownianMotion();
             std::ofstream(file1_path) << dto::BrownianMotion_to_json_string(obj1);
@@ -1427,6 +1423,19 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
+        } else if (struct_name == "Histogram2") {
+            auto obj1 = dto::random_Histogram2();
+            std::ofstream(file1_path) << dto::Histogram2_to_json_string(obj1);
+            auto obj2 =
+                dto::Histogram2_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
         } else if (struct_name == "EvaluationPoint") {
             auto obj1 = dto::random_EvaluationPoint();
             std::ofstream(file1_path) << dto::EvaluationPoint_to_json_string(obj1);
@@ -1441,10 +1450,23 @@ int main (int argc, const char **argv) try {
 
 
         } else if (struct_name == "Model") {
-            auto obj1 = dto::random_Model();
-            std::ofstream(file1_path) << dto::Model_to_json_string(obj1);
+            auto obj1 = dto::V0::random_Model();
+            std::ofstream(file1_path) << dto::V0::Model_to_json_string(obj1);
             auto obj2 =
-                dto::Model_from_json (
+                dto::V0::Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "Model") {
+            auto obj1 = dto::V1::random_Model();
+            std::ofstream(file1_path) << dto::V1::Model_to_json_string(obj1);
+            auto obj2 =
+                dto::V1::Model_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1562,32 +1584,6 @@ int main (int argc, const char **argv) try {
             )));
             std::ofstream out (file2_path);
             out << Updater_to_json_string(obj);
-            if(!out)
-                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
-
-
-        } else if (struct_name == "IndependentGaussian") {
-            auto obj =
-                dto::IndependentGaussian_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            std::ofstream out (file2_path);
-            out << IndependentGaussian_to_json_string(obj);
-            if(!out)
-                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
-
-
-        } else if (struct_name == "CorrelatedGaussian") {
-            auto obj =
-                dto::CorrelatedGaussian_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            std::ofstream out (file2_path);
-            out << CorrelatedGaussian_to_json_string(obj);
             if(!out)
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
@@ -1748,6 +1744,19 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
 
 
+        } else if (struct_name == "Histogram2") {
+            auto obj =
+                dto::Histogram2_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << Histogram2_to_json_string(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
         } else if (struct_name == "EvaluationPoint") {
             auto obj =
                 dto::EvaluationPoint_from_json (
@@ -1763,7 +1772,20 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Model") {
             auto obj =
-                dto::Model_from_json (
+                dto::V0::Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            std::ofstream out (file2_path);
+            out << Model_to_json_string(obj);
+            if(!out)
+                throw std::runtime_error("Operation 'convert': IO error on " + struct_name);
+
+
+        } else if (struct_name == "Model") {
+            auto obj =
+                dto::V1::Model_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
@@ -1893,40 +1915,6 @@ int main (int argc, const char **argv) try {
             )));
             auto obj2 =
                 dto::Updater_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file2_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "IndependentGaussian") {
-            auto obj1 =
-                dto::IndependentGaussian_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            auto obj2 =
-                dto::IndependentGaussian_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file2_path
-            )));
-            if(obj1!=obj2)
-                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
-
-
-        } else if (struct_name == "CorrelatedGaussian") {
-            auto obj1 =
-                dto::CorrelatedGaussian_from_json (
-                    json::parse (
-                        std::ifstream (
-                            file1_path
-            )));
-            auto obj2 =
-                dto::CorrelatedGaussian_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
@@ -2139,6 +2127,23 @@ int main (int argc, const char **argv) try {
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
 
 
+        } else if (struct_name == "Histogram2") {
+            auto obj1 =
+                dto::Histogram2_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                dto::Histogram2_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
         } else if (struct_name == "EvaluationPoint") {
             auto obj1 =
                 dto::EvaluationPoint_from_json (
@@ -2158,13 +2163,30 @@ int main (int argc, const char **argv) try {
 
         } else if (struct_name == "Model") {
             auto obj1 =
-                dto::Model_from_json (
+                dto::V0::Model_from_json (
                     json::parse (
                         std::ifstream (
                             file1_path
             )));
             auto obj2 =
-                dto::Model_from_json (
+                dto::V0::Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file2_path
+            )));
+            if(obj1!=obj2)
+                throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+
+
+        } else if (struct_name == "Model") {
+            auto obj1 =
+                dto::V1::Model_from_json (
+                    json::parse (
+                        std::ifstream (
+                            file1_path
+            )));
+            auto obj2 =
+                dto::V1::Model_from_json (
                     json::parse (
                         std::ifstream (
                             file2_path
