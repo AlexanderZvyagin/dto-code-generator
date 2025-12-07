@@ -1,6 +1,8 @@
-import os
+import os, logging
 from .all import *
 from .Code import *
+
+logger = logging.getLogger(__name__)
 
 class CodePython (Code):
     def __init__ (self, options={}):
@@ -119,19 +121,20 @@ def float_equal(a:float|None, b:float|None) -> bool:
                     yield line
                 yield ''
             elif isinstance(obj,Include):
+                includes_dir = self.options.get('schema_includes_dir','.')
                 separation_line = '#'*32
                 for file in obj.files.get(self.language,[]):
                     yield separation_line
                     yield f'# The start of "{file}"'
                     yield separation_line
-                    for line in open(file).readlines():
+                    for line in open(f'{includes_dir}/{file}').readlines():
                         yield line.rstrip('\n')
                     yield separation_line
                     yield f'# The end of "{file}"'
                     yield separation_line
                 yield ''
             else:
-                print(f'Cannot handle {type(obj)}')
+                logger.error(f'Cannot handle {type(obj)}')
 
     def GenerateDocString(self, doc):
         yield f"{indent}'''"

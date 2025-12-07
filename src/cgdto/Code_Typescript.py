@@ -1,6 +1,8 @@
-import os, math
+import os, math, logging
 from .all import *
 from .Code import *
+
+logger = logging.getLogger(__name__)
 
 class CodeTypescript (Code):
     def __init__ (self, options={}):
@@ -135,19 +137,20 @@ function string_equal (a:string, b:string) : boolean {
                     yield line
                 yield ''
             elif isinstance(obj,Include):
+                includes_dir = self.options.get('schema_includes_dir','.')
                 separation_line = '//'*32
                 for file in obj.files.get(self.language,[]):
                     yield separation_line
                     yield f'// The start of "{file}"'
                     yield separation_line
-                    for line in open(file).readlines():
+                    for line in open(f'{includes_dir}/{file}').readlines():
                         yield line.rstrip('\n')
                     yield separation_line
                     yield f'// The end of "{file}"'
                     yield separation_line
                 yield ''
             else:
-                print(f'Cannot handle {type(obj)}')
+                logger.error(f'Cannot handle {type(obj)}')
 
     def GeneratorStruct (self, obj:Struct):
         if obj.base:
@@ -657,7 +660,7 @@ main();
             f.write(run)
         os.chmod(name,0o777)
 
-        print(f'Building "{self.language}" test environment...')
+        logger.info(f'Building "{self.language}" test environment...')
         run_test(self.GetDirTestEnv(),'build')
 
         self.test_environment_ready = True

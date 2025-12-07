@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cgdto"
+description = "Code Generator for Data Transfer Object"
+authors = [
+    {name = "Alexander Zvygain", email = "Zvyagin.Alexander@gmail.com"},
+]
+version = "0.9.0"
+
+dependencies = [
+    "pyyaml",
+    "pytest"
+]
+
+[pytest]
+# minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+
+[tool.pytest.ini_options]
+log_cli_level = "DEBUG"
+log_cli = true
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
+pythonpath = [
+    "src"
+]

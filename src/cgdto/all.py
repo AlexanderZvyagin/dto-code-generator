@@ -2,8 +2,10 @@
 # by all language-specific implementations.
 
 from __future__ import annotations
-import os, subprocess, re
+import os, subprocess, re, logging
 from collections import namedtuple
+
+logger = logging.getLogger(__name__)
 
 __version__ = (0,8,2)
 
@@ -182,9 +184,9 @@ def run_test(outdir,command,struct_name='',file1='',file2=''):
         for v in ['stdout','stderr']:
             if not getattr(proc,v):
                 continue
-            print(f'*** {v} ***')
-            print(getattr(proc,v))
-            print(f'**************')
+            logger.info(f'*** {v} ***')
+            logger.info(getattr(proc,v))
+            logger.info(f'**************')
     proc.check_returncode()
 
 supported_languages = {}

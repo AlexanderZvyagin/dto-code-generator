@@ -1,6 +1,8 @@
-import os, math
+import os, math, logging
 from .all import *
 from .Code import *
+
+logger = logging.getLogger(__name__)
 
 class CodeCpp (Code):
     def __init__ (self, options={}):
@@ -706,7 +708,7 @@ esac
             f.write(run)
         os.chmod(name,0o777)
 
-        print(f'Building "{self.language}" test environment...')
+        logger.info(f'Building "{self.language}" test environment...')
         run_test(self.GetDirTestEnv(),'build')
 
         self.test_environment_ready = True

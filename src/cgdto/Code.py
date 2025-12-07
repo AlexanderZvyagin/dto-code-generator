@@ -1,5 +1,7 @@
-import os
+import os, logging
 from .all import *
+
+logger = logging.getLogger(__name__)
 
 '''
 The generator interface does not know:
@@ -39,7 +41,7 @@ class Code:
         for path,line in self.GeneratorFiles (objs):
             if not path in files:
                 head, tail = os.path.split (path)
-                print(f'creating file "{path}"')
+                logger.info(f'creating file "{path}"')
                 if head:
                     os.makedirs (head, exist_ok=True)
                 file = open(path,'w')
@@ -73,7 +75,7 @@ class Code:
                 continue
             if not obj.gen_test:
                 continue
-            print(f'  Testing [{self.language}] {obj.name}')
+            logger.info(f'  Testing [{self.language}] {obj.name}')
             struct_name = obj.name
             outdir1 = self.GetDirTestEnv()
             outdir2 = self.GetDirTestEnv()
@@ -90,13 +92,13 @@ class Code:
     # The following methods need to be implemented be derived class
 
     def GeneratorDto (self, objs):
-        print(f'GeneratorDto is not implemented for {self.language}')
+        logger.warning(f'GeneratorDto is not implemented for {self.language}')
         return ()
 
     def GeneratorTests (self, objs):
-        print(f'GeneratorTests is not implemented for {self.language}')
+        logger.warning(f'GeneratorTests is not implemented for {self.language}')
         return ()
 
     def CreateTestEnv (self, objs):
-        print(f'CreateTestEnv is not implemented for {self.language}')
+        logger.warning(f'CreateTestEnv is not implemented for {self.language}')
         return ()
