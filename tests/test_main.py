@@ -15,33 +15,57 @@ def runTests() -> bool:
 def languages():
     return ['python','cpp','typescript']
 
-# @pytest.fixture
-# def schemas():
-#     return [schema_mcsdk]
+class Schema:
+    def __init__(self,module):
+        self.module = module
+    def Version(self):
+        return self.module.schema_version()
+    def Objs(self):
+        raise NotImplementedError
+    def Dir(self):
+        return os.path.dirname(self.module.__file__)
 
-@pytest.mark.parametrize("schema", [empty_schema,mcsdk_schema,openapi_schema])
+class EmptySchema(Schema):
+    def __init__(self,module):
+        super().__init__(module)
+    def Objs(self):
+        return self.module.schema()
+
+class McsdkSchema(Schema):
+    def __init__(self,module):
+        super().__init__(module)
+    def Objs(self):
+        return self.module.schema()
+
+class OpenapiSchema(Schema):
+    def __init__(self,module,configYaml:str):
+        super().__init__(module)
+        self.configYaml = configYaml
+    def Objs(self):
+        return self.module.schema(os.path.join(self.Dir(),self.configYaml))
+
+@pytest.mark.parametrize("schema", [EmptySchema(empty_schema),McsdkSchema(mcsdk_schema),OpenapiSchema(openapi_schema,'petstore.yaml')])
 def test_schema(runTests,languages,schema):
     logger.debug(f'languages: {languages}')
 
-    schemaDir = os.path.dirname(schema.__file__)
-    logger.debug(f'Schema directory: {schemaDir}')
+    logger.debug(f'Schema directory: {schema.Dir()}')
 
-    objs = schema.schema()
+    objs = schema.Objs()
 
     structs = [o for o in objs if isinstance(o,Struct)]
     funcs   = [o for o in objs if isinstance(o,Function)]
     cblocks = [o for o in objs if isinstance(o,CodeBlock)]
     logger.debug(f'The schema has {len(objs)} objects:  {len(structs)} structs, {len(funcs)} functions and {len(cblocks)} code blocks')
 
-    outdir = f'{schemaDir}/output'
+    outdir = f'{schema.Dir()}/output'
     if os.path.exists(outdir):
         logger.warning(f'Removing the old output: {outdir}')
         shutil.rmtree(outdir)
 
     options = {
         'outdir':outdir,
-        'schema_version':schema.schema_version(),
-        'schema_includes_dir':schemaDir
+        'schema_version':schema.Version(),
+        'schema_includes_dir':schema.Dir()
     }
 
     code = {}

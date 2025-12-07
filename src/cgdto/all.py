@@ -29,6 +29,12 @@ def detect_dict_key_value (name):
     q = re.match('dict\[(.*),(.*)\]',name)
     return q.groups() if q else None
 
+def typeDefaultValue(typeName):
+    match typeName:
+        case 'string': return ''
+        case 'int': return 0
+        case _: raise Exception(f'typeDefaultValue(): Not supported type: {typeName}')
+
 class Variable:
 
     def __init__ (
