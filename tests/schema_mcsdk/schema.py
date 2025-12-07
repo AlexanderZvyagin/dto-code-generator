@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from cgdto import *
 from math import nan
 
