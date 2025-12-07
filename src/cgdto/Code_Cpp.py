@@ -417,6 +417,7 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include <optional>
 
 //include-dto//
 
