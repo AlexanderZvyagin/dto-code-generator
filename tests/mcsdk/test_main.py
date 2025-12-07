@@ -1,7 +1,7 @@
 import pytest, logging, os, shutil
 
 from cgdto import Struct, Variable, Function, CodeBlock, supported_languages
-import schema
+from schema_mcsdk import schema
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ def test_mcsdk(languages):
     logger.debug(f'The schema has {len(objs)} objects:  {len(structs)} structs, {len(funcs)} functions and {len(cblocks)} code blocks')
 
     outdir = f'{schemaDir}/output'
-    if os.path.exists:
+    if os.path.exists(outdir):
         logger.warning(f'Removing the old output: {outdir}')
         shutil.rmtree(outdir)
 
