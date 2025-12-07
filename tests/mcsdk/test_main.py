@@ -1,4 +1,4 @@
-import pytest, logging, os
+import pytest, logging, os, shutil
 
 from cgdto import Struct, Variable, Function, CodeBlock, supported_languages
 import schema
@@ -22,11 +22,17 @@ def test_mcsdk(languages):
     cblocks = [o for o in objs if isinstance(o,CodeBlock)]
     logger.debug(f'The schema has {len(objs)} objects:  {len(structs)} structs, {len(funcs)} functions and {len(cblocks)} code blocks')
 
+    outdir = f'{schemaDir}/output'
+    if os.path.exists:
+        logger.warning(f'Removing the old output: {outdir}')
+        shutil.rmtree(outdir)
+
     options = {
-        'outdir':'output',
+        'outdir':outdir,
         'schema_version':schema.schema_version(),
         'schema_includes_dir':schemaDir
     }
+    
 
     code = {}
     for lang in languages:
@@ -42,4 +48,5 @@ def test_mcsdk(languages):
         for lang2 in languages:
             if not code[lang1].test_environment_ready:
                 continue
+            logger.info(f'Testing: {lang1} with {lang2}')
             code[lang1].RunTests(code[lang2],objs)
