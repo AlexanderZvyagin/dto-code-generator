@@ -37,6 +37,8 @@ class Code:
 
     def Process (self, objs):
 
+        os.makedirs (self.GetDirDto(), exist_ok=True)
+
         files = {}
         for path,line in self.GeneratorFiles (objs):
             if not path in files:

@@ -7,7 +7,7 @@ from collections import namedtuple
 
 logger = logging.getLogger(__name__)
 
-__version__ = (0,8,2)
+__version__ = (0,9,0)
 
 def version() -> str:
     return f'{__version__[0]}.{__version__[1]}.{__version__[2]}'
