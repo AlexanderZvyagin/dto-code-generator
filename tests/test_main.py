@@ -1,15 +1,15 @@
 import pytest, logging, os, shutil
 
 from cgdto import Struct, Variable, Function, CodeBlock, supported_languages
-from schema_empty import schema as schema_empty
-from schema_mcsdk import schema as schema_mcsdk
-from schema_openapi import schema as schema_openapi
+from empty_schema import schema as empty_schema
+from mcsdk_schema import schema as mcsdk_schema
+from openapi_schema import schema as openapi_schema
 
 logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def runTests() -> bool:
-    return False
+    return True
 
 @pytest.fixture
 def languages():
@@ -19,7 +19,7 @@ def languages():
 # def schemas():
 #     return [schema_mcsdk]
 
-@pytest.mark.parametrize("schema", [schema_empty,schema_mcsdk,schema_openapi])
+@pytest.mark.parametrize("schema", [empty_schema,mcsdk_schema,openapi_schema])
 def test_schema(runTests,languages,schema):
     logger.debug(f'languages: {languages}')
 
