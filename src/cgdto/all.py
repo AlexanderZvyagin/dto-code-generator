@@ -36,13 +36,13 @@ def detect_dict_key_value (name):
     q = re.match('dict\[(.*),(.*)\]',name)
     return q.groups() if q else None
 
-def typeDefaultValue(typeName):
+def typeDefaultValue(typeName:BasicType):
     match typeName:
         # case 'variant': return ''
-        case 'float': return 0
-        case 'string': return ''
-        case 'int': return 0
-        case _: raise Exception(f'typeDefaultValue(): Not supported type: {typeName}')
+        case BasicType.int: return 0
+        case BasicType.float: return 0
+        case BasicType.string: return ''
+        case _: raise Exception(f'typeDefaultValue(): Not supported type: {type(typeName)} {typeName}')
 
 class Variable:
 

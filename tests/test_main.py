@@ -11,10 +11,6 @@ logger = logging.getLogger(__name__)
 def runTests() -> bool:
     return True
 
-@pytest.fixture
-def languages():
-    return ['python','cpp','typescript']
-
 class Schema:
     def __init__(self,module):
         self.module = module
@@ -49,13 +45,13 @@ class OpenapiSchema(Schema):
         return f'{self.Dir()}/{os.path.splitext(self.configYaml)[0]}_output'
 
 @pytest.mark.parametrize(
-        "schema",
+        "schema, languages",
         [
-            EmptySchema(empty_schema),
-            McsdkSchema(mcsdk_schema),
-            OpenapiSchema(openapi_schema,'petstore.yaml'),
-            # OpenapiSchema(openapi_schema,'petstore-extended.json'),
-            # OpenapiSchema(openapi_schema,'1.yaml'),
+            (EmptySchema(empty_schema), ['python','cpp','typescript']),
+            (McsdkSchema(mcsdk_schema), ['python','cpp','typescript']),
+            (OpenapiSchema(openapi_schema,'petstore.yaml'), ['python','cpp','typescript']),
+            (OpenapiSchema(openapi_schema,'petstore-extended.json'), ['python','cpp','typescript']),
+            (OpenapiSchema(openapi_schema,'1.yaml'), ['cpp']),
         ]
 )
 def test_schema(runTests,languages,schema):

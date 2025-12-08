@@ -10,7 +10,7 @@ def schema_version () -> str:
 
 class OpenApi:
     class Type(StrEnum):
-        null    = "'null'"
+        null    = auto()
         # boolean = 'boolean'
         array   = auto()
         object  = auto()
@@ -22,27 +22,27 @@ class OpenApi:
         int32 = auto()
         int64 = auto()
 
-def mapOpenapiType(openapiType:str,openapiFormat:str) -> str:
+def mapOpenapiType(openapiType:str,openapiFormat:str) -> BasicType:
     match openapiType:
         case OpenApi.Type.null:
-            return 'void'
+            return BasicType.null
         case OpenApi.Type.number:
-            return 'float'
+            return BasicType.float
         case OpenApi.Type.integer:
-            return 'int'
+            return BasicType.int
             # match openapiFormat:
             #     case OpenApi.Format.none: return 'int'
             #     case OpenApi.Format.int32: return 'int'
             #     case OpenApi.Format.int64: return 'int'
             #     case _: raise Exception(f'{self.langName} unsupported type={openapiType} format={openapiFormat}')
         case OpenApi.Type.string:
-            return 'string'
+            return BasicType.string
             # match openapiFormat:
             #     case '': return 'std::string'
             #     case _: raise Exception(f'{self.langName} unsupported type={openapiType} format={openapiFormat}')
-        case _: raise Exception(f'Unsupported type: {openapiType}')
+        case _: raise Exception(f'Unsupported type: "{openapiType}"')
 
-def createOpenApiAnyOf(anyOf):
+def createOpenApiAnyOf(name,anyOf):
     logger.debug(f'createOpenApiAnyOf: {anyOf}')
     types = []
     for item in anyOf:
@@ -50,9 +50,16 @@ def createOpenApiAnyOf(anyOf):
 
     logger.debug(f'createOpenApiAnyOf: types: {types}')
 
-
-    # if len(types)==2:
+    if len(types)==2 and BasicType.null in types:
+        logger.debug('Converting into optional!')
             # Variable('RandomSeed','int',None,optional=True),
+        qtype = [item for item in types if not item is BasicType.null]
+        if len(qtype)!=1:
+            raise Exception(f'createOpenApiAnyOf: bad types: {types}')
+        return Variable(name=name,type=qtype[0],optional=True)
+    else:
+        raise Exception(f'createOpenApiAnyOf: not supported: {types}')
+    
     raise NotImplementedError
 
 def process_openapi_object_schema(name,obj,allObjs):
@@ -67,13 +74,14 @@ def process_openapi_object_schema(name,obj,allObjs):
     for varName,property  in obj.get('properties',{}).items():
         required:bool = varName in obj.get('required',[])
         if 'type' in property:
-            varType = mapOpenapiType(property['type'],property.get('format'))
+            var = Variable(name=varName,type=mapOpenapiType(property['type'],property.get('format')))
         elif 'anyOf' in property:
-            varType = createOpenApiAnyOf(property['anyOf'])
+            var = createOpenApiAnyOf(varName,property['anyOf'])
         else:
             raise Exception(f'Not supported property type: {property}')
-        struct.AddAttribute(Variable(varName,varType))
-        ctorArgs.append(Variable(name=varName,type=varType,defval=typeDefaultValue(varType)))
+        struct.AddAttribute(var)
+        var.defval = typeDefaultValue(var.type)
+        ctorArgs.append(var)
         ctorMapping.append((varName,[Variable(varName)]))
 
     variant = []
