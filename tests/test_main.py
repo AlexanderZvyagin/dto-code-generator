@@ -50,7 +50,7 @@ class OpenapiSchema(Schema):
             (EmptySchema(empty_schema), ['python','cpp','typescript']),
             (McsdkSchema(mcsdk_schema), ['python','cpp','typescript']),
             (OpenapiSchema(openapi_schema,'petstore.yaml'), ['python','cpp','typescript']),
-            (OpenapiSchema(openapi_schema,'1.yaml'), ['cpp']),
+            (OpenapiSchema(openapi_schema,'property_anyOf.yaml'), ['python','cpp','typescript']),
         ]
 )
 def test_schema(runTests,languages,schema):
