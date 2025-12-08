@@ -40,9 +40,9 @@ class CodePython (Code):
                 type_str = f'list[{type_str}]'
             if var.optional:
                 type_str = f'{type_str}|None'
-            if var.variant:
-                assert tname=='variant'
-                raise Exception(f'Variant is not supported: {var.variant}')
+            # if var.variant:
+            #     assert tname=='variant'
+            #     raise Exception(f'Variant is not supported: {var.variant}')
 
         return type_str
 

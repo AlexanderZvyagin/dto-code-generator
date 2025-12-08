@@ -53,7 +53,7 @@ class Variable:
         defval                      = None,
         list    :bool               = False,
         optional:bool               = False,
-        variant :list[str|Struct]   = [],
+        # variant :list[str|Struct]   = [],
         skip_dto:bool               = False,
         static  :bool               = False,
         doc     :str|list[str]      = '',
@@ -63,7 +63,7 @@ class Variable:
         self.defval   = defval
         self.list     = list
         self.optional = optional
-        self.variant  = variant
+        # self.variant  = variant
         self.skip_dto = skip_dto
         self.static   = static
         self.doc      = doc
@@ -79,7 +79,7 @@ class Variable:
             return self.type
 
     def __repr__ (self):
-        return f'Variable(name={self.name},type={self.type},defval={self.defval},variant={self.variant},list={self.list},optional={self.optional},skip_dto={self.skip_dto})'
+        return f'Variable(name={self.name},type={self.type},defval={self.defval},list={self.list},optional={self.optional},skip_dto={self.skip_dto})'
 
 # FIXME: is it needed?
 ext = {

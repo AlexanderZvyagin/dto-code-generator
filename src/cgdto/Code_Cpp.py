@@ -34,11 +34,11 @@ class CodeCpp (Code):
         logger.debug(f'TypeToString: {var}')
 
         if type(var)==Variable:
-            if var.variant:
-                assert tname=='variant'
-                logger.debug(f'variant: {var.variant}')
-                vars = [self.TypeToString(Variable(name='',type=item)) for item in var.variant]
-                type_str = f'std::variant<{",".join(vars)}>'
+            # if var.variant:
+            #     assert tname=='variant'
+            #     logger.debug(f'variant: {var.variant}')
+            #     vars = [self.TypeToString(Variable(name='',type=item)) for item in var.variant]
+            #     type_str = f'std::variant<{",".join(vars)}>'
             if var.list:
                 type_str = f'std::vector<{type_str}>'
             if var.optional:
@@ -97,7 +97,7 @@ class CodeCpp (Code):
         for line in f'''
 
 #include <optional>
-#include <variant>
+//#include <variant>
 #include <string>
 #include <vector>
 #include <map>

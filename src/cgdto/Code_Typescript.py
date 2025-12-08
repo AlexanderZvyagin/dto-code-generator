@@ -40,9 +40,9 @@ class CodeTypescript (Code):
                 type_str = f'{type_str}[]'
             if var.optional:
                 type_str = f'{type_str}|undefined'
-            if var.variant:
-                assert tname=='variant'
-                raise Exception(f'Variant is not supported: {var.variant}')
+            # if var.variant:
+            #     assert tname=='variant'
+            #     raise Exception(f'Variant is not supported: {var.variant}')
 
         return type_str
 

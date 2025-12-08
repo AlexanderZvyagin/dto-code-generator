@@ -84,48 +84,48 @@ def process_openapi_object_schema(name,obj,allObjs):
         ctorArgs.append(var)
         ctorMapping.append((varName,[Variable(varName)]))
 
-    variant = []
-    for item in obj.get('oneOf',[])+obj.get('anyOf',[]):
-        logger.debug(f'oneOf+anyOf: {item}')
+    # variant = []
+    # for item in obj.get('oneOf',[])+obj.get('anyOf',[]):
+    #     logger.debug(f'oneOf+anyOf: {item}')
 
-        processed = False
+    #     processed = False
 
-        ref = item.get('$ref',None)
-        logger.debug(f'ref: {ref}')
-        if ref:
-            refStructName = ref.split('/')[-1]
-            findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
-            if len(findRef)!=1:
-                raise Exception(f'found {len(findRef)} objects "{refStructName}"')
-            struct.AddDependency(findRef[0])
-            variant.append(findRef[0])
-            processed = True
+    #     ref = item.get('$ref',None)
+    #     logger.debug(f'ref: {ref}')
+    #     if ref:
+    #         refStructName = ref.split('/')[-1]
+    #         findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
+    #         if len(findRef)!=1:
+    #             raise Exception(f'found {len(findRef)} objects "{refStructName}"')
+    #         struct.AddDependency(findRef[0])
+    #         variant.append(findRef[0])
+    #         processed = True
         
-        ptype = item.get('type',None)
-        logger.debug(f'type: {ptype}')
-        if ptype:
-            # refStructName = ref.split('/')[-1]
-            # findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
-            # if len(findRef)!=1:
-            #     raise Exception(f'found {len(findRef)} objects "{refStructName}"')
-            # struct.AddDependency(findRef[0])
-            variant.append(ptype)
-            processed = True
+    #     ptype = item.get('type',None)
+    #     logger.debug(f'type: {ptype}')
+    #     if ptype:
+    #         # refStructName = ref.split('/')[-1]
+    #         # findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
+    #         # if len(findRef)!=1:
+    #         #     raise Exception(f'found {len(findRef)} objects "{refStructName}"')
+    #         # struct.AddDependency(findRef[0])
+    #         variant.append(ptype)
+    #         processed = True
 
-        if not processed:
-            raise Exception(f'oneOf+anyOf: not supported: {item}')
-    if variant:
-        varType = 'variant'
-        varName = 'oneOfanyOf'
-        struct.AddAttribute(Variable(name=varName,type=varType,variant=variant))
-        firstVariant = variant[0]
-        if isinstance(firstVariant,Struct):
-            ctorArgs.append(Variable(name=varName,type=varType,variant=variant,defval=Variable(f'{firstVariant.name}()',firstVariant)))
-        # elif firstVariant==OpenApi.Type.null:
-        #     ctorArgs.append(Variable(name=varName,type=varType,variant=variant,defval=Variable(f'{firstVariant.name}()',firstVariant)))
-        else:
-            raise Exception(f'Not supported: {firstVariant} of type {type(firstVariant)}')
-        ctorMapping.append((varName,[Variable(varName)]))
+    #     if not processed:
+    #         raise Exception(f'oneOf+anyOf: not supported: {item}')
+    # if variant:
+    #     varType = 'variant'
+    #     varName = 'oneOfanyOf'
+    #     struct.AddAttribute(Variable(name=varName,type=varType,variant=variant))
+    #     firstVariant = variant[0]
+    #     if isinstance(firstVariant,Struct):
+    #         ctorArgs.append(Variable(name=varName,type=varType,variant=variant,defval=Variable(f'{firstVariant.name}()',firstVariant)))
+    #     # elif firstVariant==OpenApi.Type.null:
+    #     #     ctorArgs.append(Variable(name=varName,type=varType,variant=variant,defval=Variable(f'{firstVariant.name}()',firstVariant)))
+    #     else:
+    #         raise Exception(f'Not supported: {firstVariant} of type {type(firstVariant)}')
+    #     ctorMapping.append((varName,[Variable(varName)]))
 
     struct.methods.append(Function (
         struct.name,
