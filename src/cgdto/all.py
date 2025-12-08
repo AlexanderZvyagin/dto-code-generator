@@ -199,12 +199,13 @@ def run_test(outdir,command,struct_name='',file1='',file2=''):
     ]
     proc = subprocess.run (cmd, capture_output=True, text=True, cwd=outdir)
     if proc.returncode:
+        logger.error(f'run_test: outdir={outdir} command={command} struct={struct_name} file1={file1} file2={file2}')
         for v in ['stdout','stderr']:
             if not getattr(proc,v):
                 continue
-            logger.info(f'*** {v} ***')
-            logger.info(getattr(proc,v))
-            logger.info(f'**************')
+            logger.error(f'*** {v} ***')
+            logger.error(getattr(proc,v))
+            logger.error(f'**************')
     proc.check_returncode()
 
 supported_languages = {}

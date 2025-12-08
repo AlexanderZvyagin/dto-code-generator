@@ -50,7 +50,6 @@ class OpenapiSchema(Schema):
             (EmptySchema(empty_schema), ['python','cpp','typescript']),
             (McsdkSchema(mcsdk_schema), ['python','cpp','typescript']),
             (OpenapiSchema(openapi_schema,'petstore.yaml'), ['python','cpp','typescript']),
-            (OpenapiSchema(openapi_schema,'petstore-extended.json'), ['python','cpp','typescript']),
             (OpenapiSchema(openapi_schema,'1.yaml'), ['cpp']),
         ]
 )

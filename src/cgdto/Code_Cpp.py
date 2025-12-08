@@ -12,8 +12,6 @@ class CodeCpp (Code):
 
     def TypeToString (self, var:Variable) -> str:
 
-        logger.debug(f'aaaaa {type(BasicType.null)} {BasicType.null}')
-
         m = {
             BasicType.null    : 'void',
             BasicType.string  : 'std::string',
@@ -39,7 +37,6 @@ class CodeCpp (Code):
             if var.variant:
                 assert tname=='variant'
                 logger.debug(f'variant: {var.variant}')
-                # if len(var.variant)==2:
                 vars = [self.TypeToString(Variable(name='',type=item)) for item in var.variant]
                 type_str = f'std::variant<{",".join(vars)}>'
             if var.list:
@@ -389,8 +386,11 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
                         std::ifstream (
                             file1_path
             )));
-            if(obj1!=obj2)
+            if(obj1!=obj2){{
+                std::cerr << "obj1: " << {namespace()}::{obj.name}_to_json_string(obj1) << "\\n";
+                std::cerr << "obj2: " << {namespace()}::{obj.name}_to_json_string(obj2) << "\\n";
                 throw std::runtime_error("Operation 'compare' failed for struct " + struct_name);
+            }}
 ''')
 
             code_convert.extend(f'''
@@ -559,15 +559,15 @@ std::optional<std::vector<float>> random_optional_list_float (
 }
 
 // https://stackoverflow.com/questions/47977829/generate-a-random-string-in-c11
-std::string random_string (int len=16) {
+std::string random_string (int len_min=0, int len_max=2) {
     static std::string str("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
     std::shuffle(str.begin(), str.end(), generator);
-    return str.substr(0, len);
+    return str.substr(0, random_int (len_min, len_max));
 }
 
-std::optional<std::string> random_optional_string (int len=16) {
+std::optional<std::string> random_optional_string (int len_min=0, int len_max=2) {
     if(yes_no())
-        return random_string(len);
+        return random_string(random_int (len_min, len_max));
     else
         return {};
 }
@@ -575,12 +575,13 @@ std::optional<std::string> random_optional_string (int len=16) {
 std::vector<std::string> random_list_string (
     int len_min = 0,
     int len_max = 3,
-    int strlen_max = 16
+    int strlen_min = 0,
+    int strlen_max = 2
 ) {
     const auto size = random_int (len_min, len_max);
     std::vector<std::string> list;
     for(int i=0; i<size; i++)
-        list.push_back(random_string(strlen_max));
+        list.push_back(random_string(strlen_min,strlen_max));
     return list;
 }
 

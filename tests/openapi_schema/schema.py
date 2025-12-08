@@ -80,7 +80,7 @@ def process_openapi_object_schema(name,obj,allObjs):
         else:
             raise Exception(f'Not supported property type: {property}')
         struct.AddAttribute(var)
-        var.defval = typeDefaultValue(var.type)
+        var.defval = None if var.optional else typeDefaultValue(var.type)
         ctorArgs.append(var)
         ctorMapping.append((varName,[Variable(varName)]))
 
