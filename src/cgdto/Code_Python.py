@@ -417,7 +417,7 @@ def random_{obj.name} ():
 
             code_construct_random.extend(f'''
 def random_optional_{obj.name} () -> {obj.name}|None:
-    if yes_no():
+    if random_boolean():
         return None
     return random_{obj.name}()
 '''.split('\n'))
@@ -430,7 +430,7 @@ def random_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]:
 
             code_construct_random.extend(f'''
 def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]|None:
-    if yes_no():
+    if random_boolean():
         return None
     return random_list_{obj.name}(min,max)
 '''.split('\n'))
@@ -471,21 +471,21 @@ def random_list_string(min:int = 0, max:int = 3) -> list[str]:
     return [random_string() for i in range(n)]
 
 def random_optional_string (len_max:int=5) -> str|None:
-    if yes_no(): return None
+    if random_boolean(): return None
     return random_string()
 
 def random_optional_list_string(min:int = 0, max:int = 3) -> list[str]:
-    if yes_no(): return None
+    if random_boolean(): return None
     return random_list_string(min,max)
 
 def random_int (min = -1000, max = 1000) -> int:
     return random.randint(min,max)
 
-def yes_no () -> bool:
+def random_boolean () -> bool:
     return random_int(0,1)
 
 def random_optional_int (min = -1000, max = 1000) -> int:
-    if yes_no(): return None
+    if random_boolean(): return None
     return random_int(min,max)
 
 def random_list_int(min:int = 0, max:int = 3) -> list[int]:
@@ -493,7 +493,7 @@ def random_list_int(min:int = 0, max:int = 3) -> list[int]:
     return [random_int() for i in range(n)]
 
 def random_optional_list_int(min:int = 0, max:int = 3) -> list[int]|None:
-    if yes_no(): return None
+    if random_boolean(): return None
     return random_list_int(min,max)
 
 def random_float (min:float = -1e6, max:float = 1e6) -> float:
@@ -502,7 +502,7 @@ def random_float (min:float = -1e6, max:float = 1e6) -> float:
     # return random.uniform(min,max)
 
 def random_optional_float (min = -1e6, max = 1e6) -> float|None:
-    if yes_no(): return None
+    if random_boolean(): return None
     return random_int()
     # FIXME
     # return random.uniform(min,max)
@@ -512,7 +512,7 @@ def random_list_float (min:int = 0, max:int = 3) -> list[float]:
     return [random_float() for i in range(n)]
 
 def random_optional_list_float (min = 0, max = 3) -> list[float]|None:
-    if yes_no(): return None
+    if random_boolean(): return None
     return random_list_float(min,max)
 
 #create-struct-random#

@@ -58,6 +58,8 @@ class CodeCpp (Code):
             return f'{{{y}}}'
         elif isinstance(arg,str):
             return f'"{arg}"'
+        elif isinstance(arg,bool):
+            return f'{"true" if arg else "false"}'
         elif isinstance(arg,int):
             return f'{arg}'
         elif isinstance(arg,float):
@@ -67,7 +69,6 @@ class CodeCpp (Code):
                 return str(arg)
         else:
             raise Exception(f'Not supported: {arg}')
-            # return str(arg)
 
     def GeneratorDto (self, objs):
         ext_hpp = self.header_extension
@@ -350,7 +351,7 @@ using json = nlohmann::json;
 
             code_construct_random.extend(f'''
 std::optional<{obj.name}> random_optional_{obj.name} (void) {{
-    if(yes_no())
+    if(random_boolean())
         return {{}};
     return random_{obj.name} ();
 }}
@@ -368,7 +369,7 @@ std::vector<{obj.name}> random_list_{obj.name} (int min, int max) {{
 
             code_construct_random.extend(f'''
 std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min, int max) {{
-    if(yes_no())
+    if(random_boolean())
         return {{}};
     return random_list_{obj.name} (min,max);
 }}
@@ -460,13 +461,13 @@ int random_int (
     return uniform_dist (generator);
 }
 
-auto yes_no = [] (void) -> bool {return random_int(0,1);};
+auto random_boolean = [] (void) -> bool {return random_int(0,1);};
 
 std::optional<int> random_optional_int (
     int min = -1000,
     int max = 1000
 ) {
-    if(yes_no())
+    if(random_boolean())
         return random_int(min,max);
     else
         return {};
@@ -491,7 +492,7 @@ std::optional<std::vector<int>> random_optional_list_int (
     int int_min = -1000,
     int int_max = 1000
 ) {
-    if(yes_no())
+    if(random_boolean())
         return random_list_int(len_min,len_max,int_min,int_max);
     else
         return {};
@@ -506,11 +507,11 @@ float random_float (
     // FIXME
     return (float) random_int(min,max);
 #if 0
-    if(can_be_nan and yes_no())
+    if(can_be_nan and random_boolean())
         return NAN;
 
-    if(can_be_infinity and yes_no())
-        return (yes_no() ? -1 : 1) * std::numeric_limits<float>::infinity();
+    if(can_be_infinity and random_boolean())
+        return (random_boolean() ? -1 : 1) * std::numeric_limits<float>::infinity();
 
     std::uniform_real_distribution uniform_dist(min,max);
     return uniform_dist (generator);
@@ -523,7 +524,7 @@ std::optional<float> random_optional_float (
     bool can_be_nan      = false,
     bool can_be_infinity = false
 ) {
-    if(yes_no())
+    if(random_boolean())
         return random_float(min,max,can_be_nan,can_be_infinity);
     else
         return {};
@@ -552,7 +553,7 @@ std::optional<std::vector<float>> random_optional_list_float (
     bool  can_be_nan      = false,
     bool  can_be_infinity = false
 ) {
-    if(yes_no())
+    if(random_boolean())
         return random_list_float(len_min,len_max,min,max,can_be_nan,can_be_infinity);
     else
         return {};
@@ -566,7 +567,7 @@ std::string random_string (int len_min=0, int len_max=2) {
 }
 
 std::optional<std::string> random_optional_string (int len_min=0, int len_max=2) {
-    if(yes_no())
+    if(random_boolean())
         return random_string(random_int (len_min, len_max));
     else
         return {};
@@ -590,7 +591,7 @@ std::optional<std::vector<std::string>> random_optional_list_string (
     int len_max = 3,
     int strlen_max = 16
 ) {
-    if(yes_no())
+    if(random_boolean())
         return random_list_string(len_min,len_max,strlen_max);
     else
         return {};

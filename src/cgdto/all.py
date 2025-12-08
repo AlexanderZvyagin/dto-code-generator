@@ -39,6 +39,7 @@ def detect_dict_key_value (name):
 def typeDefaultValue(typeName:BasicType):
     match typeName:
         # case 'variant': return ''
+        case BasicType.boolean: return False
         case BasicType.int: return 0
         case BasicType.float: return 0
         case BasicType.string: return ''

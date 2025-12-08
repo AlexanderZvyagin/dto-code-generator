@@ -57,6 +57,8 @@ class CodeTypescript (Code):
             return f'[{y}]'
         elif isinstance(arg,str):
             return f'"{arg}"'
+        elif isinstance(arg,bool):
+            return f'{"true" if arg else "false"}'
         elif isinstance(arg,float):
             if math.isnan(arg):
                 return 'Number.NaN'
@@ -110,6 +112,10 @@ function float_equal (a:number, b:number) : boolean {
 }
 
 function int_equal (a:number, b:number) : boolean {
+    return a===b;
+}
+
+function boolean_equal (a:boolean, b:boolean) : boolean {
     return a===b;
 }
 
@@ -433,7 +439,7 @@ function random_{obj.name} () : {obj.name} {{
 
             code_construct_random.extend(f'''
 function random_optional_{obj.name} () : {obj.name}|undefined {{
-    if(yes_no())
+    if(random_boolean())
         return undefined;
     return random_{obj.name} ();
 }}
@@ -451,7 +457,7 @@ function random_list_{obj.name} (min:number = 0, max:number = 3) : {obj.name}[] 
 
             code_construct_random.extend(f'''
 function random_optional_list_{obj.name} () : {obj.name}[]|undefined {{
-    if(yes_no())
+    if(random_boolean())
         return undefined;
     return random_list_{obj.name} ();
 }}
@@ -502,12 +508,12 @@ function random_int(min:number = -1000, max:number = 1000) : number {
     return Math.floor (min + Math.random()*(max-min+1));
 }
 
-function yes_no () : boolean {
+function random_boolean () : boolean {
     return random_int(0,1)==1;
 }
 
 function random_optional_int() : number|undefined {
-    return yes_no() ? random_int() : undefined;
+    return random_boolean() ? random_int() : undefined;
 }
 
 function random_float(min:number = -1e6, max:number = 1e6) : number {
@@ -515,7 +521,7 @@ function random_float(min:number = -1e6, max:number = 1e6) : number {
 }
 
 function random_optional_float() : number|undefined {
-    return yes_no() ? random_float() : undefined;
+    return random_boolean() ? random_float() : undefined;
 }
 
 function random_string(min:number = 0, max:number = 3) : string {
@@ -527,7 +533,7 @@ function random_string(min:number = 0, max:number = 3) : string {
 }
 
 function random_optional_string() : string|undefined {
-    return yes_no() ? random_string() : undefined;
+    return random_boolean() ? random_string() : undefined;
 }
 
 function random_list_int (min:number = 0, max:number = 3) : number[] {
@@ -539,7 +545,7 @@ function random_list_int (min:number = 0, max:number = 3) : number[] {
 }
 
 function random_optional_list_int() : number[]|undefined {
-    return yes_no() ? random_list_int() : undefined;
+    return random_boolean() ? random_list_int() : undefined;
 }
 
 function random_list_float (min:number = 0, max:number = 3) : number[] {
@@ -551,7 +557,7 @@ function random_list_float (min:number = 0, max:number = 3) : number[] {
 }
 
 function random_optional_list_float() : number[]|undefined {
-    return yes_no() ? random_list_float() : undefined;
+    return random_boolean() ? random_list_float() : undefined;
 }
 
 function random_list_string (min:number = 0, max:number = 3) : string[] {
@@ -563,7 +569,7 @@ function random_list_string (min:number = 0, max:number = 3) : string[] {
 }
 
 function random_optional_list_string() : string[]|undefined {
-    return yes_no() ? random_list_string() : undefined;
+    return random_boolean() ? random_list_string() : undefined;
 }
 
 //create-struct-random//
