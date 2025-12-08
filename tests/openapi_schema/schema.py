@@ -1,4 +1,4 @@
-import yaml, logging
+import json, yaml, logging
 from enum import StrEnum
 
 from cgdto import *
@@ -49,33 +49,12 @@ def process_openapi_object_schema(name,obj):
         struct.AddAttribute(Variable(varName,varType))
         ctorArgs.append(Variable(name=varName,type=varType,defval=typeDefaultValue(varType)))
         ctorMapping.append((varName,[Variable(varName)]))
-        # varType:str = self.Type(property['type'],property.get('format',''))
-        # if not required:
-        #     varType = f'std::optional<{varType}>'
-        # self.AppendCode(fileName,line)
-        # self.AppendCode(fileName,f'  {varType} {varName};')
 
     struct.methods.append(Function (
         struct.name,
         'constructor',
         args = ctorArgs,
         mapping = ctorMapping
-        # args = [
-        #     Variable('name','string',''),
-        #     Variable('title','string',''),
-        #     Variable('doc_md','string',''),
-        #     Variable('start','string',''),
-        #     Variable('nargs_min','int',-88),
-        #     Variable('nrefs_min','int',-88)
-        # ],
-        # mapping = [
-        #     ('name',[Variable('name')]),
-        #     ('title',[Variable('title')]),
-        #     ('doc_md',[Variable('doc_md')]),
-        #     ('start',[Variable('start')]),
-        #     ('nargs_min',[Variable('nargs_min')]),
-        #     ('nrefs_min',[Variable('nrefs_min')]),
-        # ]
     ))
 
     return struct
@@ -90,9 +69,14 @@ def process_openapi_schema(name,obj):
         case 'array':  return process_openapi_array_schema(name,obj)
         case _: raise Exception(f'Not supported schema type: {obj["type"]}')
 
-def schema (openApiYaml:str):
+def schema (openApiConfig:str):
 
-    specs = yaml.safe_load(open(openApiYaml))
+    ext = openApiConfig.split('.')[-1]
+    with open(openApiConfig) as file:
+        match ext:
+            case 'yaml': specs = yaml.safe_load(file)
+            case 'json': specs = json.load(file)
+            case _: raise Exception(f'Unknown extension {ext}')
 
     objs = []
 
