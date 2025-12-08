@@ -11,7 +11,7 @@ def schema_version () -> str:
 class OpenApi:
     class Type(StrEnum):
         null    = auto()
-        # boolean = 'boolean'
+        boolean = auto()
         array   = auto()
         object  = auto()
         number  = auto()
@@ -26,6 +26,8 @@ def mapOpenapiType(openapiType:str,openapiFormat:str) -> BasicType:
     match openapiType:
         case OpenApi.Type.null:
             return BasicType.null
+        case OpenApi.Type.boolean:
+            return BasicType.boolean
         case OpenApi.Type.number:
             return BasicType.float
         case OpenApi.Type.integer:
@@ -37,6 +39,9 @@ def mapOpenapiType(openapiType:str,openapiFormat:str) -> BasicType:
             #     case _: raise Exception(f'{self.langName} unsupported type={openapiType} format={openapiFormat}')
         case OpenApi.Type.string:
             return BasicType.string
+        case OpenApi.Type.array:
+            raise NotImplementedError
+            # return BasicType.string
             # match openapiFormat:
             #     case '': return 'std::string'
             #     case _: raise Exception(f'{self.langName} unsupported type={openapiType} format={openapiFormat}')
