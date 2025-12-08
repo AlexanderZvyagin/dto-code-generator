@@ -17,14 +17,17 @@ class CodeTypescript (Code):
     def TypeToString (self, var:Variable) -> str:
 
         m = {
-            'void'    : 'void',
-            'string'  : 'string',
-            'boolean' : 'boolean',
-            'int'     : 'number',
-            'float'   : 'number',
+            BasicType.null    : 'void',
+            BasicType.string  : 'string',
+            BasicType.boolean : 'boolean',
+            BasicType.int     : 'number',
+            BasicType.float   : 'number',
         }
 
-        tname = var.TypeName()
+        if type(var)==Variable:
+            tname = var.TypeName()
+        else:
+            tname = var
 
         kv = detect_dict_key_value(tname)
         if kv:
@@ -32,10 +35,15 @@ class CodeTypescript (Code):
 
         type_str = m.get(tname,tname)
 
-        if var.list:
-            type_str = f'{type_str}[]'
-        if var.optional:
-            type_str = f'{type_str}|undefined'
+        if type(var)==Variable:
+            if var.list:
+                type_str = f'{type_str}[]'
+            if var.optional:
+                type_str = f'{type_str}|undefined'
+            if var.variant:
+                assert tname=='variant'
+                raise Exception(f'Variant is not supported: {var.variant}')
+
         return type_str
 
     def ValueToString (self, arg) -> str:

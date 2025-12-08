@@ -24,6 +24,8 @@ class Schema:
         raise NotImplementedError
     def Dir(self):
         return os.path.dirname(self.module.__file__)
+    def OutDir(self):
+        return f'{self.Dir()}/output'
 
 class EmptySchema(Schema):
     def __init__(self,module):
@@ -43,8 +45,19 @@ class OpenapiSchema(Schema):
         self.configYaml = configYaml
     def Objs(self):
         return self.module.schema(os.path.join(self.Dir(),self.configYaml))
+    def OutDir(self):
+        return f'{self.Dir()}/{os.path.splitext(self.configYaml)[0]}_output'
 
-@pytest.mark.parametrize("schema", [EmptySchema(empty_schema),McsdkSchema(mcsdk_schema),OpenapiSchema(openapi_schema,'petstore.yaml')])
+@pytest.mark.parametrize(
+        "schema",
+        [
+            EmptySchema(empty_schema),
+            McsdkSchema(mcsdk_schema),
+            OpenapiSchema(openapi_schema,'petstore.yaml'),
+            # OpenapiSchema(openapi_schema,'petstore-extended.json'),
+            # OpenapiSchema(openapi_schema,'1.yaml'),
+        ]
+)
 def test_schema(runTests,languages,schema):
     logger.debug(f'languages: {languages}')
 
@@ -57,7 +70,7 @@ def test_schema(runTests,languages,schema):
     cblocks = [o for o in objs if isinstance(o,CodeBlock)]
     logger.debug(f'The schema has {len(objs)} objects:  {len(structs)} structs, {len(funcs)} functions and {len(cblocks)} code blocks')
 
-    outdir = f'{schema.Dir()}/output'
+    outdir = schema.OutDir()
     if os.path.exists(outdir):
         logger.warning(f'Removing the old output: {outdir}')
         shutil.rmtree(outdir)

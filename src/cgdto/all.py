@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 import os, subprocess, re, logging
-from collections import namedtuple
+from enum import StrEnum, auto
 
 logger = logging.getLogger(__name__)
 
@@ -25,12 +25,21 @@ Generated from schema: {schema}
 
     return txt
 
+class BasicType(StrEnum):
+    null    = auto()
+    string  = auto()
+    boolean = auto()
+    int     = auto()
+    float   = auto()
+
 def detect_dict_key_value (name):
     q = re.match('dict\[(.*),(.*)\]',name)
     return q.groups() if q else None
 
 def typeDefaultValue(typeName):
     match typeName:
+        # case 'variant': return ''
+        case 'float': return 0
         case 'string': return ''
         case 'int': return 0
         case _: raise Exception(f'typeDefaultValue(): Not supported type: {typeName}')
@@ -39,20 +48,22 @@ class Variable:
 
     def __init__ (
         self,
-        name:str = '',
-        type     = None,
-        defval   = None,
-        list     = False,
-        optional = False,
-        skip_dto = False,
-        static   = False,
-        doc:str|list[str] = ''
+        name:str                    = '',
+        type                        = None,
+        defval                      = None,
+        list    :bool               = False,
+        optional:bool               = False,
+        variant :list[str|Struct]   = [],
+        skip_dto:bool               = False,
+        static  :bool               = False,
+        doc     :str|list[str]      = '',
     ):
         self.name     = name
         self.type     = type
         self.defval   = defval
         self.list     = list
         self.optional = optional
+        self.variant  = variant
         self.skip_dto = skip_dto
         self.static   = static
         self.doc      = doc
@@ -68,8 +79,9 @@ class Variable:
             return self.type
 
     def __repr__ (self):
-        return f'Variable(name={self.name},type={self.type},defval={self.defval},list={self.list},optional={self.optional},skip_dto={self.skip_dto})'
+        return f'Variable(name={self.name},type={self.type},defval={self.defval},variant={self.variant},list={self.list},optional={self.optional},skip_dto={self.skip_dto})'
 
+# FIXME: is it needed?
 ext = {
     'cpp'           : 'cpp',
     'python'        : 'py',

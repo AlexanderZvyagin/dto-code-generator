@@ -12,15 +12,20 @@ class CodeCpp (Code):
 
     def TypeToString (self, var:Variable) -> str:
 
+        logger.debug(f'aaaaa {type(BasicType.null)} {BasicType.null}')
+
         m = {
-            'void'    : 'void',
-            'string'  : 'std::string',
-            'boolean' : 'bool',
-            'int'     : 'int',
-            'float'   : 'float',
+            BasicType.null    : 'void',
+            BasicType.string  : 'std::string',
+            BasicType.boolean : 'bool',
+            BasicType.int     : 'int',
+            BasicType.float   : 'float',
         }
 
-        tname = var.TypeName()
+        if type(var)==Variable:
+            tname = var.TypeName()
+        else:
+            tname = var
 
         kv = detect_dict_key_value(tname)
         if kv:
@@ -28,10 +33,20 @@ class CodeCpp (Code):
 
         type_str = m.get(tname,tname)
 
-        if var.list:
-            type_str = f'std::vector<{type_str}>'
-        if var.optional:
-            type_str = f'std::optional<{type_str}>'
+        logger.debug(f'TypeToString: {var}')
+
+        if type(var)==Variable:
+            if var.variant:
+                assert tname=='variant'
+                logger.debug(f'variant: {var.variant}')
+                # if len(var.variant)==2:
+                vars = [self.TypeToString(Variable(name='',type=item)) for item in var.variant]
+                type_str = f'std::variant<{",".join(vars)}>'
+            if var.list:
+                type_str = f'std::vector<{type_str}>'
+            if var.optional:
+                type_str = f'std::optional<{type_str}>'
+
         return type_str
 
     def ValueToString (self, arg) -> str:
@@ -46,13 +61,16 @@ class CodeCpp (Code):
             return f'{{{y}}}'
         elif isinstance(arg,str):
             return f'"{arg}"'
+        elif isinstance(arg,int):
+            return f'{arg}'
         elif isinstance(arg,float):
             if math.isnan(arg):
                 return 'NAN'
             else:
                 return str(arg)
         else:
-            return str(arg)
+            raise Exception(f'Not supported: {arg}')
+            # return str(arg)
 
     def GeneratorDto (self, objs):
         ext_hpp = self.header_extension
@@ -82,6 +100,7 @@ class CodeCpp (Code):
         for line in f'''
 
 #include <optional>
+#include <variant>
 #include <string>
 #include <vector>
 #include <map>
@@ -95,6 +114,8 @@ using json = nlohmann::json;
             yield line
 
     def GeneratorStruct (self, obj:Struct):
+
+        logger.debug(f'GeneratorStruct: {obj}')
 
         for dep in obj.dependencies:
             yield f'#include "{dep.name}.{self.header_extension}"'
@@ -116,6 +137,7 @@ using json = nlohmann::json;
         yield f''
 
         for attr in obj.attributes:
+            logger.debug(f'Attr: {attr}')
             default_value = ''
             if attr.defval is not None:
                 default_value = f' {{{self.ValueToString(attr.defval)}}}'
@@ -304,6 +326,8 @@ using json = nlohmann::json;
                     random_arg = f'random_list_{tname}()'
                 elif not arg.optional and not arg.list:
                     random_arg = f'random_{tname}()'
+                # elif arg.variant and not arg.list and not arg.optional:
+                #     random_arg = f'random_variant_{arg.name}()'
                 else:
                     raise Exception('Development error')
                 ending = '' if (i+1)==len(ctors[0].args) else ','
@@ -411,13 +435,12 @@ std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min,
                     code_construct_random.append(f'')
 
         cpp_test_template = '''
+#include <optional>
 #include <random>
 #include <limits>
 #include <filesystem>
 #include <iostream>
 #include <fstream>
-#include <stdexcept>
-#include <optional>
 #include <algorithm>
 
 //include-dto//

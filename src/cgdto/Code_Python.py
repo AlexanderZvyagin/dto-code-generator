@@ -14,17 +14,20 @@ class CodePython (Code):
         else:
             return False
 
-    def TypeToString (self, var:Variable) -> str:
+    def TypeToString (self, var:Variable|str) -> str:
 
         m = {
-            'void'    : 'void',
-            'string'  : 'str',
-            'boolean' : 'bool',
-            'int'     : 'int',
-            'float'   : 'float',
+            BasicType.null    : 'void',
+            BasicType.string  : 'str',
+            BasicType.boolean : 'bool',
+            BasicType.int     : 'int',
+            BasicType.float   : 'float',
         }
 
-        tname = var.TypeName()
+        if type(var)==Variable:
+            tname = var.TypeName()
+        else:
+            tname = var
 
         kv = detect_dict_key_value(tname)
         if kv:
@@ -32,10 +35,15 @@ class CodePython (Code):
 
         type_str = m.get(tname,tname)
 
-        if var.list:
-            type_str = f'list[{type_str}]'
-        if var.optional:
-            type_str = f'{type_str}|None'
+        if type(var)==Variable:
+            if var.list:
+                type_str = f'list[{type_str}]'
+            if var.optional:
+                type_str = f'{type_str}|None'
+            if var.variant:
+                assert tname=='variant'
+                raise Exception(f'Variant is not supported: {var.variant}')
+
         return type_str
 
     def ValueToString (self, arg) -> str:
@@ -200,6 +208,9 @@ def float_equal(a:float|None, b:float|None) -> bool:
             yield line
 
     def GeneratorFunction (self, func:Function, base:Struct=None):
+
+        logger.debug(f'GeneratorFunction: {func}')
+
         if base and func.name==base.name:
             for line in self.GeneratorConstructor(func,base):
                 yield line
@@ -211,6 +222,7 @@ def float_equal(a:float|None, b:float|None) -> bool:
             for i,a in enumerate(func.args):
                 default = '' if a.defval is None else f' = {self.ValueToString(a.defval)}'
                 yield f'{indent}{a.name}{default},'
+            logger.debug(f'Function {func.name} return type: {func.ReturnType()}')
             yield f') -> {self.TypeToString(func.ReturnType())} :'
 
             if func.doc:

@@ -7,29 +7,29 @@ def schema_version () -> str:
 def V0_Model (Updater,EvaluationPoint):
     obj = Struct ('Model',namespace='V0',default_version=False)
     Model = obj
-    obj.AddAttribute(Variable('TimeStart','float'))
-    obj.AddAttribute(Variable('TimeSteps','int'))
-    obj.AddAttribute(Variable('NumPaths','int'))
+    obj.AddAttribute(Variable('TimeStart',BasicType.float))
+    obj.AddAttribute(Variable('TimeSteps',BasicType.int))
+    obj.AddAttribute(Variable('NumPaths',BasicType.int))
     obj.AddAttribute(Variable('updaters',Updater,list=True))
     obj.AddAttribute(Variable('evaluations',EvaluationPoint,list=True))
-    obj.AddAttribute(Variable('RandomSeed','int',optional=True))
-    obj.AddAttribute(Variable('RunTimeoutSeconds','float',optional=True))
-    obj.AddAttribute(Variable('MemoryLimitKB','int',optional=True))
+    obj.AddAttribute(Variable('RandomSeed',BasicType.int,optional=True))
+    obj.AddAttribute(Variable('RunTimeoutSeconds',BasicType.float,optional=True))
+    obj.AddAttribute(Variable('MemoryLimitKB',BasicType.int,optional=True))
     obj.AddAttribute(Variable('titles','dict[int,string]',skip_dto=True))
-    obj.AddAttribute(Variable('_nstates','int',skip_dto=True))
+    obj.AddAttribute(Variable('_nstates',BasicType.int,skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('TimeStart','float',nan),
-            Variable('TimeSteps','int',0),
-            Variable('NumPaths','int',0),
+            Variable('TimeStart',BasicType.float,nan),
+            Variable('TimeSteps',BasicType.int,0),
+            Variable('NumPaths',BasicType.int,0),
             Variable('updaters',Updater,[],list=True),
             Variable('evaluations',EvaluationPoint,[],list=True),
-            Variable('RandomSeed','int',None,optional=True),
-            Variable('RunTimeoutSeconds','float',None,optional=True),
-            Variable('MemoryLimitKB','int',None,optional=True),
-            Variable('nstates','int',0),
+            Variable('RandomSeed',BasicType.int,None,optional=True),
+            Variable('RunTimeoutSeconds',BasicType.float,None,optional=True),
+            Variable('MemoryLimitKB',BasicType.int,None,optional=True),
+            Variable('nstates',BasicType.int,0),
         ],
         mapping = [
             ('TimeStart'        ,[Variable('TimeStart')]),
@@ -56,7 +56,7 @@ this.titles = {};
 
     obj.methods.append(Function (
         '__repr__',
-        'string',
+        BasicType.string,
         const = True,
         code = {
             'python':
@@ -68,7 +68,7 @@ return f'TimeStart={self.TimeStart} TimeSteps={self.TimeSteps} NumPaths={self.Nu
 
     obj.methods.append(Function (
         'GetNumberOfUpdaters',
-        'int',
+        BasicType.int,
         const = True,
         code = {
             'python':
@@ -92,7 +92,7 @@ return updaters.Count();
 
     obj.methods.append(Function (
         'GetNumberOfStates',
-        'int',
+        BasicType.int,
         const = True,
         code = {
             'python':
@@ -150,28 +150,28 @@ def V1_Model (Updater,EvaluationPoint):
     version = 1
     obj = Struct ('Model',namespace=f'V{version}',default_version=True)
     Model = obj
-    obj.AddAttribute(Variable('version','string',defval=f'{obj.name}:{version}'))
-    obj.AddAttribute(Variable('TimeStart','float'))
-    obj.AddAttribute(Variable('TimeSteps','int'))
-    obj.AddAttribute(Variable('NumPaths','int'))
+    obj.AddAttribute(Variable('version',BasicType.string,defval=f'{obj.name}:{version}'))
+    obj.AddAttribute(Variable('TimeStart',BasicType.float))
+    obj.AddAttribute(Variable('TimeSteps',BasicType.int))
+    obj.AddAttribute(Variable('NumPaths',BasicType.int))
     obj.AddAttribute(Variable('updaters',Updater,list=True))
     obj.AddAttribute(Variable('evaluations',EvaluationPoint,list=True))
-    obj.AddAttribute(Variable('RandomSeed','int',optional=True))
-    obj.AddAttribute(Variable('RunTimeoutSeconds','float',optional=True))
+    obj.AddAttribute(Variable('RandomSeed',BasicType.int,optional=True))
+    obj.AddAttribute(Variable('RunTimeoutSeconds',BasicType.float,optional=True))
     obj.AddAttribute(Variable('titles','dict[int,string]',skip_dto=True))
-    obj.AddAttribute(Variable('_nstates','int',skip_dto=True))
+    obj.AddAttribute(Variable('_nstates',BasicType.int,skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('TimeStart','float',nan),
-            Variable('TimeSteps','int',0),
-            Variable('NumPaths','int',0),
+            Variable('TimeStart',BasicType.float,nan),
+            Variable('TimeSteps',BasicType.int,0),
+            Variable('NumPaths',BasicType.int,0),
             Variable('updaters',Updater,[],list=True),
             Variable('evaluations',EvaluationPoint,[],list=True),
-            Variable('RandomSeed','int',None,optional=True),
-            Variable('RunTimeoutSeconds','float',None,optional=True),
-            Variable('nstates','int',0),
+            Variable('RandomSeed',BasicType.int,None,optional=True),
+            Variable('RunTimeoutSeconds',BasicType.float,None,optional=True),
+            Variable('nstates',BasicType.int,0),
         ],
         mapping = [
             ('TimeStart'        ,[Variable('TimeStart')]),
@@ -197,7 +197,7 @@ this.titles = {};
 
     obj.methods.append(Function (
         '__repr__',
-        'string',
+        BasicType.string,
         const = True,
         code = {
             'python':
@@ -209,7 +209,7 @@ return f'TimeStart={self.TimeStart} TimeSteps={self.TimeSteps} NumPaths={self.Nu
 
     obj.methods.append(Function (
         'GetNumberOfUpdaters',
-        'int',
+        BasicType.int,
         const = True,
         code = {
             'python':
@@ -233,7 +233,7 @@ return updaters.Count();
 
     obj.methods.append(Function (
         'GetNumberOfStates',
-        'int',
+        BasicType.int,
         const = True,
         code = {
             'python':
@@ -303,17 +303,17 @@ def schema ():
 
     obj = Struct('Error')
     Error = obj
-    obj.AddAttribute(Variable('message','string', optional=True))
-    obj.AddAttribute(Variable('details','string', optional=True))
-    obj.AddAttribute(Variable('code','int', optional=True))
+    obj.AddAttribute(Variable('message',BasicType.string, optional=True))
+    obj.AddAttribute(Variable('details',BasicType.string, optional=True))
+    obj.AddAttribute(Variable('code',BasicType.int, optional=True))
     obj.AddAttribute(Variable('errors',Error, optional=True, list=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('message','string',optional=True,defval=None),
-            Variable('details','string',optional=True,defval=None),
-            Variable('code','int',optional=True,defval=None),
+            Variable('message',BasicType.string,optional=True,defval=None),
+            Variable('details',BasicType.string,optional=True,defval=None),
+            Variable('code',BasicType.int,optional=True,defval=None),
             Variable('errors',Error,optional=True,list=True,defval=None),
         ],
         mapping = [
@@ -326,25 +326,25 @@ def schema ():
     objs.append(obj)
 
     obj = Struct('UpdaterDoc')
-    obj.AddAttribute(Variable('name','string',doc='''
+    obj.AddAttribute(Variable('name',BasicType.string,doc='''
 The parameter 'name' is a single world which uniquely identifies how a MC state will be updated.
 E.g. GeometricalBrownianMotion.
 '''))
-    obj.AddAttribute(Variable('title','string',doc='Short description (single line) what the updater is doing.'))
-    obj.AddAttribute(Variable('doc_md','string',doc='Long multiline description of the updater using Markdown format.'))
-    obj.AddAttribute(Variable('start','string'))
-    obj.AddAttribute(Variable('nargs_min','int'))
-    obj.AddAttribute(Variable('nrefs_min','int'))
+    obj.AddAttribute(Variable('title',BasicType.string,doc='Short description (single line) what the updater is doing.'))
+    obj.AddAttribute(Variable('doc_md',BasicType.string,doc='Long multiline description of the updater using Markdown format.'))
+    obj.AddAttribute(Variable('start',BasicType.string))
+    obj.AddAttribute(Variable('nargs_min',BasicType.int))
+    obj.AddAttribute(Variable('nrefs_min',BasicType.int))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('name','string',''),
-            Variable('title','string',''),
-            Variable('doc_md','string',''),
-            Variable('start','string',''),
-            Variable('nargs_min','int',-88),
-            Variable('nrefs_min','int',-88)
+            Variable('name',BasicType.string,''),
+            Variable('title',BasicType.string,''),
+            Variable('doc_md',BasicType.string,''),
+            Variable('start',BasicType.string,''),
+            Variable('nargs_min',BasicType.int,-88),
+            Variable('nrefs_min',BasicType.int,-88)
         ],
         mapping = [
             ('name',[Variable('name')]),
@@ -362,18 +362,18 @@ UpdaterDto is used to pass parameters to update a state.
 ''')
     objs.append(obj)
     UpdaterDto = obj
-    obj.AddAttribute(Variable('name','string'))
-    obj.AddAttribute(Variable('refs','int', list=True, optional=True))
-    obj.AddAttribute(Variable('args','float', list=True, optional=True))
-    obj.AddAttribute(Variable('start','float',list=True, optional=True))
+    obj.AddAttribute(Variable('name',BasicType.string))
+    obj.AddAttribute(Variable('refs',BasicType.int, list=True, optional=True))
+    obj.AddAttribute(Variable('args',BasicType.float, list=True, optional=True))
+    obj.AddAttribute(Variable('start',BasicType.float,list=True, optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('name', 'string', '',doc='Unique name of the updater, e.g. BrownianMotion'),
-            Variable(name='refs', type='int', defval=None, list=True, optional=True, doc='List of states which an updater requires.'),
-            Variable('args', 'float', defval=None, list=True, optional=True, doc='List of arguments.'),
-            Variable('start', 'float', defval=None, list=True, optional=True, doc='State starting value, e.g. start=3 will start a BM process from value 3.')
+            Variable('name', BasicType.string, '',doc='Unique name of the updater, e.g. BrownianMotion'),
+            Variable(name='refs', type=BasicType.int, defval=None, list=True, optional=True, doc='List of states which an updater requires.'),
+            Variable('args', BasicType.float, defval=None, list=True, optional=True, doc='List of arguments.'),
+            Variable('start', BasicType.float, defval=None, list=True, optional=True, doc='State starting value, e.g. start=3 will start a BM process from value 3.')
         ],
         mapping = [
             ('name',[Variable('name')]),
@@ -386,19 +386,19 @@ UpdaterDto is used to pass parameters to update a state.
     obj = Struct('Updater',UpdaterDto)
     objs.append(obj)
     Updater = obj
-    obj.AddAttribute(Variable('_state','int',skip_dto=True))
-    obj.AddAttribute(Variable('_nstates','int',skip_dto=True))
-    obj.AddAttribute(Variable('title','string',skip_dto=True))
+    obj.AddAttribute(Variable('_state',BasicType.int,skip_dto=True))
+    obj.AddAttribute(Variable('_nstates',BasicType.int,skip_dto=True))
+    obj.AddAttribute(Variable('title',BasicType.string,skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('name','string',''),
-            Variable('refs','int',[],list=True),
-            Variable('args','float',[],list=True),
-            Variable('start','float',[],list=True),
-            Variable('nstates','int',1),
-            Variable('title','string',''),
+            Variable('name',BasicType.string,''),
+            Variable('refs',BasicType.int,[],list=True),
+            Variable('args',BasicType.float,[],list=True),
+            Variable('start',BasicType.float,[],list=True),
+            Variable('nstates',BasicType.int,1),
+            Variable('title',BasicType.string,''),
         ],
         mapping = [
             (obj.base.name,[
@@ -415,7 +415,7 @@ UpdaterDto is used to pass parameters to update a state.
 
     obj.methods.append(Function (
         '__repr__',
-        'string',
+        BasicType.string,
         const = True,
         code = {
             'python':
@@ -435,7 +435,7 @@ return f'{self.name} nstates={self._nstates} state={self._state} refs={self.refs
     
     obj.methods.append(Function (
         'GetStateNumber',
-        'int',
+        BasicType.int,
         code = {
             'typescript':
 '''
@@ -460,7 +460,7 @@ return self._state
 
     obj.methods.append(Function (
         'GetStart',
-        Variable(None,'float', list=True),
+        Variable(None,BasicType.float, list=True),
         const = True,
         code = {
             'python':
@@ -493,10 +493,10 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('start'     ,'float', nan),
-            Variable('drift'     ,'float', nan),
-            Variable('diffusion' ,'float', nan),
-            Variable('title'     ,'string',''),
+            Variable('start'     ,BasicType.float, nan),
+            Variable('drift'     ,BasicType.float, nan),
+            Variable('diffusion' ,BasicType.float, nan),
+            Variable('title'     ,BasicType.string,''),
         ],
         mapping = [(obj.base.name,[
             'BrownianMotion',
@@ -514,10 +514,10 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('start'     ,'float', nan),
-            Variable('drift'     ,'int'  , -88),
-            Variable('diffusion' ,'int'  , -88),
-            Variable('title'     ,'string',''),
+            Variable('start'     ,BasicType.float, nan),
+            Variable('drift'     ,BasicType.int  , -88),
+            Variable('diffusion' ,BasicType.int  , -88),
+            Variable('title'     ,BasicType.string,''),
         ],
         mapping = [(obj.base.name,[
             'BrownianMotion',
@@ -535,10 +535,10 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('start'     ,'float', nan),
-            Variable('drift'     ,'float', nan),
-            Variable('diffusion' ,'float', nan),
-            Variable('title'     ,'string',''),
+            Variable('start'     ,BasicType.float, nan),
+            Variable('drift'     ,BasicType.float, nan),
+            Variable('diffusion' ,BasicType.float, nan),
+            Variable('title'     ,BasicType.string,''),
         ],
         mapping = [(obj.base.name,[
             'GeometricalBrownianMotion',
@@ -556,10 +556,10 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('start'     ,'float', nan),
-            Variable('drift'     ,'int'  , -88),
-            Variable('diffusion' ,'int'  , -88),
-            Variable('title'     ,'string',''),
+            Variable('start'     ,BasicType.float, nan),
+            Variable('drift'     ,BasicType.int  , -88),
+            Variable('diffusion' ,BasicType.int  , -88),
+            Variable('title'     ,BasicType.string,''),
         ],
         mapping = [(obj.base.name,[
             'GeometricalBrownianMotion',
@@ -577,9 +577,9 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('underlying','int'  , -88),
-            Variable('start'     ,'float', nan),
-            Variable('title'     ,'string',''),
+            Variable('underlying',BasicType.int  , -88),
+            Variable('start'     ,BasicType.float, nan),
+            Variable('title'     ,BasicType.string,''),
         ],
         mapping = [(obj.base.name,[
             'ZeroCouponBond',
@@ -593,16 +593,16 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('Option',Updater)
-    obj.AddAttribute(Variable('Call','int',defval=0, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('Put' ,'int',defval=1, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('Call',BasicType.int,defval=0, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('Put' ,BasicType.int,defval=1, static=True, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('underlying','int'  , -88),
-            Variable('strike'    ,'float', nan),
-            Variable('call_put'  ,'int',   -88),
-            Variable('title'     ,'string',''),
+            Variable('underlying',BasicType.int  , -88),
+            Variable('strike'    ,BasicType.float, nan),
+            Variable('call_put'  ,BasicType.int,   -88),
+            Variable('title'     ,BasicType.string,''),
         ],
         mapping = [(obj.base.name,[
             'Option',
@@ -616,21 +616,21 @@ void from_json(const json &j, std::vector<Updater> &u) {
     objs.append(obj)
 
     obj = Struct('Barrier',Updater)
-    obj.AddAttribute(Variable('DirectionUp','int',defval=1, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('DirectionDown','int',defval=-1, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('DirectionAny','int',defval=0, static=True, skip_dto=True))
-    obj.AddAttribute(Variable('ActionSet','int',defval=0, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionUp',BasicType.int,defval=1, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionDown',BasicType.int,defval=-1, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('DirectionAny',BasicType.int,defval=0, static=True, skip_dto=True))
+    obj.AddAttribute(Variable('ActionSet',BasicType.int,defval=0, static=True, skip_dto=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('underlying','int'  ,-88),
-            Variable('start'     ,'float',nan),
-            Variable('level'     ,'float',nan),
-            Variable('direction' ,'int'  ,-88),
-            Variable('action'    ,'int'  ,-88),
-            Variable('value'     ,'float',nan),
-            Variable('title'     ,'string',''),
+            Variable('underlying',BasicType.int  ,-88),
+            Variable('start'     ,BasicType.float,nan),
+            Variable('level'     ,BasicType.float,nan),
+            Variable('direction' ,BasicType.int  ,-88),
+            Variable('action'    ,BasicType.int  ,-88),
+            Variable('value'     ,BasicType.float,nan),
+            Variable('title'     ,BasicType.string,''),
         ],
         mapping = [(obj.base.name,[
             'Barrier',
@@ -657,9 +657,9 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('ref'     ,'int',defval=-1),
-            Variable('args'    ,'float',defval=[],list=True),
-            Variable('title'   ,'string',defval=''),
+            Variable('ref'     ,BasicType.int,defval=-1),
+            Variable('args'    ,BasicType.float,defval=[],list=True),
+            Variable('title'   ,BasicType.string,defval=''),
         ],
         mapping = [(obj.base.name,[
             'Polynom',
@@ -678,11 +678,11 @@ void from_json(const json &j, std::vector<Updater> &u) {
         obj.name,
         'constructor',
         args = [
-            Variable('ref'    ,'int'   ,defval=-88),
-            Variable('xmin'   ,'float' ,defval=-1),
-            Variable('xmax'   ,'float' ,defval=1),
-            Variable('y'      ,'float' ,defval=[],list=True),
-            Variable('title'  ,'string',defval=''),
+            Variable('ref'    ,BasicType.int   ,defval=-88),
+            Variable('xmin'   ,BasicType.float ,defval=-1),
+            Variable('xmax'   ,BasicType.float ,defval=1),
+            Variable('y'      ,BasicType.float ,defval=[],list=True),
+            Variable('title'  ,BasicType.string,defval=''),
         ],
         mapping = [(obj.base.name,[
             'Linear1DInterpolation',
@@ -723,9 +723,9 @@ this.args = [...[xmin,xmax],...y];
         obj.name,
         'constructor',
         args = [
-            Variable('refs'     ,'int',defval=[],list=True),
-            Variable('factor'   ,'float',defval=1),
-            Variable('title'     ,'string',defval=''),
+            Variable('refs'     ,BasicType.int,defval=[],list=True),
+            Variable('factor'   ,BasicType.float,defval=1),
+            Variable('title'     ,BasicType.string,defval=''),
         ],
         mapping = [(obj.base.name,[
             'Multiplication',
@@ -744,10 +744,10 @@ this.args = [...[xmin,xmax],...y];
         obj.name,
         'constructor',
         args = [
-            Variable('numerator'     ,'int',defval=-88),
-            Variable('denominator'   ,'int',defval=-88),
-            Variable('eps'           ,'float',defval=0),
-            Variable('title'         ,'string',defval=''),
+            Variable('numerator'     ,BasicType.int,defval=-88),
+            Variable('denominator'   ,BasicType.int,defval=-88),
+            Variable('eps'           ,BasicType.float,defval=0),
+            Variable('title'         ,BasicType.string,defval=''),
         ],
         mapping = [(obj.base.name,[
             'Division',
@@ -763,20 +763,20 @@ this.args = [...[xmin,xmax],...y];
 
     obj = Struct('HistogramAxis')
     HistogramAxis = obj
-    obj.AddAttribute(Variable('state','int'))
-    obj.AddAttribute(Variable('nbins','int'))
-    obj.AddAttribute(Variable('min','float',optional=True))
-    obj.AddAttribute(Variable('max','float',optional=True))
-    obj.AddAttribute(Variable('title','string',optional=True))
+    obj.AddAttribute(Variable('state',BasicType.int))
+    obj.AddAttribute(Variable('nbins',BasicType.int))
+    obj.AddAttribute(Variable('min',BasicType.float,optional=True))
+    obj.AddAttribute(Variable('max',BasicType.float,optional=True))
+    obj.AddAttribute(Variable('title',BasicType.string,optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('state','int',-88),
-            Variable('nbins','int',-88),
-            Variable('min'  ,'float',-88), # FIXME: cannot use math.nan for the moment
-            Variable('max'  ,'float',-88), # FIXME: cannot use math.nan for the moment
-            Variable('title'  ,'string',''), # FIXME: cannot use math.nan for the moment
+            Variable('state',BasicType.int,-88),
+            Variable('nbins',BasicType.int,-88),
+            Variable('min'  ,BasicType.float,-88), # FIXME: cannot use math.nan for the moment
+            Variable('max'  ,BasicType.float,-88), # FIXME: cannot use math.nan for the moment
+            Variable('title'  ,BasicType.string,''), # FIXME: cannot use math.nan for the moment
         ],
         mapping = [
             ('state',[Variable('state')]),
@@ -792,16 +792,16 @@ this.args = [...[xmin,xmax],...y];
     Histogram = obj
     obj.AddAttribute(Variable('ax',HistogramAxis))
     obj.AddAttribute(Variable('ay',HistogramAxis,optional=True))
-    obj.AddAttribute(Variable('evaluation_point','int',optional=True))
-    obj.AddAttribute(Variable('bins','float',list=True,optional=True))
+    obj.AddAttribute(Variable('evaluation_point',BasicType.int,optional=True))
+    obj.AddAttribute(Variable('bins',BasicType.float,list=True,optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
             Variable('ax',HistogramAxis,Variable('HistogramAxis()',HistogramAxis)),
             Variable('ay',HistogramAxis,None,optional=True),
-            Variable('evaluation_point','int',None,optional=True),
-            Variable('bins','float',None,optional=True,list=True)
+            Variable('evaluation_point',BasicType.int,None,optional=True),
+            Variable('bins',BasicType.float,None,optional=True,list=True)
         ],
         mapping = [
             ('ax',[Variable('ax')]),
@@ -857,11 +857,11 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     obj.AddAttribute(Variable('AxisX',HistogramAxis))
     obj.AddAttribute(Variable('AxisY',HistogramAxis,optional=True))
     obj.AddAttribute(Variable('AxisZ',HistogramAxis,optional=True))
-    obj.AddAttribute(Variable('Flags','int',optional=True))
-    obj.AddAttribute(Variable('EvaluationPoint','int',optional=True))
-    obj.AddAttribute(Variable('TimeStep','int',optional=True))
-    obj.AddAttribute(Variable('Title','string',optional=True))
-    obj.AddAttribute(Variable('Bins','float',list=True,optional=True))
+    obj.AddAttribute(Variable('Flags',BasicType.int,optional=True))
+    obj.AddAttribute(Variable('EvaluationPoint',BasicType.int,optional=True))
+    obj.AddAttribute(Variable('TimeStep',BasicType.int,optional=True))
+    obj.AddAttribute(Variable('Title',BasicType.string,optional=True))
+    obj.AddAttribute(Variable('Bins',BasicType.float,list=True,optional=True))
 
     obj.methods.append(Function (
         obj.name,
@@ -870,11 +870,11 @@ void from_json(const json &j, std::vector<Histogram> &u) {
             Variable('AxisX',HistogramAxis,defval=Variable('HistogramAxis()',HistogramAxis)),
             Variable('AxisY',HistogramAxis,optional=True),
             Variable('AxisZ',HistogramAxis,optional=True),
-            Variable('Flags','int',optional=True),
-            Variable('EvaluationPoint','int',optional=True),
-            Variable('TimeStep','int',optional=True),
-            Variable('Title','string',optional=True),
-            Variable('Bins','float',optional=True,list=True),
+            Variable('Flags',BasicType.int,optional=True),
+            Variable('EvaluationPoint',BasicType.int,optional=True),
+            Variable('TimeStep',BasicType.int,optional=True),
+            Variable('Title',BasicType.string,optional=True),
+            Variable('Bins',BasicType.float,optional=True,list=True),
         ],
         mapping = [
             ('AxisX',[Variable('AxisX')]),
@@ -901,13 +901,13 @@ void from_json(const json &j, std::vector<Histogram> &u) {
 
     obj = Struct ('EvaluationPoint')
     EvaluationPoint = obj
-    obj.AddAttribute(Variable('time','float'))
+    obj.AddAttribute(Variable('time',BasicType.float))
     obj.AddAttribute(Variable('histograms',Histogram,list=True,optional=True))
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('time','float',nan),
+            Variable('time',BasicType.float,nan),
             Variable('histograms',Histogram,None,optional=True,list=True),
         ],
         mapping = [
@@ -917,7 +917,7 @@ void from_json(const json &j, std::vector<Histogram> &u) {
     ))
     obj.methods.append(Function (
         'GetTime',
-        'int',
+        BasicType.int,
         const = True,
         code = {
             'python':
@@ -971,19 +971,19 @@ return this;
 
     obj = Struct('Result')
     Result = obj
-    obj.AddAttribute(Variable('n','int'))
-    obj.AddAttribute(Variable('mean','float'))
-    obj.AddAttribute(Variable('stddev','float'))
-    obj.AddAttribute(Variable('skewness','float'))
+    obj.AddAttribute(Variable('n',BasicType.int))
+    obj.AddAttribute(Variable('mean',BasicType.float))
+    obj.AddAttribute(Variable('stddev',BasicType.float))
+    obj.AddAttribute(Variable('skewness',BasicType.float))
 
     obj.methods.append(Function (
         obj.name,
         'constructor',
         args = [
-            Variable('n','int',0),
-            Variable('mean','float',nan),
-            Variable('stddev','float',nan),
-            Variable('skewness','float',nan),
+            Variable('n',BasicType.int,0),
+            Variable('mean',BasicType.float,nan),
+            Variable('stddev',BasicType.float,nan),
+            Variable('skewness',BasicType.float,nan),
         ],
         mapping = [
             ('n',[Variable('n')]),
@@ -995,7 +995,7 @@ return this;
 
     obj.methods.append(Function (
         'GetMean',
-        'float',
+        BasicType.float,
         const = True,
         code = {
             'python':
@@ -1015,7 +1015,7 @@ return this.mean;
 
     obj.methods.append(Function (
         'GetMeanError',
-        'float',
+        BasicType.float,
         const = True,
         doc = 'The function computes an error estimate of the mean value.',
         code = {
@@ -1036,7 +1036,7 @@ return this.n<=0 ? Number.NaN : this.stddev/Math.sqrt(this.n);
 
     obj.methods.append(Function (
         'GetStdDev',
-        'float',
+        BasicType.float,
         const = True,
         code = {
             'python':
@@ -1056,7 +1056,7 @@ return this.stddev;
 
     obj.methods.append(Function (
         'GetSkewness',
-        'float',
+        BasicType.float,
         const = True,
         code = {
             'python':
@@ -1079,13 +1079,13 @@ return this.skewness;
     obj = Struct('EvaluationResults')
     EvaluationResults = obj
     EvaluationResults.AddDependency(Result)
-    obj.AddAttribute(Variable('names','string',list=True))
-    obj.AddAttribute(Variable('npaths','int',list=True))
-    obj.AddAttribute(Variable('mean','float',list=True))
-    obj.AddAttribute(Variable('stddev','float',list=True))
-    obj.AddAttribute(Variable('skewness','float',list=True))
-    obj.AddAttribute(Variable('time_points','float',list=True))
-    obj.AddAttribute(Variable('time_steps','int',list=True))
+    obj.AddAttribute(Variable('names',BasicType.string,list=True))
+    obj.AddAttribute(Variable('npaths',BasicType.int,list=True))
+    obj.AddAttribute(Variable('mean',BasicType.float,list=True))
+    obj.AddAttribute(Variable('stddev',BasicType.float,list=True))
+    obj.AddAttribute(Variable('skewness',BasicType.float,list=True))
+    obj.AddAttribute(Variable('time_points',BasicType.float,list=True))
+    obj.AddAttribute(Variable('time_steps',BasicType.int,list=True))
     obj.AddAttribute(Variable('histograms',Histogram,list=True))
     obj.AddAttribute(Variable('histograms2',Histogram2,list=True))
     obj.AddAttribute(Variable('model',Model,optional=True))
@@ -1093,13 +1093,13 @@ return this.skewness;
         obj.name,
         'constructor',
         args = [
-            Variable('names','string',[],list=True),
-            Variable('npaths','int',[],list=True),
-            Variable('mean','float',[],list=True),
-            Variable('stddev','float',[],list=True),
-            Variable('skewness','float',[],list=True),
-            Variable('time_points','float',[],list=True),
-            Variable('time_steps','int',[],list=True),
+            Variable('names',BasicType.string,[],list=True),
+            Variable('npaths',BasicType.int,[],list=True),
+            Variable('mean',BasicType.float,[],list=True),
+            Variable('stddev',BasicType.float,[],list=True),
+            Variable('skewness',BasicType.float,[],list=True),
+            Variable('time_points',BasicType.float,[],list=True),
+            Variable('time_steps',BasicType.int,[],list=True),
             Variable('histograms',Histogram,[],list=True),
             Variable('histograms2',Histogram2,[],list=True),
             Variable('model',Model,None,optional=True),
@@ -1120,7 +1120,7 @@ return this.skewness;
 
     obj.methods.append(Function (
         'GetNumberOfStates',
-        'int',
+        BasicType.int,
         const = True,
         code = {
             'python':
@@ -1140,7 +1140,7 @@ return this.names.length;
 
     obj.methods.append(Function (
         'GetNumberOfEvaluations',
-        'int',
+        BasicType.int,
         const = True,
         code = {
             'python':
@@ -1160,10 +1160,10 @@ return this.time_points.length;
 
     obj.methods.append(Function (
         'Index',
-        'int',
+        BasicType.int,
         args = [
-            Variable('state','int'),
-            Variable('point','int')
+            Variable('state',BasicType.int),
+            Variable('point',BasicType.int)
         ],
         const = True,
         code = {
@@ -1192,8 +1192,8 @@ return point*this.GetNumberOfStates() + state;
         'GetStateEvaluationResult',
         Result,
         args = [
-            Variable('state','int'),
-            Variable('point','int')
+            Variable('state',BasicType.int),
+            Variable('point',BasicType.int)
         ],
         const = True,
         code = {
@@ -1266,9 +1266,9 @@ def EvaluationResults_from_response(r,model=None):
         obj.name,
         'constructor',
         args = [
-            Variable('weights'  , 'float'  , defval=[], list=True),
-            Variable('states'   , 'int'    , defval=[], list=True),
-            Variable('title'    , 'string' , defval=''),
+            Variable('weights'  , BasicType.float  , defval=[], list=True),
+            Variable('states'   , BasicType.int    , defval=[], list=True),
+            Variable('title'    , BasicType.string , defval=''),
         ],
         mapping = [(obj.base.name,[
             'Sum',
@@ -1286,9 +1286,9 @@ def EvaluationResults_from_response(r,model=None):
         obj.name,
         'constructor',
         args = [
-            Variable('state' , 'int'    , defval=-88),
-            Variable('t'     , 'float'  , defval=[], list=True),
-            Variable('title' , 'string' , defval=''),
+            Variable('state' , BasicType.int    , defval=-88),
+            Variable('t'     , BasicType.float  , defval=[], list=True),
+            Variable('title' , BasicType.string , defval=''),
         ],
         mapping = [(obj.base.name,[
             'SumOfFutureValues',
