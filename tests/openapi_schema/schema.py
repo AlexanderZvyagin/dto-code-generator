@@ -80,20 +80,24 @@ def process_openapi_schema(name,obj,allObjs,schemas):
     ctorMapping = []
 
     def createArray(arrayName:str,property) -> Variable:
-        ref = property['items']['$ref']
-        logger.debug(f'ref: {ref}')
-        refStructName = ref.split('/')[-1]
-        findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
-        if len(findRef)==1:
-            varType = findRef[0]
+        ref = property['items'].get('$ref')
+        if not ref:
+            logger.warning('$ref not found in property, using "string" as the object type')
+            varType = BasicType.string
         else:
-            if name!=refStructName:
-                logger.warning(f'Schema "{name}" is using unknown schema "{refStructName}", resolving...')
-                varType = process_openapi_schema(refStructName,schemas[refStructName],allObjs,schemas)
-                register(varType,allObjs)
+            logger.debug(f'ref: {ref}')
+            refStructName = ref.split('/')[-1]
+            findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
+            if len(findRef)==1:
+                varType = findRef[0]
             else:
-                logger.debug(f'Schema {name} contains an array of itself elements.')
-                varType = struct
+                if name!=refStructName:
+                    logger.warning(f'Schema "{name}" is using unknown schema "{refStructName}", resolving...')
+                    varType = process_openapi_schema(refStructName,schemas[refStructName],allObjs,schemas)
+                    register(varType,allObjs)
+                else:
+                    logger.debug(f'Schema {name} contains an array of itself elements.')
+                    varType = struct
         return Variable(name=arrayName,type=varType,list=True)
 
     if obj.get('type')=='array':
