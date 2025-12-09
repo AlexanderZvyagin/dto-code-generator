@@ -118,3 +118,10 @@ components:
           items:
             $ref: '#/components/schemas/Grain'
           type: array
+    Data:
+      type: object
+      properties:
+        refsData:
+          type: array
+          items:
+            $ref: '#/components/schemas/Data'

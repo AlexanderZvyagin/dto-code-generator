@@ -87,9 +87,13 @@ def process_openapi_schema(name,obj,allObjs,schemas):
         if len(findRef)==1:
             varType = findRef[0]
         else:
-            logger.warning(f'Schema "{name}" is using unknown schema "{refStructName}", resolving...')
-            varType = process_openapi_schema(refStructName,schemas[refStructName],allObjs,schemas)
-            register(varType,allObjs)
+            if name!=refStructName:
+                logger.warning(f'Schema "{name}" is using unknown schema "{refStructName}", resolving...')
+                varType = process_openapi_schema(refStructName,schemas[refStructName],allObjs,schemas)
+                register(varType,allObjs)
+            else:
+                logger.debug(f'Schema {name} contains an array of itself elements.')
+                varType = struct
         return Variable(name=arrayName,type=varType,list=True)
 
     if obj.get('type')=='array':
