@@ -23,13 +23,7 @@ class Schema:
     def OutDir(self):
         return f'{self.Dir()}/output'
 
-class EmptySchema(Schema):
-    def __init__(self,module):
-        super().__init__(module)
-    def Objs(self):
-        return self.module.schema()
-
-class McsdkSchema(Schema):
+class PythonSchema(Schema):
     def __init__(self,module):
         super().__init__(module)
     def Objs(self):
@@ -47,13 +41,14 @@ class OpenapiSchema(Schema):
 @pytest.mark.parametrize(
         "schema, languages",
         [
-            (EmptySchema(empty_schema), ['python','cpp','typescript']),
-            (McsdkSchema(mcsdk_schema), ['python','cpp','typescript']),
+            (PythonSchema(empty_schema), ['python','cpp','typescript']),
+            (PythonSchema(mcsdk_schema), ['python','cpp','typescript']),
             (OpenapiSchema(openapi_schema,'petstore.yaml'), ['python','cpp','typescript']),
             (OpenapiSchema(openapi_schema,'property_anyOf.yaml'), ['python','cpp','typescript']),
             (OpenapiSchema(openapi_schema,'array_and_boolean.yaml'), ['python','cpp','typescript']),
         ]
 )
+
 def test_schema(runTests,languages,schema):
     logger.debug(f'languages: {languages}')
 

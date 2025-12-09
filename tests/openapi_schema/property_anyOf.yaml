@@ -127,8 +127,8 @@ components:
     #     - type: 'null'
     #     - type: string
     #     # - $ref: "#/components/schemas/Bread"
-    Drinks:
-      type: array
-      maxItems: 100
-      items:
-        $ref: '#/components/schemas/Drink'
+    # Drinks:
+    #   type: array
+    #   maxItems: 100
+    #   items:
+    #     $ref: '#/components/schemas/Drink'

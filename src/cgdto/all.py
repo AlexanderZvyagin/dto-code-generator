@@ -38,7 +38,7 @@ def detect_dict_key_value (name):
 
 def typeDefaultValue(typeName:BasicType):
     match typeName:
-        # case 'variant': return ''
+        case BasicType.null: return None
         case BasicType.boolean: return False
         case BasicType.int: return 0
         case BasicType.float: return 0
@@ -50,7 +50,7 @@ class Variable:
     def __init__ (
         self,
         name:str                    = '',
-        type                        = None,
+        type:BasicType              = BasicType.null,
         defval                      = None,
         list    :bool               = False,
         optional:bool               = False,
@@ -68,6 +68,11 @@ class Variable:
         self.skip_dto = skip_dto
         self.static   = static
         self.doc      = doc
+
+    def CreateDefautValue(self):
+        if self.optional: return None
+        if self.list    : return []
+        return typeDefaultValue(self.type)
 
     def TypeName (self) -> str:
         if isinstance(self.type,Struct):

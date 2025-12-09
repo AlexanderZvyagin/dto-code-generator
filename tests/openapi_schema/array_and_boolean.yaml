@@ -108,11 +108,11 @@ components:
           anyOf:
           - type: string
           - type: 'null'
-        # grains:
-        #   default: []
-        #   items:
-        #     $ref: '#/components/schemas/Grain'
-        #   type: array
+        grains:
+          default: []
+          items:
+            $ref: '#/components/schemas/Grain'
+          type: array
     # BreadContainer:
     #   type: array
     #   maxItems: 100
