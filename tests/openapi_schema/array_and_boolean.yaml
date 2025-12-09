@@ -93,6 +93,11 @@ components:
       properties:
         name:
           type: string
+    BreadContainer:
+      type: array
+      maxItems: 100
+      items:
+        $ref: '#/components/schemas/Bread'
     Bread:
       type: object
       properties:
@@ -113,8 +118,3 @@ components:
           items:
             $ref: '#/components/schemas/Grain'
           type: array
-    # BreadContainer:
-    #   type: array
-    #   maxItems: 100
-    #   items:
-    #     $ref: '#/components/schemas/Bread'

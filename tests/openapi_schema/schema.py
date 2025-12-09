@@ -66,7 +66,11 @@ def createOpenApiAnyOf(name,anyOf):
     else:
         raise Exception(f'createOpenApiAnyOf: not supported: {types}')
 
-def process_openapi_schema(name,obj,allObjs):
+def register(struct,allObjs):
+    if not struct.name in [obj.name for obj in allObjs]:
+        allObjs.append(struct)
+
+def process_openapi_schema(name,obj,allObjs,schemas):
 
     logger.debug(f'process_openapi_object_schema: {name}')
 
@@ -75,14 +79,18 @@ def process_openapi_schema(name,obj,allObjs):
     ctorArgs = []
     ctorMapping = []
 
-    def createArray(name:str,property) -> Variable:
+    def createArray(arrayName:str,property) -> Variable:
         ref = property['items']['$ref']
         logger.debug(f'ref: {ref}')
         refStructName = ref.split('/')[-1]
         findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
-        if len(findRef)!=1:
-            raise Exception(f'found {len(findRef)} objects "{refStructName}"')
-        return Variable(name=name,type=findRef[0],list=True)
+        if len(findRef)==1:
+            varType = findRef[0]
+        else:
+            logger.warning(f'Schema "{name}" is using unknown schema "{refStructName}", resolving...')
+            varType = process_openapi_schema(refStructName,schemas[refStructName],allObjs,schemas)
+            register(varType,allObjs)
+        return Variable(name=arrayName,type=varType,list=True)
 
     if obj.get('type')=='array':
         var = createArray('items',obj)
@@ -118,15 +126,6 @@ def process_openapi_schema(name,obj,allObjs):
 
     return struct
 
-# def process_openapi_array_schema(name,obj,allObjs):
-    
-
-# def process_openapi_schema(name,obj,allObjs):
-#     match obj['type']:
-#         case OpenApi.Type.object: return process_openapi_object_schema(name,obj,allObjs)
-#         case OpenApi.Type.array:  return process_openapi_array_schema (name,obj,allObjs)
-#         case _: raise Exception(f'Not supported schema type: {obj["type"]}')
-
 def schema (openApiConfig:str):
 
     ext = openApiConfig.split('.')[-1]
@@ -138,9 +137,9 @@ def schema (openApiConfig:str):
 
     allObjs = []
 
-    for name, obj in specs['components']['schemas'].items():
-        struct = process_openapi_schema(name,obj,allObjs)
-        if struct:
-            allObjs.append(struct)
+    schemas = specs['components']['schemas']
+    for name, obj in schemas.items():
+        struct = process_openapi_schema(name,obj,allObjs,schemas)
+        register(struct,allObjs)
 
     return allObjs
