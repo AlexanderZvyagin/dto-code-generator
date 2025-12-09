@@ -104,7 +104,7 @@ components:
         name:
           type: string
         color:
-          type: string
+          title: string
         tasty:
           type: boolean
         weight:

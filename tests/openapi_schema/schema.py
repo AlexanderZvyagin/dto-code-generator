@@ -111,7 +111,8 @@ def process_openapi_schema(name,obj,allObjs,schemas):
             elif 'anyOf' in property:
                 var = createOpenApiAnyOf(varName,property['anyOf'])
             else:
-                raise Exception(f'Not supported property type: {property}')
+                logger.warning(f'Not supported property type: {property}, using "string"')
+                var = Variable(name=varName,type=BasicType.string)
             struct.AddAttribute(copy.deepcopy(var))
             var.defval = var.CreateDefautValue()
             ctorArgs.append(var)
