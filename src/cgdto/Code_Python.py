@@ -424,8 +424,14 @@ def random_optional_{obj.name} () -> {obj.name}|None:
 
             code_construct_random.extend(f'''
 def random_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name}]:
-    size = random.randint(min,max)
-    return [random_{obj.name}() for i in range(size)]
+    global recursionDepth, maxRecursionDepth
+    lst = []
+    if recursionDepth<maxRecursionDepth:
+        recursionDepth += 1
+        size = random.randint(min,max)
+        lst = [random_{obj.name}() for i in range(size)]
+        recursionDepth += 1
+    return lst
 '''.split('\n'))
 
             code_construct_random.extend(f'''
@@ -462,6 +468,9 @@ def random_optional_list_{obj.name} (min:int = 0, max:int = 3) -> list[{obj.name
 from __future__ import annotations
 import sys, random, uuid
 from dto import *
+
+recursionDepth = 0
+maxRecursionDepth = 5
 
 def random_string(len_max:int = 5) -> str:
     return str(uuid.uuid4())[0:random.randint(0,len_max)]

@@ -359,10 +359,14 @@ std::optional<{obj.name}> random_optional_{obj.name} (void) {{
 
             code_construct_random.extend(f'''
 std::vector<{obj.name}> random_list_{obj.name} (int min, int max) {{
-    const auto size = random_int(min,max);
     std::vector<{obj.name}> list;
-    for(int i=0; i<size; i++)
-        list.push_back(random_{obj.name}());
+    if(recursionDepth<maxRecursionDepth) {{
+        recursionDepth++;
+        const auto size = random_int(min,max);
+        for(int i=0; i<size; i++)
+            list.push_back(random_{obj.name}());
+        recursionDepth--;
+    }}
     return list;
 }}
 '''.split('\n'))
@@ -452,6 +456,9 @@ namespace fs = std::filesystem;
 
 std::random_device rd;
 std::mt19937 generator(rd());
+
+unsigned recursionDepth {0};
+constexpr unsigned maxRecursionDepth {5};
 
 int random_int (
     int min = -1000,
