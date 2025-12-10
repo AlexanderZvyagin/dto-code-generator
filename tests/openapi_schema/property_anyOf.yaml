@@ -88,6 +88,11 @@ openapi: 3.0.0
 #                 $ref: '#/components/schemas/ErrorObj'
 components:
   schemas:
+    MyStruct:
+      type: object
+      properties:
+        name:
+          type: string
     Bread:
       type: object
       properties:
@@ -99,7 +104,7 @@ components:
           type: number
         varvar:
           anyOf:
-          - type: string
+          - $ref: '#/components/schemas/MyStruct'
           - type: 'null'
     # Cocktail:
     #   type: object

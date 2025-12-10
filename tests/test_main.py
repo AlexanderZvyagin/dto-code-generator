@@ -30,22 +30,24 @@ class PythonSchema(Schema):
         return self.module.schema()
 
 class OpenapiSchema(Schema):
-    def __init__(self,module,configYaml:str):
+    def __init__(self,module,specsFileName:str):
         super().__init__(module)
-        self.configYaml = configYaml
+        self.specsFileName = specsFileName
     def Objs(self):
-        return self.module.schema(os.path.join(self.Dir(),self.configYaml))
+        logger.info(f'OpenapiSchema: {self.specsFileName}')
+        return self.module.schema(os.path.join(self.Dir(),self.specsFileName))
     def OutDir(self):
-        return f'{self.Dir()}/{os.path.splitext(self.configYaml)[0]}_output'
+        return f'{self.Dir()}/{os.path.splitext(self.specsFileName)[0]}_output'
 
 @pytest.mark.parametrize(
         "schema, languages",
         [
-            (PythonSchema(empty_schema), ['python','cpp','typescript']),
-            (PythonSchema(mcsdk_schema), ['python','cpp','typescript']),
-            (OpenapiSchema(openapi_schema,'petstore.yaml'), ['python','cpp','typescript']),
-            (OpenapiSchema(openapi_schema,'property_anyOf.yaml'), ['python','cpp','typescript']),
-            (OpenapiSchema(openapi_schema,'array_and_boolean.yaml'), ['python','cpp','typescript']),
+            (PythonSchema (empty_schema), ['python','cpp','typescript']),
+            (PythonSchema (mcsdk_schema), ['python','cpp','typescript']),
+
+            (OpenapiSchema( openapi_schema, 'petstore.yaml'           ), ['python','cpp','typescript'] ),
+            (OpenapiSchema( openapi_schema, 'property_anyOf.yaml'     ), ['python','cpp','typescript'] ),
+            (OpenapiSchema( openapi_schema, 'array_and_boolean.yaml'  ), ['python','cpp','typescript'] ),
         ]
 )
 

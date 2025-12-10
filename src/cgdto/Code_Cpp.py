@@ -31,14 +31,7 @@ class CodeCpp (Code):
 
         type_str = m.get(tname,tname)
 
-        logger.debug(f'TypeToString: {var}')
-
         if type(var)==Variable:
-            # if var.variant:
-            #     assert tname=='variant'
-            #     logger.debug(f'variant: {var.variant}')
-            #     vars = [self.TypeToString(Variable(name='',type=item)) for item in var.variant]
-            #     type_str = f'std::variant<{",".join(vars)}>'
             if var.list:
                 type_str = f'std::vector<{type_str}>'
             if var.optional:
@@ -113,8 +106,6 @@ using json = nlohmann::json;
 
     def GeneratorStruct (self, obj:Struct):
 
-        logger.debug(f'GeneratorStruct: {obj}')
-
         for dep in obj.dependencies:
             yield f'#include "{dep.name}.{self.header_extension}"'
 
@@ -135,10 +126,13 @@ using json = nlohmann::json;
         yield f''
 
         for attr in obj.attributes:
-            logger.debug(f'Attr: {attr}')
             default_value = ''
             if attr.defval is not None:
                 default_value = f' {{{self.ValueToString(attr.defval)}}}'
+            if attr.doc:
+                yield f'{indent}/**'
+                yield f'{indent} * @brief {attr.doc}'
+                yield f'{indent} */'
             yield f'{indent}{self.TypeToString(attr)} {attr.name}{default_value};'
 
         yield ''

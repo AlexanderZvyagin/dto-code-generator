@@ -88,10 +88,6 @@ from copy import deepcopy
 import math
 from math import nan
 import json
-try:
-    import pandas as pd
-except:
-    print('Warning: "pandas" package was not found.')
 
 def float_equal(a:float|None, b:float|None) -> bool:
     if a is None and b is None: return True
@@ -209,8 +205,6 @@ def float_equal(a:float|None, b:float|None) -> bool:
 
     def GeneratorFunction (self, func:Function, base:Struct=None):
 
-        logger.debug(f'GeneratorFunction: {func}')
-
         if base and func.name==base.name:
             for line in self.GeneratorConstructor(func,base):
                 yield line
@@ -222,7 +216,6 @@ def float_equal(a:float|None, b:float|None) -> bool:
             for i,a in enumerate(func.args):
                 default = '' if a.defval is None else f' = {self.ValueToString(a.defval)}'
                 yield f'{indent}{a.name}{default},'
-            logger.debug(f'Function {func.name} return type: {func.ReturnType()}')
             yield f') -> {self.TypeToString(func.ReturnType())} :'
 
             if func.doc:
@@ -334,7 +327,6 @@ def float_equal(a:float|None, b:float|None) -> bool:
             yield f'{indent}{obj.base.name}_to_json(j,obj)'
         for attr in obj.attributes:
             if attr.skip_dto: continue
-            var_code = []
 
             code_not_optional = []
 

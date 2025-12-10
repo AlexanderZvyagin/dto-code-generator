@@ -121,7 +121,7 @@ components:
     Data:
       type: object
       properties:
-        refsData:
+        arrayOfData:
           type: array
           items:
             $ref: '#/components/schemas/Data'
