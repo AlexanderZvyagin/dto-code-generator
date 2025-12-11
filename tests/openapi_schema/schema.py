@@ -86,56 +86,23 @@ def getStructByName(name,allObjs,schemas) -> Struct|None:
     res = [o for o in allObjs if type(o)==Struct and o.name==name]
     match len(res):
         case 0:
-            return process_a_thing(name,schemas[name],allObjs,schemas,resolveDependentTypes=True)
+            return process_a_thing(name,schemas[name],allObjs,schemas)
         case 1:
             return res[0]
         case _:
             raise Exception(f'internal error, found {len(res)} objects of typeName={name}')
 
-# def read_object_definition(name,obj,allObjs) -> Variable:
-#     logger.debug(f'read_object_definition: name={name} {obj}')
-#     struct = Struct(name)
-
-#     ctorArgs = []
-#     ctorMapping = []
-
-#     for varName, property  in obj.get('properties',{}).items():
-#         getType('',property)
-
-#         # logger.debug(f'Adding: {varName} with props: {property}')
-#         # required:bool = varName in obj.get('required',[])
-#         # if 'type' in property:
-#         #     match property['type']:
-#         #         case 'array':
-#         #             var = createArray(varName,property)
-#         #         case _:
-#         #             # typeName, typeStruct = getType(property,allObjs)
-#         #             var = mapOpenapiType(openapiType=property['type'],openapiFormat=property.get('format'),name=varName)
-#         # elif 'anyOf' in property:
-#         #     var = createOpenApiAnyOf(varName,property['anyOf'])
-#         # else:
-#         #     logger.warning(f'Not supported property type: {property}, using "string"')
-#         #     var = Variable(name=varName,type=BasicType.string)
-#         struct.AddAttribute(copy.deepcopy(var))
-#         var.defval = var.CreateDefautValue()
-#         ctorArgs.append(var)
-#         ctorMapping.append((varName,[Variable(varName)]))
-
 def get_openapi_object_direct_type(obj) -> str:
     '''No recursion!'''
-    # logger.debug(f'get_openapi_object_direct_type: {obj}')
 
     ref   = obj.get('$ref')
     type  = obj.get('type')
     anyOf = obj.get('anyOf')
 
-    # logger.debug(f'get_openapi_object_direct_type: ref={"yes" if ref else "no"} type={"yes" if type else "no"} anyOf={"yes" if anyOf else "no"}')
-
     if ref:
         assert not type
         assert not anyOf
         return ref.split('/')[-1]
-        # raise NotImplementedError
 
     var = None
 
@@ -146,7 +113,7 @@ def get_openapi_object_direct_type(obj) -> str:
     if anyOf:
         return OpenApiType.anyOf
 
-    logger.warning(f'The type is not detected, using "{OpenApiType.string}" by default.')
+    logger.warning(f'The type is not detected, using "{OpenApiType.string}" by default: {obj}')
     return OpenApiType.string
 
 def process_object(name,obj,allObjs,schemas) -> Struct:
@@ -160,7 +127,7 @@ def process_object(name,obj,allObjs,schemas) -> Struct:
         logger.warning(f'object "{name}" has no "properties"')
 
     for varName, property in obj.get('properties',{}).items():
-        var = process_a_thing(varName,property,allObjs,schemas,resolveDependentTypes=True)
+        var = process_a_thing(varName,property,allObjs,schemas)
 
         if not (type(var)==Variable or type(var)==Struct):
             raise Exception(f'process_a_thing returned type={type(var)} for varName={varName} property={property}')
@@ -185,21 +152,26 @@ def process_object(name,obj,allObjs,schemas) -> Struct:
     return struct
 
 def process_array(arrayName,obj,allObjs,schemas) -> Variable:
-    itemsTypeStr = get_openapi_object_direct_type(obj['items'])
-    itemsType = getTypeFromString(itemsTypeStr,allObjs,schemas)
-    assert type(itemsType)==Struct or type(itemsType)==Variable
-    # logger.debug(f'array itemType={itemsType}')
-    return Variable(name=arrayName,type=itemsType,list=True)
+    array = process_a_thing(arrayName,obj['items'],allObjs,schemas)
+    logger.debug(f'process_array: {array}')
+    assert type(array)==Variable
+    assert not array.list
+    array.list = True
+    return array
+
+def newStructName(pattern:str,allObjs,maxStructs=100):
+    for i in range(maxStructs):
+        name = f'{pattern}{i}'
+        if not [o for o in allObjs if type(o)==Struct and o.name==name]:
+            return name
+    raise Exception(f'Failed to generate a newStructName with pattern={pattern} maxStructs={maxStructs}')
 
 def process_anyOf(name,obj,allObjs,schemas) -> Struct|Variable:
-    # logger.debug(f'process_anyOf: name="{name}" obj={obj}')
     vars = []
     not_null_vars = []
     for item in obj['anyOf']:
-        # logger.debug(f'process_anyOf item: {item}')
         itemTypeStr = get_openapi_object_direct_type(item)
         itemType = getTypeFromString(itemTypeStr,allObjs,schemas)
-        # logger.debug(f'anyOf itemType={itemType}')
 
         if type(itemType)==Struct:
             var = Variable(type=itemType)
@@ -215,186 +187,82 @@ def process_anyOf(name,obj,allObjs,schemas) -> Struct|Variable:
 
     if len(vars)==2 and len(not_null_vars)==1:
         var = not_null_vars[0]
-        var.optional=True
+        var.optional = True
         var.name = name
         return var
-    else:
-        raise Exception(f'process_anyOf: not supported: {vars}')
-    # return Variable(name=name,type=BasicType.string,doc='FIXME: dummy anyOf variable')
 
-def getTypeFromString(typeStr:str,allObjs,schemas) -> Struct|Variable:
+    match len(vars):
+        case 0:
+            raise Exception(f'anyOf without any items')
+        case 1:
+            return vars[0]
+        case _:
+            struct = Struct(newStructName('AnyOf',allObjs))
+            register(struct,allObjs)
+            
+            ctorArgs = []
+            ctorMapping = []
+
+            for var in vars:
+                if type(var.type)==Struct:
+                    struct.AddDependency(var.type)
+                var.optional = True
+                struct.AddAttribute(copy.deepcopy(var))
+                if not var.defval:
+                    var.defval = var.CreateDefautValue()
+                ctorArgs.append(var)
+                ctorMapping.append((var.name,[Variable(var.name)]))
+
+            struct.methods.append(Function(
+                struct.name,
+                'constructor',
+                args = ctorArgs,
+                mapping = ctorMapping
+            ))
+
+            return Variable(name,type=struct)
+
+    raise Exception(f'process_anyOf: not supported: {vars}')
+
+def getTypeFromString(typeStr:str,allObjs,schemas) -> Variable:
     if typeStr in OpenApiBasicType:
         return mapOpenapiType(name='',type=typeStr)
     elif type(typeStr)==str:
-        return getStructByName(typeStr,allObjs,schemas)
+        struct = getStructByName(typeStr,allObjs,schemas)
+        assert type(struct)==Struct
+        return Variable(name='',type=struct)
     else:
         raise Exception(f'NotImplementedError: {typeStr}')
 
-def process_a_thing(objName,obj,allObjs,schemas,resolveDependentTypes=False) -> Struct|Variable:
+def process_a_thing(objName,obj,allObjs,schemas) -> Struct|Variable:
 
     objType = get_openapi_object_direct_type(obj)
     
-    # logger.debug(f'process_a_thing: name={objName}  type={objType}  isOpenapiType={objType in OpenApiType}')
+    logger.debug(f'process_a_thing: name={objName}  type={objType}  isOpenapiType={objType in OpenApiType}')
 
     if objType in OpenApiDependentType:
-        if resolveDependentTypes:
-            match objType:
-                case OpenApiDependentType.object:
-                    a_thing = process_object(objName,obj,allObjs,schemas)
-                    assert type(a_thing)==Struct or type(a_thing)==Variable
-                    return a_thing
-                case OpenApiDependentType.array:
-                    a_thing = process_array(objName,obj,allObjs,schemas)
-                    assert type(a_thing)==Variable and a_thing.list==True
-                    return a_thing
-                case OpenApiDependentType.anyOf:
-                    a_thing = process_anyOf(objName,obj,allObjs,schemas)
-                    assert type(a_thing)==Struct or type(a_thing)==Variable
-                    return a_thing
-                case _: raise NotImplementedError
-        else:
-            raise NotImplementedError
-    elif objType in OpenApiBasicType:
+        match objType:
+            case OpenApiDependentType.object:
+                a_thing = process_object(objName,obj,allObjs,schemas)
+                assert type(a_thing)==Struct or type(a_thing)==Variable
+                return a_thing
+            case OpenApiDependentType.array:
+                a_thing = process_array(objName,obj,allObjs,schemas)
+                assert type(a_thing)==Variable and a_thing.list==True
+                return a_thing
+            case OpenApiDependentType.anyOf:
+                a_thing = process_anyOf(objName,obj,allObjs,schemas)
+                assert type(a_thing)==Struct or type(a_thing)==Variable
+                return a_thing
+            case _: raise NotImplementedError
+    elif objType in OpenApiBasicType or type(objType)==str:
         var = getTypeFromString(objType,allObjs,schemas)
+        logger.debug(f'from getTypeFromString: {var}')
         assert type(var)==Variable
         var.name = objName
         return var
-    elif type(objType)==str:
-        struct = getTypeFromString(objType,allObjs,schemas)
-        assert type(struct)==Struct
-        return struct
-    # elif objType in OpenApiBasicType:
-    #     return mapOpenapiType(name=objName,type=objType,format=obj.get('format'))
-    # elif type(objType)==str:
-    #     return getStructByName(objType,allObjs,schemas)
     else:
         raise Exception(f'NotImplementedError: {objType}')
-
-    # logger.debug(f'getType: {obj}')
-
-    # ref   = obj.get('$ref')
-    # type  = obj.get('type')
-    # anyOf = obj.get('anyOf')
-
-    # # if not ref and not type and not anyOf:
-    # #     return defaultType
-
-    # # if ref and type:
-    # #     raise Exception('getType: both $ref and type are present!')
-
-    # var = None
-
-    # if type:
-    #     logger.debug(f'getType: type="{type}"')
-    #     assert not ref
-    #     assert not anyOf
-    #     # logger.debug(f'ref: {ref}')
-    #     # refStructName = ref.split('/')[-1]
-    #     # findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
-    #     # assert len(findRef)==1
-    #     # var = Variable('',type=findRef[0])
-    #     if type in OpenApiType:
-    #         logger.debug(f'getType: type="{type}" is an OpenApiType')
-    #         match type:
-    #             case OpenApiType.object:
-    #                 read_object_definition(obj,allObjs)
-    #             case OpenApiType.array:
-    #                 arrayItemType = getType(obj['items'],allObjs)
-    #             case _:
-    #                 raise Exception(f'Unhandled case: type="{_}')
-    #     else:
-    #         logger.error(f'getType: type="{type}" is NOT an OpenApiType. findStruct={findStructByName(allObjs,type)}')
-
-    # if ref:
-    #     assert not type
-    #     assert not anyOf
-    #     logger.debug(f'ref: {ref}')
-    #     refStructName = ref.split('/')[-1]
-    #     findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
-    #     assert len(findRef)==1
-    #     var = Variable('',type=findRef[0])
-    #     # result = (findRef[0].name,findRef[0])
-    # # if type:
-    # #     if type in OpenApiType:
-    # #         return (type,None)
-
-    # logger.debug(f'getType: {obj} => {var}')
-    # return var
-
-# def process_openapi_schema_old(name,obj,allObjs,schemas):
-
-#     logger.debug(f'process_openapi_object_schema: name="{name}"  obj: {obj}')
-#     logger.debug('getType-A')
-#     getType('',obj)
-
-#     struct = Struct(name)
-
-#     ctorArgs = []
-#     ctorMapping = []
-
-#     def createArray(arrayName:str,property) -> Variable:
-#         # getType(property['items'],allObjs)
-#         ref = property['items'].get('$ref')
-#         if not ref:
-#             logger.warning('$ref not found in property, using "string" as the object type')
-#             varType = BasicType.string
-#         else:
-#             logger.debug(f'ref: {ref}')
-#             refStructName = ref.split('/')[-1]
-#             findRef = [o for o in allObjs if type(o)==Struct and o.name==refStructName]
-#             if len(findRef)==1:
-#                 varType = findRef[0]
-#                 # assert type2==varType
-#             elif len(findRef)==0:
-#                 if name!=refStructName:
-#                     logger.warning(f'Schema "{name}" is using unknown schema "{refStructName}", resolving...')
-#                     varType = process_openapi_schema(refStructName,schemas[refStructName],allObjs,schemas)
-#                     register(varType,allObjs)
-#                 else:
-#                     logger.debug(f'Schema {name} contains an array of itself elements.')
-#                     varType = struct
-#             else:
-#                 raise Exception('openapi specs error?!')
-#         return Variable(name=arrayName,type=varType,list=True)
-
-#     if obj.get('type')=='array':
-#         var = createArray('items',obj)
-#         struct.AddAttribute(copy.deepcopy(var))
-#         var.defval = []
-#         ctorArgs.append(var)
-#         ctorMapping.append((var.name,[Variable(var.name)]))
-#     else:
-#         assert obj.get('type')=='object'
-#         for varName, property  in obj.get('properties',{}).items():
-#             logger.debug('getType-C')
-#             getType('',property)
-#             logger.debug(f'Adding: {varName} with props: {property}')
-#             required:bool = varName in obj.get('required',[])
-#             if 'type' in property:
-#                 match property['type']:
-#                     case 'array':
-#                         var = createArray(varName,property)
-#                     case _:
-#                         # typeName, typeStruct = getType(property,allObjs)
-#                         var = mapOpenapiType(openapiType=property['type'],openapiFormat=property.get('format'),name=varName)
-#             elif 'anyOf' in property:
-#                 var = createOpenApiAnyOf(varName,property['anyOf'])
-#             else:
-#                 logger.warning(f'Not supported property type: {property}, using "string"')
-#                 var = Variable(name=varName,type=BasicType.string)
-#             struct.AddAttribute(copy.deepcopy(var))
-#             var.defval = var.CreateDefautValue()
-#             ctorArgs.append(var)
-#             ctorMapping.append((varName,[Variable(varName)]))
-
-#     struct.methods.append(Function (
-#         struct.name,
-#         'constructor',
-#         args = ctorArgs,
-#         mapping = ctorMapping
-#     ))
-
-#     return struct
 
 def schema (openApiConfig:str):
 
@@ -409,7 +277,6 @@ def schema (openApiConfig:str):
 
     schemas = specs['components']['schemas']
     for name, obj in schemas.items():
-        process_a_thing(name,obj,allObjs,schemas,resolveDependentTypes=True)
-        # register(struct,allObjs)
+        process_a_thing(name,obj,allObjs,schemas)
 
     return allObjs
