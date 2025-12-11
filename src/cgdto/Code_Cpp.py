@@ -290,6 +290,7 @@ using json = nlohmann::json;
     def GeneratorTest (self, objs):
 
         code_include = []
+        forward_declarations = []
         code_construct_random = []
         code_create = []
         code_convert = []
@@ -326,15 +327,19 @@ using json = nlohmann::json;
                 random_args += f'{indent*2}{random_arg}{ending}\n'
 
             if obj.namespace:
-                code_construct_random.append(f'namespace {obj.namespace} {{')
-            code_construct_random.append(f'// Forward declarations for {obj.name}')
-            code_construct_random.append(f'class {obj.name};')
-            code_construct_random.append(f'{obj.name} random_{obj.name} (void);')
-            code_construct_random.append(f'std::optional<{obj.name}> random_optional_{obj.name} (void);')
-            code_construct_random.append(f'std::vector<{obj.name}> random_list_{obj.name} (int min=0, int max=3);')
-            code_construct_random.append(f'std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min=0, int max=3);')
-            code_construct_random.append(f'')
+                forward_declarations.append(f'namespace {obj.namespace} {{')
+            forward_declarations.append(f'// Forward declarations for {obj.name}')
+            forward_declarations.append(f'class {obj.name};')
+            forward_declarations.append(f'{obj.name} random_{obj.name} (void);')
+            forward_declarations.append(f'std::optional<{obj.name}> random_optional_{obj.name} (void);')
+            forward_declarations.append(f'std::vector<{obj.name}> random_list_{obj.name} (int min=0, int max=3);')
+            forward_declarations.append(f'std::optional<std::vector<{obj.name}>> random_optional_list_{obj.name} (int min=0, int max=3);')
+            forward_declarations.append(f'')
+            if obj.namespace:
+                forward_declarations.append(f'}} // namespace {obj.namespace}')
 
+            if obj.namespace:
+                code_construct_random.append(f'namespace {obj.namespace} {{')
             code_construct_random.extend(f'''
 {obj.name} random_{obj.name} (void) {{
     return {obj.name} (
@@ -598,6 +603,8 @@ std::optional<std::vector<std::string>> random_optional_list_string (
         return {};
 }
 
+//forward-declarations//
+
 //create-struct-random//
 
 //namespace-end//
@@ -665,6 +672,10 @@ catch (...) {
                 yield f'}} // namespace {self.namespace}'
             elif line=='//include-dto//':
                 for line in code_include:
+                    yield line
+
+            elif line=='//forward-declarations//':
+                for line in forward_declarations:
                     yield line
             elif line=='//create-struct-random//':
                 for line in code_construct_random:
