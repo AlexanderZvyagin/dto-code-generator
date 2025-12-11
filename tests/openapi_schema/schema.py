@@ -102,7 +102,7 @@ def get_openapi_object_direct_type(obj) -> str:
     if ref:
         assert not type
         assert not anyOf
-        return ref.split('/')[-1]
+        return sanitize(ref.split('/')[-1])
 
     var = None
 
@@ -116,6 +116,9 @@ def get_openapi_object_direct_type(obj) -> str:
     logger.warning(f'The type is not detected, using "{OpenApiType.string}" by default: {obj}')
     return OpenApiType.string
 
+def sanitize(name:str) -> str:
+    return name.replace('-','_')
+
 def process_object(name,obj,allObjs,schemas) -> Struct:
     struct = Struct(name)
     register(struct,allObjs)
@@ -127,6 +130,9 @@ def process_object(name,obj,allObjs,schemas) -> Struct:
         logger.warning(f'object "{name}" has no "properties"')
 
     for varName, property in obj.get('properties',{}).items():
+
+        varName = sanitize(varName)
+
         var = process_a_thing(varName,property,allObjs,schemas)
 
         if not (type(var)==Variable or type(var)==Struct):
@@ -277,6 +283,7 @@ def schema (openApiConfig:str):
 
     schemas = specs['components']['schemas']
     for name, obj in schemas.items():
+        name = sanitize(name)
         process_a_thing(name,obj,allObjs,schemas)
 
     return allObjs

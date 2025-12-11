@@ -137,6 +137,7 @@ components:
           items:
             $ref: '#/components/schemas/Bread'
     DataID-Output:
+      type: object
       properties:
         deps:
           default: []
