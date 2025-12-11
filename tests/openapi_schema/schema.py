@@ -58,23 +58,6 @@ def mapOpenapiType(type:str,format:str='',name='') -> Variable:
             #     case _: raise Exception(f'{self.langName} unsupported type={openapiType} format={openapiFormat}')
         case _: raise Exception(f'Unsupported type: "{type}"')
 
-def createOpenApiAnyOf(name,anyOf):
-    # logger.debug(f'createOpenApiAnyOf: {anyOf}')
-    vars = []
-    for item in anyOf:
-        vars.append(mapOpenapiType(openapiType=item['type'],openapiFormat=item.get('format')))
-    types = [var.type for var in vars]
-
-    if len(vars)==2 and BasicType.null in types:
-        var = [item for item in vars if not item.type is BasicType.null]
-        if len(var)!=1:
-            raise Exception(f'createOpenApiAnyOf: bad types: {vars}')
-        var[0].optional=True
-        var[0].name = name
-        return var[0]
-    else:
-        raise Exception(f'createOpenApiAnyOf: not supported: {types}')
-
 def register(struct,allObjs):
     if not isinstance(struct,Struct):
         logger.error(f'An attempt to register not a structure! struct={type(struct)}')
@@ -135,12 +118,11 @@ def process_object(name,obj,allObjs,schemas) -> Struct:
 
         var = process_a_thing(varName,property,allObjs,schemas)
 
-        if not (type(var)==Variable or type(var)==Struct):
-            raise Exception(f'process_a_thing returned type={type(var)} for varName={varName} property={property}')
+        assert type(var)==Variable
 
         required:bool = varName in obj.get('required',[])
-
-        # logger.debug(f'*** object "{name}" property={varName} type={type(var)} required={required}')
+        if not required:
+            var.optional = True
 
         struct.AddAttribute(copy.deepcopy(var))
         if not var.defval:

@@ -240,10 +240,10 @@ def float_equal(a:float|None, b:float|None) -> bool:
             defval = ''
             if arg.defval is not None:
                 defval = f' = {self.ValueToString(arg.defval)}'
-            elif type(arg.type)==Struct:
-                defval = f' = {arg.type.name}()'
             elif arg.optional:
                 defval = ' = None'
+            elif type(arg.type)==Struct:
+                defval = f' = {arg.type.name}()'
             else:
                 defval = ''
             yield f'{indent}{arg.name}:{self.TypeToString(arg)}{defval}{"," if i+1<len(ctor.args) else ""}'

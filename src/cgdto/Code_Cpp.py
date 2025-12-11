@@ -469,7 +469,7 @@ int random_int (
 
 auto random_boolean = [] (void) -> bool {return random_int(0,1);};
 
-std::optional<bool> random_optional_bool (
+std::optional<bool> random_optional_boolean (
     int min = -1000,
     int max = 1000
 ) {
