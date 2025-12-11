@@ -118,6 +118,13 @@ components:
           items:
             $ref: '#/components/schemas/Grain'
           type: array
+        grainsAnyOf:
+          default: []
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/Grain'
+            - type: string
+          type: array
     Data:
       type: object
       properties:
@@ -125,3 +132,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Data'
+        arrayOfBread:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bread'
+    DataID-Output:
+      properties:
+        deps:
+          default: []
+          items:
+            $ref: '#/components/schemas/DataID-Output'
