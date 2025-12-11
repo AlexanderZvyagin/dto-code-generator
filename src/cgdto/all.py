@@ -72,6 +72,7 @@ class Variable:
     def CreateDefautValue(self):
         if self.optional: return None
         if self.list    : return []
+        if type(self.type)==Struct: return None
         return typeDefaultValue(self.type)
 
     def TypeName (self) -> str:

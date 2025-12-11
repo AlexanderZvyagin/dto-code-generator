@@ -240,6 +240,8 @@ def float_equal(a:float|None, b:float|None) -> bool:
             defval = ''
             if arg.defval is not None:
                 defval = f' = {self.ValueToString(arg.defval)}'
+            elif type(arg.type)==Struct:
+                defval = f' = {arg.type.name}()'
             elif arg.optional:
                 defval = ' = None'
             else:
@@ -464,6 +466,27 @@ from dto import *
 recursionDepth = 0
 maxRecursionDepth = 5
 
+def random_int (min = -1000, max = 1000) -> int:
+    return random.randint(min,max)
+
+def random_boolean () -> bool:
+    return random_int(0,1)
+
+def random_optional_int (min = -1000, max = 1000) -> int|None:
+    if random_boolean(): return None
+    return random_int(min,max)
+
+def random_optional_boolean () -> bool|None:
+    return random_int(0,1)
+
+def random_list_int(min:int = 0, max:int = 3) -> list[int]:
+    n = random.randint(min,max)
+    return [random_int() for i in range(n)]
+
+def random_optional_list_int(min:int = 0, max:int = 3) -> list[int]|None:
+    if random_boolean(): return None
+    return random_list_int(min,max)
+
 def random_string(len_max:int = 5) -> str:
     return str(uuid.uuid4())[0:random.randint(0,len_max)]
 
@@ -478,24 +501,6 @@ def random_optional_string (len_max:int=5) -> str|None:
 def random_optional_list_string(min:int = 0, max:int = 3) -> list[str]:
     if random_boolean(): return None
     return random_list_string(min,max)
-
-def random_int (min = -1000, max = 1000) -> int:
-    return random.randint(min,max)
-
-def random_boolean () -> bool:
-    return random_int(0,1)
-
-def random_optional_int (min = -1000, max = 1000) -> int:
-    if random_boolean(): return None
-    return random_int(min,max)
-
-def random_list_int(min:int = 0, max:int = 3) -> list[int]:
-    n = random.randint(min,max)
-    return [random_int() for i in range(n)]
-
-def random_optional_list_int(min:int = 0, max:int = 3) -> list[int]|None:
-    if random_boolean(): return None
-    return random_list_int(min,max)
 
 def random_float (min:float = -1e6, max:float = 1e6) -> float:
     return random_int()

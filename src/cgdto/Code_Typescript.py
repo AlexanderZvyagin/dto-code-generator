@@ -235,6 +235,8 @@ function string_equal (a:string, b:string) : boolean {
                     defval = f' = new {self.ValueToString(arg.defval)}'
                 else:
                     defval = f' = {self.ValueToString(arg.defval)}'
+            elif type(arg.type)==Struct:
+                defval = f' = new {arg.type.name}()'
             elif arg.optional:
                 defval = ' = undefined'
             else:
@@ -510,6 +512,10 @@ function random_int(min:number = -1000, max:number = 1000) : number {
 
 function random_boolean () : boolean {
     return random_int(0,1)==1;
+}
+
+function random_optional_boolean() : boolean|undefined {
+    return random_boolean() ? random_boolean() : undefined;
 }
 
 function random_optional_int() : number|undefined {
