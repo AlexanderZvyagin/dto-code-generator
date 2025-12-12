@@ -216,9 +216,13 @@ def getTypeFromString(typeStr:str,allObjs,findSchema) -> Variable:
     if typeStr in OpenApiBasicType:
         return mapOpenapiType(name='',type=typeStr)
     elif type(typeStr)==str:
-        struct = getStructByName(typeStr,allObjs,findSchema)
-        assert type(struct)==Struct
-        return Variable(name='',type=struct)
+        a_thing = getStructByName(typeStr,allObjs,findSchema)
+        if type(a_thing)==Struct:
+            return Variable(name='',type=a_thing)
+        elif type(a_thing)==Variable:
+            return a_thing
+        else:
+            raise Exception(f'Internal error, unexpected type {type(a_thing)}')
     else:
         raise Exception(f'NotImplementedError: {typeStr}')
 

@@ -206,7 +206,7 @@ using json = nlohmann::json;
         for i,arg in enumerate(ctor.args):
             if arg.defval is not None:
                 defval = f' = {self.ValueToString(arg.defval)}'
-            elif arg.optional:
+            elif arg.optional or type(arg.type)==Struct:
                 defval = ' = {}'
             else:
                 defval = ''
