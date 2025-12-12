@@ -1,6 +1,6 @@
 import pytest, logging, os, shutil
 
-from cgdto import Struct, Variable, Function, CodeBlock, supported_languages
+from cgdto import Struct, Function, CodeBlock, supported_languages, sortObjects
 from empty_schema import schema as empty_schema
 from mcsdk_schema import schema as mcsdk_schema
 from openapi_schema import schema as openapi_schema
@@ -56,7 +56,7 @@ def test_schema(runTests,languages,schema):
 
     logger.debug(f'Schema directory: {schema.Dir()}')
 
-    objs = schema.Objs()
+    objs = sortObjects(schema.Objs())
 
     structs = [o for o in objs if isinstance(o,Struct)]
     funcs   = [o for o in objs if isinstance(o,Function)]

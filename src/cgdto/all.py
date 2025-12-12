@@ -218,3 +218,26 @@ def run_test(outdir,command,struct_name='',file1='',file2=''):
 supported_languages = {}
 def register (Code_class):
     supported_languages[Code_class().language] = Code_class
+
+def sortObjects(objs):
+    structs = [obj for obj in objs if type(obj)==Struct]
+
+    sortedStructs = []
+
+    def isSorted(struct:Struct):
+        return struct.name in [item.name for item in sortedStructs]
+
+    def add(struct:Struct,depth:int=0):
+        assert depth<10
+        if isSorted(struct): return
+        deps = [dep for dep in struct.dependencies if not isSorted(dep)]
+        for dep in deps:
+            add(dep,depth+1)
+        sortedStructs.append(struct)
+
+    for obj in objs:
+        add(obj)
+    
+    assert len(sortedStructs)==len(structs)
+
+    return sortedStructs + [obj for obj in objs if type(obj)!=Struct]
