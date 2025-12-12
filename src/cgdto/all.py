@@ -220,7 +220,13 @@ def register (Code_class):
     supported_languages[Code_class().language] = Code_class
 
 def sortObjects(objs):
-    structs = [obj for obj in objs if type(obj)==Struct]
+    structs = []
+    otherObjs = []
+    for obj in objs:
+        if type(obj)==Struct and obj.default_version==True:
+            structs.append(obj)
+        else:
+            otherObjs.append(obj)
 
     sortedStructs = []
 
@@ -235,9 +241,9 @@ def sortObjects(objs):
             add(dep,depth+1)
         sortedStructs.append(struct)
 
-    for obj in objs:
+    for obj in structs:
         add(obj)
     
     assert len(sortedStructs)==len(structs)
 
-    return sortedStructs + [obj for obj in objs if type(obj)!=Struct]
+    return sortedStructs + otherObjs

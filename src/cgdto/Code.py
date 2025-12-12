@@ -75,7 +75,7 @@ class Code:
         for obj in objs:
             if not isinstance(obj,Struct):
                 continue
-            if not obj.gen_test:
+            if not (obj.gen_test and obj.default_version):
                 continue
             logger.info(f'  Testing [{self.language}] {obj.name}')
             struct_name = obj.name
