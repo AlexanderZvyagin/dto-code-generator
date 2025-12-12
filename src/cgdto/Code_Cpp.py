@@ -463,16 +463,15 @@ int random_int (
     int min = -1000,
     int max = 1000
 ) {
+    if(min>max) throw std::runtime_error("random_int: min>max");
+    if(min==max) return min;
     std::uniform_int_distribution<int> uniform_dist(min,max);
     return uniform_dist (generator);
 }
 
 auto random_boolean = [] (void) -> bool {return random_int(0,1);};
 
-std::optional<bool> random_optional_boolean (
-    int min = -1000,
-    int max = 1000
-) {
+std::optional<bool> random_optional_boolean () {
     if(random_boolean())
         return random_boolean();
     else
@@ -605,10 +604,11 @@ std::vector<std::string> random_list_string (
 std::optional<std::vector<std::string>> random_optional_list_string (
     int len_min = 0,
     int len_max = 3,
-    int strlen_max = 16
+    int strlen_min = 0,
+    int strlen_max = 2
 ) {
     if(random_boolean())
-        return random_list_string(len_min,len_max,strlen_max);
+        return random_list_string(len_min,len_max,strlen_max,strlen_max);
     else
         return {};
 }
